@@ -1,0 +1,19 @@
+{
+  "name": "yumbar-production",
+  "version": "0.0.1",
+  "description": "Custom software for managing ice cream production.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/psylucidos/yumbar-production.git"
+  },
+  "author": "psylucidos",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/psylucidos/yumbar-production/issues"
+  },
+  "homepage": "https://github.com/psylucidos/yumbar-production#readme"
+}
