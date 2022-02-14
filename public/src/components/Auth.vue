@@ -1,6 +1,6 @@
 <template>
   <q-card class="auth-card">
-    <div class="text-h6 text-center">
+    <div class="text-h5 text-center">
       Login
     </div>
     <div class="">
