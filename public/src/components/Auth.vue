@@ -19,7 +19,7 @@
           label="Password"
           :rules="[ val => val && val.length > 0 || 'Please type something']"
         />
-        <q-btn label="Submit" type="submit" color="primary"/>
+        <q-btn label="Submit" class="full-width" type="submit" color="primary"/>
       </q-form>
     </div>
   </q-card>
@@ -29,10 +29,6 @@
   .auth-card {
     padding: 2vh;
     width: 30vw;
-  }
-
-  .q-btn {
-    width: 100%;
   }
 
   @media only screen and (max-width: 600px) {
@@ -56,6 +52,7 @@ export default defineComponent({
   methods: {
     onSubmit() {
       console.log(this.username, this.password); //eslint-disable-line
+      this.$router.push('/data');
     },
   },
 });
