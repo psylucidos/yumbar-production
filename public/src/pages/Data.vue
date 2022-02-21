@@ -56,6 +56,7 @@
                 <div class="row full-width items-center no-wrap">
                   <div class="col pad-right">
                     <q-select
+                      v-if="!loading"
                       label="Batch Flavor"
                       required
                       v-model="packingData[index].flavor"
@@ -63,20 +64,24 @@
                       :options="flavorOptions"
                       :color="flavorColors[packingData[index].flavor]"
                     />
+                    <q-skeleton v-if="loading" type="QInput" />
                   </div>
 
                   <div class="col-auto">
                     <q-btn
+                      v-if="!loading"
                       flat
                       round
                       icon="delete"
                       @click="deletePackingFlavor(index)"
                     />
+                    <q-skeleton v-if="loading" type="QAvatar" />
                   </div>
                 </div>
 
                 <div class="col-3 pad-right">
                   <q-input
+                    v-if="!loading"
                     label="Slab Batch"
                     required
                     v-model.number="packingData[index].batchNumber"
@@ -84,9 +89,11 @@
                     type="number"
                     :color="flavorColors[packingData[index].flavor]"
                   />
+                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
                 <div class="col-3 pad-right">
                   <q-input
+                    v-if="!loading"
                     label="Number of Slabs"
                     required
                     v-model.number="packingData[index].slabAmount"
@@ -94,9 +101,11 @@
                     type="number"
                     :color="flavorColors[packingData[index].flavor]"
                   />
+                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
                 <div class="col-3 pad-right">
                   <q-input
+                    v-if="!loading"
                     label="Number of Boxes"
                     required
                     v-model.number="packingData[index].boxAmount"
@@ -104,9 +113,11 @@
                     type="number"
                     :color="flavorColors[packingData[index].flavor]"
                   />
+                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
                 <div class="col-3">
                   <q-input
+                    v-if="!loading"
                     label="Use by Date"
                     required
                     v-model="packingData[index].useByDate"
@@ -130,19 +141,23 @@
                       </q-icon>
                     </template>
                   </q-input>
+                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
                 <div class="col-12">
                   <q-input
+                    v-if="!loading"
                     label="Notes"
                     v-model="packingData[index].notes"
                     type="text"
                     autogrow
                     :color="flavorColors[packingData[index].flavor]"
                   />
+                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
               </q-card>
 
               <q-btn
+                v-if="!loading"
                 icon="add"
                 id="add-flavor-btn"
                 label="Add Flavor"
@@ -150,6 +165,7 @@
                 color="primary"
                 @click="addPackingFlavor"
               />
+              <q-skeleton v-if="loading" type="QBtn" class="full-width" />
             </q-tab-panel>
 
             <q-tab-panel name="Cutting Day">
@@ -161,6 +177,7 @@
                 <div class="row full-width items-center no-wrap">
                   <div class="col pad-right">
                     <q-select
+                      v-if="!loading"
                       label="Batch Flavor"
                       required
                       v-model="cuttingData[index].flavor"
@@ -168,20 +185,24 @@
                       :options="flavorOptions"
                       :color="flavorColors[cuttingData[index].flavor]"
                     />
+                    <q-skeleton v-if="loading" type="QInput" />
                   </div>
 
                   <div class="col-auto">
                     <q-btn
+                      v-if="!loading"
                       flat
                       round
                       icon="delete"
                       @click="deleteFlavor(index)"
                     />
+                    <q-skeleton v-if="loading" type="QAvatar" />
                   </div>
                 </div>
 
                 <div class="col-3 pad-right">
                   <q-input
+                    v-if="!loading"
                     label="Slab Batch"
                     required
                     v-model.number="cuttingData[index].slabBatch"
@@ -189,9 +210,11 @@
                     type="number"
                     :color="flavorColors[cuttingData[index].flavor]"
                   />
+                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
                 <div class="col-3 pad-right">
                   <q-input
+                    v-if="!loading"
                     label="Base Batch"
                     required
                     v-model.number="cuttingData[index].baseBatch"
@@ -199,9 +222,11 @@
                     type="number"
                     :color="flavorColors[cuttingData[index].flavor]"
                   />
+                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
                 <div class="col-3 pad-right">
                   <q-input
+                    v-if="!loading"
                     label="Slab Amount"
                     required
                     v-model.number="cuttingData[index].slabAmount"
@@ -209,9 +234,11 @@
                     type="number"
                     :color="flavorColors[cuttingData[index].flavor]"
                   />
+                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
-                <div class="col-3 pad-right">
+                <div class="col-3">
                   <q-input
+                    v-if="!loading"
                     label="Box Amount"
                     required
                     v-model.number="cuttingData[index].boxAmount"
@@ -219,19 +246,23 @@
                     type="number"
                     :color="flavorColors[cuttingData[index].flavor]"
                   />
+                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
                 <div class="col-12">
                   <q-input
+                    v-if="!loading"
                     label="Notes"
                     v-model="cuttingData[index].notes"
                     type="text"
                     autogrow
                     :color="flavorColors[cuttingData[index].flavor]"
                   />
+                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
               </q-card>
 
               <q-btn
+                v-if="!loading"
                 icon="add"
                 id="add-flavor-btn"
                 label="Add Flavor"
@@ -239,6 +270,7 @@
                 color="primary"
                 @click="addCuttingFlavor"
               />
+              <q-skeleton v-if="loading" type="QBtn" class="full-width" />
             </q-tab-panel>
 
             <q-tab-panel name="Base Day">
@@ -250,6 +282,7 @@
                 <div class="row full-width items-center no-wrap">
                   <div class="col pad-right">
                     <q-select
+                      v-if="!loading"
                       label="Batch Flavor"
                       required
                       v-model="baseData[index].flavor"
@@ -257,20 +290,24 @@
                       :options="baseFlavorOptions"
                       :color="flavorColors[baseData[index].flavor]"
                     />
+                    <q-skeleton v-if="loading" type="QInput" />
                   </div>
 
                   <div class="col-auto">
                     <q-btn
+                      v-if="!loading"
                       flat
                       round
                       icon="delete"
                       @click="deleteBaseFlavor(index)"
                     />
+                    <q-skeleton v-if="loading" type="QAvatar" />
                   </div>
                 </div>
 
                 <div class="col-3 pad-right">
                   <q-input
+                    v-if="!loading"
                     label="Base Batch"
                     required
                     v-model.number="baseData[index].batchNumber"
@@ -278,9 +315,11 @@
                     type="number"
                     :color="flavorColors[baseData[index].flavor]"
                   />
+                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
                 <div class="col-3 pad-right">
                   <q-input
+                    v-if="!loading"
                     label="Number of Large Bases"
                     required
                     v-model.number="baseData[index].largeAmount"
@@ -288,9 +327,11 @@
                     type="number"
                     :color="flavorColors[baseData[index].flavor]"
                   />
+                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
                 <div class="col-3 pad-right">
                   <q-input
+                    v-if="!loading"
                     label="Number of Small Bases"
                     required
                     v-model.number="baseData[index].smallAmount"
@@ -298,9 +339,11 @@
                     type="number"
                     :color="flavorColors[baseData[index].flavor]"
                   />
+                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
                 <div class="col-3">
                   <q-input
+                    v-if="!loading"
                     label="Number of Cake Bases"
                     required
                     v-model.number="baseData[index].cakeAmount"
@@ -308,25 +351,32 @@
                     type="number"
                     :color="flavorColors[baseData[index].flavor]"
                   />
+                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
-                <div class="col-12 text-center text-h6">
-                  Total Bases: {{ baseData[index].largeAmount
-                                + baseData[index].smallAmount
-                                + baseData[index].cakeAmount
-                                || 0 }}
+                <div class="row full-width items-center justify-center">
+                  <div v-if="!loading" class="text-h6">
+                    Total Bases: {{ baseData[index].largeAmount
+                                  + baseData[index].smallAmount
+                                  + baseData[index].cakeAmount
+                                  || 0 }}
+                  </div>
+                  <q-skeleton class="col-4" v-if="loading" type="QInput" height="3vh" />
                 </div>
                 <div class="col-12">
                   <q-input
+                    v-if="!loading"
                     label="Notes"
                     v-model="baseData[index].notes"
                     type="text"
                     autogrow
                     :color="flavorColors[baseData[index].flavor]"
                   />
+                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
               </q-card>
 
               <q-btn
+                v-if="!loading"
                 icon="add"
                 id="add-flavor-btn"
                 label="Add Flavor"
@@ -334,6 +384,7 @@
                 color="primary"
                 @click="addBaseFlavor"
               />
+              <q-skeleton v-if="loading" type="QBtn" class="full-width" />
             </q-tab-panel>
 
             <q-tab-panel name="Ice Cream Day">
@@ -345,6 +396,7 @@
                 <div class="row full-width items-center no-wrap">
                   <div class="col pad-right">
                     <q-select
+                      v-if="!loading"
                       label="Batch Flavor"
                       required
                       v-model="icecreamData[index].flavor"
@@ -352,20 +404,24 @@
                       :options="flavorOptions"
                       :color="flavorColors[icecreamData[index].flavor]"
                     />
+                    <q-skeleton v-if="loading" type="QInput" />
                   </div>
 
                   <div class="col-auto">
                     <q-btn
+                      v-if="!loading"
                       flat
                       round
                       icon="delete"
                       @click="deleteIcecreamFlavor(index)"
                     />
+                    <q-skeleton v-if="loading" type="QAvatar" />
                   </div>
                 </div>
 
                 <div class="col-4 pad-right">
                   <q-input
+                    v-if="!loading"
                     label="Batch Number"
                     required
                     v-model.number="icecreamData[index].batchNumber"
@@ -373,9 +429,11 @@
                     type="number"
                     :color="flavorColors[icecreamData[index].flavor]"
                   />
+                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
                 <div class="col-4 pad-right">
                   <q-input
+                    v-if="!loading"
                     label="Number of Jugs"
                     required
                     v-model.number="icecreamData[index].jugsAmount"
@@ -383,9 +441,11 @@
                     type="number"
                     :color="flavorColors[icecreamData[index].flavor]"
                   />
+                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
                 <div class="col-4">
                   <q-input
+                    v-if="!loading"
                     label="Number of Trays"
                     required
                     v-model.number="icecreamData[index].traysAmount"
@@ -393,19 +453,23 @@
                     type="number"
                     :color="flavorColors[icecreamData[index].flavor]"
                   />
+                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
                 <div class="col-12">
                   <q-input
+                    v-if="!loading"
                     label="Notes"
                     v-model="icecreamData[index].notes"
                     type="text"
                     autogrow
                     :color="flavorColors[icecreamData[index].flavor]"
                   />
+                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
               </q-card>
 
               <q-btn
+                v-if="!loading"
                 icon="add"
                 id="add-flavor-btn"
                 label="Add Flavor"
@@ -413,12 +477,13 @@
                 color="primary"
                 @click="addIcecreamFlavor"
               />
+              <q-skeleton v-if="loading" type="QBtn" class="full-width" />
             </q-tab-panel>
           </q-tab-panels>
         </q-card-section>
 
         <q-card-section id="save-btn-container">
-          <q-btn label="Save" class="full-width" type="submit" color="primary"/>
+          <q-btn label="Save" class="full-width" :disabled="loading" type="submit" color="primary"/>
         </q-card-section>
       </q-form>
     </q-card>
@@ -433,6 +498,10 @@
 
   #date-input {
     padding-right: 1vw;
+  }
+
+  .q-skeleton {
+    margin: 5px;
   }
 
   .q-tab-panel {
@@ -469,6 +538,7 @@ export default defineComponent({
   data() {
     return {
       date: '',
+      loading: true,
       productionDay: 'Select Production Type',
       productionDayOptions: ['Packing Day', 'Base Day', 'Cutting Day', 'Ice Cream Day'],
       flavorOptions: ['Vanilla', 'Chocolate', 'Jaffa', 'Hazelnut'],
@@ -527,6 +597,11 @@ export default defineComponent({
     const MM = currentDate.getMonth() < 10 ? `0${currentDate.getMonth()}` : currentDate.getMonth();
     const YYYY = currentDate.getFullYear();
     this.date = `${DD}-${MM}-${YYYY}`;
+
+    const self = this;
+    setTimeout(() => {
+      self.loading = false;
+    }, 3 * 1000);
   },
   methods: {
     onUpdate() {
