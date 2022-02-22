@@ -37,7 +37,12 @@
             </div>
 
             <div class="col-3">
-              <q-select dense v-model="productionDay" :options="productionDayOptions" />
+              <q-select
+                dense
+                v-model="productionDay"
+                :options="productionDayOptions"
+                :disable="loading"
+              />
             </div>
           </div>
 
@@ -64,7 +69,6 @@
                       :options="flavorOptions"
                       :color="flavorColors[packingData[index].flavor]"
                     />
-                    <q-skeleton v-if="loading" type="QInput" />
                   </div>
 
                   <div class="col-auto">
@@ -75,7 +79,6 @@
                       icon="delete"
                       @click="deletePackingFlavor(index)"
                     />
-                    <q-skeleton v-if="loading" type="QAvatar" />
                   </div>
                 </div>
 
@@ -89,7 +92,6 @@
                     type="number"
                     :color="flavorColors[packingData[index].flavor]"
                   />
-                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
                 <div class="col-3 pad-right">
                   <q-input
@@ -101,7 +103,6 @@
                     type="number"
                     :color="flavorColors[packingData[index].flavor]"
                   />
-                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
                 <div class="col-3 pad-right">
                   <q-input
@@ -113,7 +114,6 @@
                     type="number"
                     :color="flavorColors[packingData[index].flavor]"
                   />
-                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
                 <div class="col-3">
                   <q-input
@@ -141,7 +141,6 @@
                       </q-icon>
                     </template>
                   </q-input>
-                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
                 <div class="col-12">
                   <q-input
@@ -152,7 +151,6 @@
                     autogrow
                     :color="flavorColors[packingData[index].flavor]"
                   />
-                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
               </q-card>
 
@@ -165,7 +163,6 @@
                 color="primary"
                 @click="addPackingFlavor"
               />
-              <q-skeleton v-if="loading" type="QBtn" class="full-width" />
             </q-tab-panel>
 
             <q-tab-panel name="Cutting Day">
@@ -185,7 +182,6 @@
                       :options="flavorOptions"
                       :color="flavorColors[cuttingData[index].flavor]"
                     />
-                    <q-skeleton v-if="loading" type="QInput" />
                   </div>
 
                   <div class="col-auto">
@@ -196,7 +192,6 @@
                       icon="delete"
                       @click="deleteFlavor(index)"
                     />
-                    <q-skeleton v-if="loading" type="QAvatar" />
                   </div>
                 </div>
 
@@ -210,7 +205,6 @@
                     type="number"
                     :color="flavorColors[cuttingData[index].flavor]"
                   />
-                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
                 <div class="col-3 pad-right">
                   <q-input
@@ -222,7 +216,6 @@
                     type="number"
                     :color="flavorColors[cuttingData[index].flavor]"
                   />
-                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
                 <div class="col-3 pad-right">
                   <q-input
@@ -234,7 +227,6 @@
                     type="number"
                     :color="flavorColors[cuttingData[index].flavor]"
                   />
-                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
                 <div class="col-3">
                   <q-input
@@ -246,7 +238,6 @@
                     type="number"
                     :color="flavorColors[cuttingData[index].flavor]"
                   />
-                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
                 <div class="col-12">
                   <q-input
@@ -257,7 +248,6 @@
                     autogrow
                     :color="flavorColors[cuttingData[index].flavor]"
                   />
-                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
               </q-card>
 
@@ -270,7 +260,6 @@
                 color="primary"
                 @click="addCuttingFlavor"
               />
-              <q-skeleton v-if="loading" type="QBtn" class="full-width" />
             </q-tab-panel>
 
             <q-tab-panel name="Base Day">
@@ -290,7 +279,6 @@
                       :options="baseFlavorOptions"
                       :color="flavorColors[baseData[index].flavor]"
                     />
-                    <q-skeleton v-if="loading" type="QInput" />
                   </div>
 
                   <div class="col-auto">
@@ -301,7 +289,6 @@
                       icon="delete"
                       @click="deleteBaseFlavor(index)"
                     />
-                    <q-skeleton v-if="loading" type="QAvatar" />
                   </div>
                 </div>
 
@@ -315,7 +302,6 @@
                     type="number"
                     :color="flavorColors[baseData[index].flavor]"
                   />
-                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
                 <div class="col-3 pad-right">
                   <q-input
@@ -327,7 +313,6 @@
                     type="number"
                     :color="flavorColors[baseData[index].flavor]"
                   />
-                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
                 <div class="col-3 pad-right">
                   <q-input
@@ -339,7 +324,6 @@
                     type="number"
                     :color="flavorColors[baseData[index].flavor]"
                   />
-                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
                 <div class="col-3">
                   <q-input
@@ -351,7 +335,6 @@
                     type="number"
                     :color="flavorColors[baseData[index].flavor]"
                   />
-                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
                 <div class="row full-width items-center justify-center">
                   <div v-if="!loading" class="text-h6">
@@ -360,7 +343,6 @@
                                   + baseData[index].cakeAmount
                                   || 0 }}
                   </div>
-                  <q-skeleton class="col-4" v-if="loading" type="QInput" height="3vh" />
                 </div>
                 <div class="col-12">
                   <q-input
@@ -371,7 +353,6 @@
                     autogrow
                     :color="flavorColors[baseData[index].flavor]"
                   />
-                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
               </q-card>
 
@@ -384,7 +365,6 @@
                 color="primary"
                 @click="addBaseFlavor"
               />
-              <q-skeleton v-if="loading" type="QBtn" class="full-width" />
             </q-tab-panel>
 
             <q-tab-panel name="Ice Cream Day">
@@ -404,7 +384,6 @@
                       :options="flavorOptions"
                       :color="flavorColors[icecreamData[index].flavor]"
                     />
-                    <q-skeleton v-if="loading" type="QInput" />
                   </div>
 
                   <div class="col-auto">
@@ -415,7 +394,6 @@
                       icon="delete"
                       @click="deleteIcecreamFlavor(index)"
                     />
-                    <q-skeleton v-if="loading" type="QAvatar" />
                   </div>
                 </div>
 
@@ -429,7 +407,6 @@
                     type="number"
                     :color="flavorColors[icecreamData[index].flavor]"
                   />
-                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
                 <div class="col-4 pad-right">
                   <q-input
@@ -441,7 +418,6 @@
                     type="number"
                     :color="flavorColors[icecreamData[index].flavor]"
                   />
-                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
                 <div class="col-4">
                   <q-input
@@ -453,7 +429,6 @@
                     type="number"
                     :color="flavorColors[icecreamData[index].flavor]"
                   />
-                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
                 <div class="col-12">
                   <q-input
@@ -464,7 +439,6 @@
                     autogrow
                     :color="flavorColors[icecreamData[index].flavor]"
                   />
-                  <q-skeleton v-if="loading" type="QInput" />
                 </div>
               </q-card>
 
@@ -477,13 +451,58 @@
                 color="primary"
                 @click="addIcecreamFlavor"
               />
+            </q-tab-panel>
+
+            <q-tab-panel name="Select Production Type">
+              <div
+                v-if="!loading"
+                class="full-width text-center text-h6 text-grey"
+              >
+                Please Select Production Type
+              </div>
+
+              <div v-if="loading">
+                <q-card
+                  v-for="index in 3"
+                  v-bind:key="index"
+                  class="row items-center full-width flavor-item"
+                >
+                  <div class="row full-width items-center no-wrap">
+                    <div class="col pad-right">
+                      <q-skeleton type="QInput" />
+                    </div>
+
+                    <div class="col-auto">
+                      <q-skeleton type="QAvatar" />
+                    </div>
+                  </div>
+
+                  <div class="col-3 pad-right">
+                    <q-skeleton type="QInput" />
+                  </div>
+                  <div class="col-3 pad-right">
+                    <q-skeleton type="QInput" />
+                  </div>
+                  <div class="col-3 pad-right">
+                    <q-skeleton type="QInput" />
+                  </div>
+                  <div class="col-3">
+                    <q-skeleton type="QInput" />
+                  </div>
+
+                  <div class="col-12">
+                    <q-skeleton type="QInput" />
+                  </div>
+                </q-card>
+              </div>
+
               <q-skeleton v-if="loading" type="QBtn" class="full-width" />
             </q-tab-panel>
           </q-tab-panels>
         </q-card-section>
 
         <q-card-section id="save-btn-container">
-          <q-btn label="Save" class="full-width" :disabled="loading" type="submit" color="primary"/>
+          <q-btn label="Save" class="full-width" :disable="loading" type="submit" color="primary"/>
         </q-card-section>
       </q-form>
     </q-card>
@@ -659,6 +678,18 @@ export default defineComponent({
     },
     deleteIcecreamFlavor(index) {
       this.icecreamData.splice(index, 1);
+    },
+  },
+  watch: {
+    date(newDate) {
+      console.log('changed Date', newDate);
+      this.loading = true;
+      this.productionDay = 'Select Production Type';
+
+      const self = this;
+      setTimeout(() => {
+        self.loading = false;
+      }, 3 * 1000);
     },
   },
 });
