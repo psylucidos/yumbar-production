@@ -71,6 +71,34 @@
                     />
                   </div>
 
+                  <div class="col-auto pad-right">
+                    <q-input
+                      v-if="!loading"
+                      label="Use by Date"
+                      required
+                      v-model="packingData[index].useByDate"
+                      mask="##-##-####"
+                      class="q-field--with-bottom"
+                    >
+                      <template v-slot:append>
+                        <q-icon name="event" class="cursor-pointer">
+                          <q-popup-proxy
+                            ref="qDateProxy"
+                            cover
+                            transition-show="scale"
+                            transition-hide="scale"
+                          >
+                            <q-date v-model="packingData[index].useByDate" mask="DD-MM-YYYY">
+                              <div class="row items-center justify-end">
+                                <q-btn v-close-popup label="Close" color="primary" flat />
+                              </div>
+                            </q-date>
+                          </q-popup-proxy>
+                        </q-icon>
+                      </template>
+                    </q-input>
+                  </div>
+
                   <div class="col-auto">
                     <q-btn
                       v-if="!loading"
@@ -85,7 +113,7 @@
                 <div class="col-3 pad-right">
                   <q-input
                     v-if="!loading"
-                    label="Slab Batch"
+                    label="Slab Batch #"
                     required
                     v-model.number="packingData[index].batchNumber"
                     :rules="[ val => val >= 1 || 'Batch must be positive!' ]"
@@ -118,30 +146,15 @@
                 <div class="col-3">
                   <q-input
                     v-if="!loading"
-                    label="Use by Date"
+                    label="Number of Samples"
                     required
-                    v-model="packingData[index].useByDate"
-                    mask="##-##-####"
-                    class="q-field--with-bottom"
-                  >
-                    <template v-slot:append>
-                      <q-icon name="event" class="cursor-pointer">
-                        <q-popup-proxy
-                          ref="qDateProxy"
-                          cover
-                          transition-show="scale"
-                          transition-hide="scale"
-                        >
-                          <q-date v-model="packingData[index].useByDate" mask="DD-MM-YYYY">
-                            <div class="row items-center justify-end">
-                              <q-btn v-close-popup label="Close" color="primary" flat />
-                            </div>
-                          </q-date>
-                        </q-popup-proxy>
-                      </q-icon>
-                    </template>
-                  </q-input>
+                    v-model.number="packingData[index].sampleAmount"
+                    :rules="[ val => val >= 1 || 'Amount must be positive!' ]"
+                    type="number"
+                    :color="flavorColors[packingData[index].flavor]"
+                  />
                 </div>
+
                 <div class="col-12">
                   <q-input
                     v-if="!loading"
@@ -306,6 +319,17 @@
                 <div class="col-3 pad-right">
                   <q-input
                     v-if="!loading"
+                    label="Number of Blender Batches"
+                    required
+                    v-model.number="baseData[index].blenderAmount"
+                    :rules="[ val => val >= 1 || 'Amount must be positive!' ]"
+                    type="number"
+                    :color="flavorColors[baseData[index].flavor]"
+                  />
+                </div>
+                <div class="col-3 pad-right">
+                  <q-input
+                    v-if="!loading"
                     label="Number of Large Bases"
                     required
                     v-model.number="baseData[index].largeAmount"
@@ -314,7 +338,7 @@
                     :color="flavorColors[baseData[index].flavor]"
                   />
                 </div>
-                <div class="col-3 pad-right">
+                <div class="col-3">
                   <q-input
                     v-if="!loading"
                     label="Number of Small Bases"
@@ -325,24 +349,38 @@
                     :color="flavorColors[baseData[index].flavor]"
                   />
                 </div>
-                <div class="col-3">
+                <div class="col-4 pad-right">
                   <q-input
                     v-if="!loading"
-                    label="Number of Cake Bases"
+                    label="Number of Small Cake Bases"
                     required
-                    v-model.number="baseData[index].cakeAmount"
+                    v-model.number="baseData[index].smallCakeAmount"
                     :rules="[ val => val >= 0 || 'Amount must not be negative!' ]"
                     type="number"
                     :color="flavorColors[baseData[index].flavor]"
                   />
                 </div>
-                <div class="row full-width items-center justify-center">
-                  <div v-if="!loading" class="text-h6">
-                    Total Bases: {{ baseData[index].largeAmount
-                                  + baseData[index].smallAmount
-                                  + baseData[index].cakeAmount
-                                  || 0 }}
-                  </div>
+                <div class="col-4 pad-right">
+                  <q-input
+                    v-if="!loading"
+                    label="Number of Medium Cake Bases"
+                    required
+                    v-model.number="baseData[index].mediumCakeAmount"
+                    :rules="[ val => val >= 0 || 'Amount must not be negative!' ]"
+                    type="number"
+                    :color="flavorColors[baseData[index].flavor]"
+                  />
+                </div>
+                <div class="col-4">
+                  <q-input
+                    v-if="!loading"
+                    label="Number of Large Cake Bases"
+                    required
+                    v-model.number="baseData[index].largeCakeAmount"
+                    :rules="[ val => val >= 0 || 'Amount must not be negative!' ]"
+                    type="number"
+                    :color="flavorColors[baseData[index].flavor]"
+                  />
                 </div>
                 <div class="col-12">
                   <q-input
@@ -559,8 +597,19 @@ export default defineComponent({
       date: '',
       loading: true,
       productionDay: 'Select Production Type',
-      productionDayOptions: ['Packing Day', 'Base Day', 'Cutting Day', 'Ice Cream Day'],
-      flavorOptions: ['Vanilla', 'Chocolate', 'Jaffa', 'Hazelnut'],
+      productionDayOptions: ['Cutting Day', 'Packing Day', 'Base Day', 'Ice Cream Day'],
+      flavorOptions: [
+        'Vanilla',
+        'Chocolate',
+        'Jaffa',
+        'Hazelnut',
+        'Mint',
+        'Mango',
+        'Strawberry',
+        'Blueberry',
+        'Raspberry',
+        'Coffee',
+      ],
       baseFlavorOptions: ['Vanilla', 'Chocolate'],
       flavorColors: {
         Vanilla: 'yellow-3',
@@ -586,16 +635,20 @@ export default defineComponent({
           slabAmount: '',
           boxAmount: '',
           useByDate: '',
+          sampleAmount: '',
           notes: '',
         },
       ],
       baseData: [
         {
           flavor: '',
+          blenderAmount: '',
           batchNumber: '',
           smallAmount: '',
           largeAmount: '',
-          cakeAmount: '',
+          smallCakeAmount: '',
+          mediumCakeAmount: '',
+          largeCakeAmount: '',
           notes: '',
         },
       ],
@@ -610,23 +663,43 @@ export default defineComponent({
       ],
     };
   },
-  created() {
+  mounted() {
     const currentDate = new Date();
     const DD = currentDate.getDate();
     const MM = currentDate.getMonth() < 10 ? `0${currentDate.getMonth()}` : currentDate.getMonth();
     const YYYY = currentDate.getFullYear();
     this.date = `${DD}-${MM}-${YYYY}`;
 
+    this.startLoading();
     const self = this;
     setTimeout(() => {
-      self.loading = false;
+      self.endLoading();
     }, 3 * 1000);
+
+    setInterval(() => {
+      self.onUpdate();
+    }, 10 * 1000);
   },
   methods: {
     onUpdate() {
+      console.log('Auto Update'); // eslint-ignore-line
       if (this.productionDay === 'Packing Day') {
         console.log(this.packingData); // eslint-ignore-line
+      } if (this.productionDay === 'Cutting Day') {
+        console.log(this.cuttingData); // eslint-ignore-line
+      } if (this.productionDay === 'Icecream Day') {
+        console.log(this.icecreamData); // eslint-ignore-line
+      } if (this.productionDay === 'Base Day') {
+        console.log(this.baseData); // eslint-ignore-line
       }
+    },
+    startLoading() {
+      console.log('Begin Loading...');
+      this.loading = true;
+    },
+    endLoading() {
+      console.log('End Loading!');
+      this.loading = false;
     },
     addCuttingFlavor() {
       this.cuttingData.push({
@@ -645,16 +718,20 @@ export default defineComponent({
         slabAmount: '',
         boxAmount: '',
         useByDate: '',
+        sampleAmount: '',
         notes: '',
       });
     },
     addBaseFlavor() {
       this.baseData.push({
         flavor: '',
+        blenderAmount: '',
         batchNumber: '',
         smallAmount: '',
         largeAmount: '',
-        cakeAmount: '',
+        smallCakeAmount: '',
+        mediumCakeAmount: '',
+        largeCakeAmount: '',
         notes: '',
       });
     },
@@ -683,12 +760,12 @@ export default defineComponent({
   watch: {
     date(newDate) {
       console.log('changed Date', newDate);
-      this.loading = true;
       this.productionDay = 'Select Production Type';
 
+      this.startLoading();
       const self = this;
       setTimeout(() => {
-        self.loading = false;
+        self.endLoading();
       }, 3 * 1000);
     },
   },
