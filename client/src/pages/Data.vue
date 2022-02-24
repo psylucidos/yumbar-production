@@ -539,6 +539,123 @@
           </q-tab-panels>
         </q-card-section>
 
+        <q-separator />
+
+        <q-card-section
+          class="bg-grey-2"
+          v-if="!loading"
+        >
+          <q-card
+            v-for="(item, index) in staffData"
+            v-bind:key="index"
+            class="row items-center full-width staff-item"
+          >
+            <div class="row full-width items-center no-wrap">
+              <div class="col pad-right">
+                <q-select
+                  label="Staff Member"
+                  required
+                  v-model="staffData[index].name"
+                  :rules="[ val => staffOptions.includes(val) || 'Please select staff member!' ]"
+                  :options="staffOptions"
+                />
+              </div>
+
+              <div class="col-3 pad-right">
+                <q-input
+                  label="Start Time"
+                  v-model="staffData[index].startTime"
+                  required
+                  mask="##:##"
+                  class="q-field--with-bottom"
+                >
+                  <template v-slot:append>
+                    <q-icon name="access_time" class="cursor-pointer">
+                      <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                        <q-time v-model="staffData[index].startTime">
+                          <div class="row items-center justify-end">
+                            <q-btn v-close-popup label="Close" color="primary" flat />
+                          </div>
+                        </q-time>
+                      </q-popup-proxy>
+                    </q-icon>
+                  </template>
+                </q-input>
+              </div>
+
+              <div class="col-3 pad-right">
+                <q-input
+                  label="End Time"
+                  v-model="staffData[index].endTime"
+                  required
+                  mask="##:##"
+                  class="q-field--with-bottom"
+                >
+                  <template v-slot:append>
+                    <q-icon name="access_time" class="cursor-pointer">
+                      <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                        <q-time v-model="staffData[index].endTime">
+                          <div class="row items-center justify-end">
+                            <q-btn v-close-popup label="Close" color="primary" flat />
+                          </div>
+                        </q-time>
+                      </q-popup-proxy>
+                    </q-icon>
+                  </template>
+                </q-input>
+              </div>
+
+              <div class="col-auto">
+                <q-btn
+                  flat
+                  round
+                  icon="delete"
+                  @click="deleteStaffMember(index)"
+                />
+              </div>
+            </div>
+          </q-card>
+
+          <q-btn
+            v-if="!loading"
+            icon="add"
+            id="add-staff-btn"
+            label="Add Staff Member"
+            class="full-width"
+            color="primary"
+            @click="addStaffMember"
+          />
+        </q-card-section>
+
+        <q-card-section
+          class="bg-grey-2"
+          v-if="loading"
+        >
+          <q-card
+            class="row items-center full-width staff-item"
+          >
+            <div class="row full-width items-center no-wrap">
+              <div class="col pad-right">
+                <q-skeleton type="QInput" />
+              </div>
+
+              <div class="col-3 pad-right">
+                <q-skeleton type="QInput" />
+              </div>
+
+              <div class="col-3 pad-right">
+                <q-skeleton type="QInput" />
+              </div>
+
+              <div class="col-auto">
+                <q-skeleton type="QAvatar" />
+              </div>
+            </div>
+          </q-card>
+
+          <q-skeleton v-if="loading" type="QBtn" class="full-width" />
+        </q-card-section>
+
         <q-card-section id="save-btn-container">
           <q-btn label="Save" class="full-width" :disable="loading" type="submit" color="primary"/>
         </q-card-section>
@@ -565,10 +682,15 @@
     padding: 0;
   }
 
-  .flavor-item {
+  .flavor-item, .staff-item {
     padding: 1vw;
-    border: 0.5px solid white;
     margin-bottom: 16px;
+  }
+
+  .staff-item {
+    .q-field {
+      padding-bottom: 0;
+    }
   }
 
   .pad-right {
@@ -590,6 +712,8 @@
 <script>
 import { defineComponent } from 'vue';
 
+const AUTOUPDATEINTERVAL = 30;
+
 export default defineComponent({
   name: 'PageData',
   data() {
@@ -598,6 +722,7 @@ export default defineComponent({
       loading: true,
       productionDay: 'Select Production Type',
       productionDayOptions: ['Cutting Day', 'Packing Day', 'Base Day', 'Ice Cream Day'],
+      staffOptions: ['Bob', 'Jane', 'Januel'],
       flavorOptions: [
         'Vanilla',
         'Chocolate',
@@ -661,6 +786,13 @@ export default defineComponent({
           notes: '',
         },
       ],
+      staffData: [
+        {
+          name: '',
+          startTime: '',
+          endTime: '',
+        },
+      ],
     };
   },
   mounted() {
@@ -678,7 +810,7 @@ export default defineComponent({
 
     setInterval(() => {
       self.onUpdate();
-    }, 10 * 1000);
+    }, AUTOUPDATEINTERVAL * 1000);
   },
   methods: {
     onUpdate() {
@@ -744,6 +876,13 @@ export default defineComponent({
         notes: '',
       });
     },
+    addStaffMember() {
+      this.staffData.push({
+        name: '',
+        startTime: '',
+        endTime: '',
+      });
+    },
     deleteCuttingFlavor(index) {
       this.cuttingData.splice(index, 1);
     },
@@ -755,6 +894,9 @@ export default defineComponent({
     },
     deleteIcecreamFlavor(index) {
       this.icecreamData.splice(index, 1);
+    },
+    deleteStaffMember(index) {
+      this.staffData.splice(index, 1);
     },
   },
   watch: {
