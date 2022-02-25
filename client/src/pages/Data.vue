@@ -435,7 +435,7 @@
                   </div>
                 </div>
 
-                <div class="col-4 pad-right">
+                <div class="col-3 pad-right">
                   <q-input
                     v-if="!loading"
                     label="Batch Number"
@@ -446,7 +446,7 @@
                     :color="flavorColors[icecreamData[index].flavor]"
                   />
                 </div>
-                <div class="col-4 pad-right">
+                <div class="col-3 pad-right">
                   <q-input
                     v-if="!loading"
                     label="Number of Jugs"
@@ -457,12 +457,23 @@
                     :color="flavorColors[icecreamData[index].flavor]"
                   />
                 </div>
-                <div class="col-4">
+                <div class="col-3 pad-right">
                   <q-input
                     v-if="!loading"
                     label="Number of Trays"
                     required
                     v-model.number="icecreamData[index].traysAmount"
+                    :rules="[ val => val >= 0 || 'Amount must not be negative!' ]"
+                    type="number"
+                    :color="flavorColors[icecreamData[index].flavor]"
+                  />
+                </div>
+                <div class="col-3">
+                  <q-input
+                    v-if="!loading"
+                    label="Number of Unsaleable Trays"
+                    required
+                    v-model.number="icecreamData[index].unsaleableTraysAmount"
                     :rules="[ val => val >= 0 || 'Amount must not be negative!' ]"
                     type="number"
                     :color="flavorColors[icecreamData[index].flavor]"
@@ -605,6 +616,17 @@
                 </q-input>
               </div>
 
+              <div class="col-3 pad-right">
+                <q-input
+                  label="Break Time (Minutes)"
+                  v-model="staffData[index].breakTime"
+                  required
+                  type="number"
+                  class="q-field--with-bottom"
+                >
+                </q-input>
+              </div>
+
               <div class="col-auto">
                 <q-btn
                   flat
@@ -645,6 +667,10 @@
 
               <div class="col-3 pad-right">
                 <q-skeleton type="QInput" />
+              </div>
+
+              <div class="col-auto">
+                <q-skeleton type="QAvatar" />
               </div>
 
               <div class="col-auto">
@@ -783,6 +809,7 @@ export default defineComponent({
           batchNumber: '',
           jugsAmount: '',
           traysAmount: '',
+          unsaleableTraysAmount: '',
           notes: '',
         },
       ],
@@ -791,6 +818,7 @@ export default defineComponent({
           name: '',
           startTime: '',
           endTime: '',
+          breakTime: '',
         },
       ],
     };
@@ -873,6 +901,7 @@ export default defineComponent({
         batchNumber: '',
         jugsAmount: '',
         traysAmount: '',
+        unsaleableTraysAmount: '',
         notes: '',
       });
     },
@@ -881,6 +910,7 @@ export default defineComponent({
         name: '',
         startTime: '',
         endTime: '',
+        breakTime: '',
       });
     },
     deleteCuttingFlavor(index) {
