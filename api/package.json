@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "npm run lint && npx nodemon index.js",
     "lint": "npx eslint ./",
+    "lint-fix": "npx eslint ./ --fix",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -21,7 +22,8 @@
   "dependencies": {
     "@koa/router": "^10.1.1",
     "dotenv": "^16.0.0",
-    "koa": "^2.13.4"
+    "koa": "^2.13.4",
+    "pg": "^8.7.3"
   },
   "devDependencies": {
     "eslint": "^8.9.0",
