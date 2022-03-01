@@ -618,8 +618,8 @@
 
               <div class="col-3 pad-right">
                 <q-input
-                  label="Break Time (Minutes)"
-                  v-model="staffData[index].breakTime"
+                  label="Break Length (Minutes)"
+                  v-model="staffData[index].breakLength"
                   required
                   type="number"
                   class="q-field--with-bottom"
@@ -771,7 +771,6 @@ export default defineComponent({
       cuttingData: [
         {
           flavor: '',
-          batch: '',
           slabBatch: '',
           baseBatch: '',
           slabAmount: '',
@@ -818,7 +817,7 @@ export default defineComponent({
           name: '',
           startTime: '',
           endTime: '',
-          breakTime: '',
+          breakLength: '',
         },
       ],
     };
@@ -864,7 +863,6 @@ export default defineComponent({
     addCuttingFlavor() {
       this.cuttingData.push({
         flavor: '',
-        batch: '',
         slabBatch: '',
         baseBatch: '',
         slabAmount: '',
@@ -910,7 +908,7 @@ export default defineComponent({
         name: '',
         startTime: '',
         endTime: '',
-        breakTime: '',
+        breakLength: '',
       });
     },
     deleteCuttingFlavor(index) {

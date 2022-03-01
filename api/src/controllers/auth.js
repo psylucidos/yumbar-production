@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 const { scryptSync, randomBytes, timingSafeEqual } = require('crypto');
 const db = require('../database');
 
@@ -7,7 +5,7 @@ module.exports = {
   login: (username, password) => new Promise((resolve, reject) => {
     db.query('SELECT * FROM yumbarusers WHERE username = $1;', [username], (err, res) => {
       if (err) {
-        reject(500, err);
+        reject(err);
       } else if (res.rows[0]) {
         const targetUser = res.rows[0];
 
@@ -19,10 +17,10 @@ module.exports = {
         if (match) {
           resolve(200);
         } else {
-          reject(401);
+          reject(new Error('Incorrect login details!'));
         }
       } else {
-        reject(404);
+        reject(new Error('User not found!'));
       }
     });
   }),
@@ -34,11 +32,11 @@ module.exports = {
 
     db.query('INSERT INTO yumbarusers(username, password) VALUES($1, $2) RETURNING *;', [newUsername, userPassword], (err, res) => {
       if (err) {
-        reject(500, err);
+        reject(err);
       } else if (res.rows[0]) {
         resolve(200, res.rows[0]);
       } else {
-        rsolve(401);
+        resolve(new Error('User not created!'));
       }
     });
   }),

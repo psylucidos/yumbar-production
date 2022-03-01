@@ -7,7 +7,11 @@ module.exports = {
     const start = Date.now();
     return pool.query(text, params, (err, res) => {
       const duration = Date.now() - start;
-      console.log('executed query', { text, duration, rows: res.rowCount });
+      if (!err) {
+        console.log('executed query', { text, duration, rows: res.rowCount });
+      } else {
+        console.log('executed query with error', { text, duration });
+      }
       callback(err, res);
     });
   },
