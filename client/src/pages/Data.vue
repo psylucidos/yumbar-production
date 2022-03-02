@@ -737,8 +737,10 @@
 
 <script>
 import { defineComponent } from 'vue';
+import axios from 'axios';
 
 const AUTOUPDATEINTERVAL = 30;
+const PATHTOAPI = 'http://localhost:8888/api'; // TODO: Convert to ENV system
 
 export default defineComponent({
   name: 'PageData',
@@ -829,27 +831,86 @@ export default defineComponent({
     const YYYY = currentDate.getFullYear();
     this.date = `${DD}-${MM}-${YYYY}`;
 
-    this.startLoading();
     const self = this;
-    setTimeout(() => {
-      self.endLoading();
-    }, 3 * 1000);
-
     setInterval(() => {
       self.onUpdate();
     }, AUTOUPDATEINTERVAL * 1000);
   },
   methods: {
+    getData() {
+      this.startLoading();
+      const self = this;
+      axios
+        .post(`${PATHTOAPI}/flavours/get`, {
+          date: String(self.date),
+          productionType: String(self.productionDay),
+        })
+        .then((res) => {
+          if (this.productionDay === 'Packing Day') {
+            this.packingData = res;
+          } if (this.productionDay === 'Cutting Day') {
+            this.cuttingData = res;
+          } if (this.productionDay === 'Icecream Day') {
+            this.icecreamData = res;
+          } if (this.productionDay === 'Base Day') {
+            this.baseData = res;
+          }
+          self.endLoading();
+        })
+        .catch((err) => {
+          // TODO: use $q.prompt to create alert that there was an error
+          throw err;
+        });
+    },
     onUpdate() {
       console.log('Auto Update'); // eslint-ignore-line
+      let flavourEntryData = null;
       if (this.productionDay === 'Packing Day') {
         console.log(this.packingData); // eslint-ignore-line
+        flavourEntryData = this.packingData;
       } if (this.productionDay === 'Cutting Day') {
         console.log(this.cuttingData); // eslint-ignore-line
+        flavourEntryData = this.cuttingData;
       } if (this.productionDay === 'Icecream Day') {
         console.log(this.icecreamData); // eslint-ignore-line
+        flavourEntryData = this.icecreamData;
       } if (this.productionDay === 'Base Day') {
         console.log(this.baseData); // eslint-ignore-line
+        flavourEntryData = this.baseData;
+      }
+
+      const self = this;
+      for (let i = 0; i < flavourEntryData.length; i += 1) {
+        axios
+          .post(`${PATHTOAPI}/flavours/update`, {
+            id: String(flavourEntryData[i].id),
+            productionType: String(self.productionDay),
+            flavourEntryData: flavourEntryData[i], // TODO: send data through JSON maybe
+          })
+          .then((res) => {
+            console.log('saved flavour data', res); // eslint-ignore-line
+            // TODO: handle this somehow
+          })
+          .catch((err) => {
+            // TODO: use $q.prompt to create alert that there was an error
+            throw err;
+          });
+      }
+
+      for (let i = 0; i < self.staffData.length; i += 1) {
+        axios
+          .post(`${PATHTOAPI}/staff/update`, {
+            id: String(self.staffData[i].id),
+            staffEntryData: Object(self.staffData[i]), // TODO: send data through JSON maybe
+          })
+          .then((res) => {
+            console.log('saved staff data', res); // eslint-ignore-line
+            // TODO: handle this somehow
+          })
+          .catch((err) => {
+            // TODO: use $q.prompt to create alert that there was an error
+            throw err;
+          });
       }
     },
     startLoading() {
@@ -860,83 +921,207 @@ export default defineComponent({
       console.log('End Loading!');
       this.loading = false;
     },
+    // TODO: for adding flavours and all requests, create loading feedback
+    // TODO: homogenise all post requests
     addCuttingFlavor() {
-      this.cuttingData.push({
-        flavor: '',
-        slabBatch: '',
-        baseBatch: '',
-        slabAmount: '',
-        boxAmount: '',
-      });
+      const self = this;
+      axios
+        .post(`${PATHTOAPI}/flavours/add`, {
+          date: String(self.date),
+          productionType: String(self.productionDay),
+          flavourEntryData: {
+            flavor: '',
+            slabBatch: 0,
+            baseBatch: 0,
+            slabAmount: 0,
+            boxAmount: 0,
+          },
+        })
+        .then((res) => {
+          this.cuttingData.push(res);
+        })
+        .catch((err) => {
+          // TODO: use $q.prompt to create alert that there was an error
+          throw err;
+        });
     },
     addPackingFlavor() {
-      this.packingData.push({
-        flavor: '',
-        batchNumber: '',
-        slabAmount: '',
-        boxAmount: '',
-        useByDate: '',
-        sampleAmount: '',
-        notes: '',
-      });
+      const self = this;
+      axios
+        .post(`${PATHTOAPI}/flavours/add`, {
+          date: String(self.date),
+          productionType: String(self.productionDay),
+          flavourEntryData: {
+            flavor: '',
+            batchNumber: 0,
+            slabAmount: 0,
+            boxAmount: 0,
+            useByDate: '',
+            sampleAmount: 0,
+            notes: '',
+          },
+        })
+        .then((res) => {
+          this.packingData.push(res);
+        })
+        .catch((err) => {
+          // TODO: use $q.prompt to create alert that there was an error
+          throw err;
+        });
     },
     addBaseFlavor() {
-      this.baseData.push({
-        flavor: '',
-        blenderAmount: '',
-        batchNumber: '',
-        smallAmount: '',
-        largeAmount: '',
-        smallCakeAmount: '',
-        mediumCakeAmount: '',
-        largeCakeAmount: '',
-        notes: '',
-      });
+      const self = this;
+      axios
+        .post(`${PATHTOAPI}/flavours/add`, {
+          date: String(self.date),
+          productionType: String(self.productionDay),
+          flavourEntryData: {
+            flavor: '',
+            blenderAmount: 0,
+            batchNumber: 0,
+            smallAmount: 0,
+            largeAmount: 0,
+            smallCakeAmount: 0,
+            mediumCakeAmount: 0,
+            largeCakeAmount: 0,
+            notes: '',
+          },
+        })
+        .then((res) => {
+          this.baseData.push(res);
+        })
+        .catch((err) => {
+          // TODO: use $q.prompt to create alert that there was an error
+          throw err;
+        });
     },
     addIcecreamFlavor() {
-      this.icecreamData.push({
-        flavor: '',
-        batchNumber: '',
-        jugsAmount: '',
-        traysAmount: '',
-        unsaleableTraysAmount: '',
-        notes: '',
-      });
+      const self = this;
+      axios
+        .post(`${PATHTOAPI}/flavours/add`, {
+          date: String(self.date),
+          productionType: String(self.productionDay),
+          flavourEntryData: {
+            flavor: '',
+            batchNumber: 0,
+            jugsAmount: 0,
+            traysAmount: 0,
+            unsaleableTraysAmount: 0,
+            notes: '',
+          },
+        })
+        .then((res) => {
+          this.icecreamData.push(res);
+        })
+        .catch((err) => {
+          // TODO: use $q.prompt to create alert that there was an error
+          throw err;
+        });
     },
     addStaffMember() {
-      this.staffData.push({
-        name: '',
-        startTime: '',
-        endTime: '',
-        breakLength: '',
-      });
+      const self = this;
+      axios
+        .post(`${PATHTOAPI}/staff/add`, {
+          date: String(self.date),
+          flavourEntryData: {
+            name: '',
+            startTime: '',
+            endTime: '',
+            breakLength: 0,
+          },
+        })
+        .then((res) => {
+          this.staffData.push(res);
+        })
+        .catch((err) => {
+          // TODO: use $q.prompt to create alert that there was an error
+          throw err;
+        });
     },
     deleteCuttingFlavor(index) {
-      this.cuttingData.splice(index, 1);
+      const self = this;
+      axios
+        .post(`${PATHTOAPI}/flavours/delete`, {
+          id: String(self.cuttingData[index].id),
+        })
+        .then((res) => {
+          console.log('deleted cutting', res);
+          this.cuttingData.splice(index, 1);
+        })
+        .catch((err) => {
+          // TODO: use $q.prompt to create alert that there was an error
+          throw err;
+        });
     },
     deletePackingFlavor(index) {
-      this.packingData.splice(index, 1);
+      const self = this;
+      axios
+        .post(`${PATHTOAPI}/flavours/delete`, {
+          id: String(self.packingData[index].id),
+        })
+        .then((res) => {
+          console.log('deleted cutting', res);
+          this.packingData.splice(index, 1);
+        })
+        .catch((err) => {
+          // TODO: use $q.prompt to create alert that there was an error
+          throw err;
+        });
     },
     deleteBaseFlavor(index) {
-      this.baseData.splice(index, 1);
+      const self = this;
+      axios
+        .post(`${PATHTOAPI}/flavours/delete`, {
+          id: String(self.baseData[index].id),
+        })
+        .then((res) => {
+          console.log('deleted cutting', res);
+          this.baseData.splice(index, 1);
+        })
+        .catch((err) => {
+          // TODO: use $q.prompt to create alert that there was an error
+          throw err;
+        });
     },
     deleteIcecreamFlavor(index) {
-      this.icecreamData.splice(index, 1);
+      const self = this;
+      axios
+        .post(`${PATHTOAPI}/flavours/delete`, {
+          id: String(self.icecreamData[index].id),
+        })
+        .then((res) => {
+          console.log('deleted cutting', res);
+          this.icecreamData.splice(index, 1);
+        })
+        .catch((err) => {
+          // TODO: use $q.prompt to create alert that there was an error
+          throw err;
+        });
     },
     deleteStaffMember(index) {
-      this.staffData.splice(index, 1);
+      const self = this;
+      axios
+        .post(`${PATHTOAPI}/staff/delete`, {
+          id: String(self.staffData[index].id),
+        })
+        .then((res) => {
+          console.log('deleted cutting', res);
+          this.staffData.splice(index, 1);
+        })
+        .catch((err) => {
+          // TODO: use $q.prompt to create alert that there was an error
+          throw err;
+        });
     },
   },
   watch: {
     date(newDate) {
       console.log('changed Date', newDate);
       this.productionDay = 'Select Production Type';
-
-      this.startLoading();
-      const self = this;
-      setTimeout(() => {
-        self.endLoading();
-      }, 3 * 1000);
+    },
+    productionDay(newProductionType) {
+      console.log('changed production type', newProductionType); // eslint-ignore-line
+      this.getData();
     },
   },
 });
