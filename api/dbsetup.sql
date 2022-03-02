@@ -22,7 +22,7 @@ CREATE TABLE staffentries (
 CREATE TABLE cuttingflavourentries (
   id SERIAL PRIMARY KEY,
   productiondate date NOT NULL,
-  flavor text NOT NULL,
+  flavour text NOT NULL,
   slabbatch integer NOT NULL,
   basebatch integer NOT NULL,
   slabamount integer NOT NULL,
@@ -33,7 +33,7 @@ CREATE TABLE cuttingflavourentries (
 CREATE TABLE packingflavourentries (
   id SERIAL PRIMARY KEY,
   productiondate date NOT NULL,
-  flavor text NOT NULL,
+  flavour text NOT NULL,
   batchnumber integer NOT NULL,
   slabamount integer NOT NULL,
   boxamount integer NOT NULL,
@@ -45,7 +45,7 @@ CREATE TABLE packingflavourentries (
 CREATE TABLE baseflavourentries (
   id SERIAL PRIMARY KEY,
   productiondate date NOT NULL,
-  flavor text NOT NULL,
+  flavour text NOT NULL,
   blenderamount integer NOT NULL,
   batchnumber integer NOT NULL,
   smallamount integer NOT NULL,
@@ -56,10 +56,10 @@ CREATE TABLE baseflavourentries (
   notes text NOT NULL
 );
 
-CREATE TABLE icecreamflavorentires (
+CREATE TABLE icecreamflavourentires (
   id SERIAL PRIMARY KEY,
   productiondate date NOT NULL,
-  flavor text NOT NULL,
+  flavour text NOT NULL,
   batchnumber integer NOT NULL,
   jugsamount integer NOT NULL,
   traysamount integer NOT NULL,

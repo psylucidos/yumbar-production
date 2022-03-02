@@ -4,10 +4,10 @@ module.exports = {
   addFlavorEntry: (date, productionType, flavourEntryData) => new Promise((resolve, reject) => {
     if (productionType === 'Cutting Day') {
       db.query(
-        'INSERT INTO cuttingflavourentries(productiondate, flavor, slabbatch, basebatch, slabamount, boxamount, notes) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *;',
+        'INSERT INTO cuttingflavourentries(productiondate, flavour, slabbatch, basebatch, slabamount, boxamount, notes) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *;',
         [
           date,
-          flavourEntryData.flavor,
+          flavourEntryData.flavour,
           flavourEntryData.slabBatch,
           flavourEntryData.baseBatch,
           flavourEntryData.slabAmount,
@@ -26,10 +26,10 @@ module.exports = {
       );
     } else if (productionType === 'Packing Day') {
       db.query(
-        'INSERT INTO packingflavourentries(productiondate, flavor, batchnumber, slabamount, boxamount, usebydate, sampleamount, notes) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *;',
+        'INSERT INTO packingflavourentries(productiondate, flavour, batchnumber, slabamount, boxamount, usebydate, sampleamount, notes) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *;',
         [
           date,
-          flavourEntryData.flavor,
+          flavourEntryData.flavour,
           flavourEntryData.batchNumber,
           flavourEntryData.slabAmount,
           flavourEntryData.boxAmount,
@@ -49,10 +49,10 @@ module.exports = {
       );
     } else if (productionType === 'Base Day') {
       db.query(
-        'INSERT INTO baseflavourentries(productiondate, flavor, blenderamount, batchnumber, smallamount, largeamount, smallcakeamount, mediumcakeamount, largecakeamount, notes) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *;',
+        'INSERT INTO baseflavourentries(productiondate, flavour, blenderamount, batchnumber, smallamount, largeamount, smallcakeamount, mediumcakeamount, largecakeamount, notes) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *;',
         [
           date,
-          flavourEntryData.flavor,
+          flavourEntryData.flavour,
           flavourEntryData.blenderAmount,
           flavourEntryData.batchNumber,
           flavourEntryData.smallAmount,
@@ -74,10 +74,10 @@ module.exports = {
       );
     } else if (productionType === 'Ice Cream Day') {
       db.query(
-        'INSERT INTO icecreamflavorentires(productiondate, flavor, blenderamount, batchnumber, smallamount, largeamount, smallcakeamount, mediumcakeamount, largecakeamount, notes) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *;',
+        'INSERT INTO icecreamflavourentires(productiondate, flavour, blenderamount, batchnumber, smallamount, largeamount, smallcakeamount, mediumcakeamount, largecakeamount, notes) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *;',
         [
           date,
-          flavourEntryData.flavor,
+          flavourEntryData.flavour,
           flavourEntryData.batchNumber,
           flavourEntryData.jugsAmount,
           flavourEntryData.traysAmount,
@@ -102,10 +102,10 @@ module.exports = {
   updateFlavorEntry: (id, productionType, flavourEntryData) => new Promise((resolve, reject) => {
     if (productionType === 'Cutting Day') {
       db.query(
-        'UPDATE cuttingflavourentries SET flavor=$2, slabbatch=$3, basebatch=$4, slabamount=$5, boxamount=$6, notes=$7 WHERE id=$1;',
+        'UPDATE cuttingflavourentries SET flavour=$2, slabbatch=$3, basebatch=$4, slabamount=$5, boxamount=$6, notes=$7 WHERE id=$1;',
         [
           id,
-          flavourEntryData.flavor,
+          flavourEntryData.flavour,
           flavourEntryData.slabBatch,
           flavourEntryData.baseBatch,
           flavourEntryData.slabAmount,
@@ -124,10 +124,10 @@ module.exports = {
       );
     } else if (productionType === 'Packing Day') {
       db.query(
-        'UPDATE packingflavourentries SET flavor=$2, batchnumber=$3, slabamount=$4, boxamount=$5, usebydate=$6, sampleamount=$7, notes=$8 WHERE id=$1;',
+        'UPDATE packingflavourentries SET flavour=$2, batchnumber=$3, slabamount=$4, boxamount=$5, usebydate=$6, sampleamount=$7, notes=$8 WHERE id=$1;',
         [
           id,
-          flavourEntryData.flavor,
+          flavourEntryData.flavour,
           flavourEntryData.batchNumber,
           flavourEntryData.slabAmount,
           flavourEntryData.boxAmount,
@@ -147,10 +147,10 @@ module.exports = {
       );
     } else if (productionType === 'Base Day') {
       db.query(
-        'UPDATE baseflavourentries SET flavor=$2, blenderamount=$3, batchnumber=$4, smallamount=$5, largeamount=$6, smallcakeamount=$7, mediumcakeamount=$8, largecakeamount=$9, notes=$10 WHERE id=$1;',
+        'UPDATE baseflavourentries SET flavour=$2, blenderamount=$3, batchnumber=$4, smallamount=$5, largeamount=$6, smallcakeamount=$7, mediumcakeamount=$8, largecakeamount=$9, notes=$10 WHERE id=$1;',
         [
           id,
-          flavourEntryData.flavor,
+          flavourEntryData.flavour,
           flavourEntryData.blenderAmount,
           flavourEntryData.batchNumber,
           flavourEntryData.smallAmount,
@@ -172,10 +172,10 @@ module.exports = {
       );
     } else if (productionType === 'Ice Cream Day') {
       db.query(
-        'UPDATE icecreamflavorentires SET flavor=$2, blenderamount=$3, batchnumber=$4, smallamount=$5, largeamount=$6, smallcakeamount=$7, mediumcakeamount=$8, largecakeamount=$9, notes=$10 WHERE id=$1',
+        'UPDATE icecreamflavourentires SET flavour=$2, blenderamount=$3, batchnumber=$4, smallamount=$5, largeamount=$6, smallcakeamount=$7, mediumcakeamount=$8, largecakeamount=$9, notes=$10 WHERE id=$1',
         [
           id,
-          flavourEntryData.flavor,
+          flavourEntryData.flavour,
           flavourEntryData.batchNumber,
           flavourEntryData.jugsAmount,
           flavourEntryData.traysAmount,
@@ -229,7 +229,7 @@ module.exports = {
         }
       });
     } else if (productionType === 'Ice Cream Day') {
-      db.query('SELECT * FROM icecreamflavorentires WHERE date=$1;', [date], (err, res) => {
+      db.query('SELECT * FROM icecreamflavourentires WHERE date=$1;', [date], (err, res) => {
         if (err) {
           reject(err);
         } else if (res.rows[0]) {
@@ -286,7 +286,7 @@ module.exports = {
       );
     } else if (productionType === 'Ice Cream Day') {
       db.query(
-        'DELETE FROM icecreamflavorentires WHERE id=$1;',
+        'DELETE FROM icecreamflavourentires WHERE id=$1;',
         [id],
         (err, res) => {
           if (err) {
