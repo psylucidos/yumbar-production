@@ -30,13 +30,22 @@ module.exports = {
     const hashedPassword = scryptSync(newPassword, salt, 64).toString('hex');
     const userPassword = `${salt}:${hashedPassword}`;
 
-    db.query('INSERT INTO yumbarusers(username, password) VALUES($1, $2) RETURNING *;', [newUsername, userPassword], (err, res) => {
-      if (err) {
-        reject(err);
-      } else if (res.rows[0]) {
-        resolve(200, res.rows[0]);
+    // TODO: See if better query exists
+    db.query('SELECT * FROM yumbarusers WHERE username = $1;', [newUsername], (selectErr, selectRes) => {
+      if (selectErr) {
+        reject(selectErr);
+      } else if (selectRes.rows[0]) {
+        reject(new Error('Username taken!'));
       } else {
-        resolve(new Error('User not created!'));
+        db.query('INSERT INTO yumbarusers(username, password) VALUES($1, $2) RETURNING *;', [newUsername, userPassword], (err, res) => {
+          if (err) {
+            reject(err);
+          } else if (res.rows[0]) {
+            resolve(200, res.rows[0]);
+          } else {
+            resolve(new Error('User not created!'));
+          }
+        });
       }
     });
   }),

@@ -6,7 +6,7 @@ CREATE TABLE yumbarusers (
 
 CREATE TABLE productiondays (
   id SERIAL PRIMARY KEY,
-  productiondate date NOT NULL,
+  productiondate date NOT NULL UNIQUE,
   productiontype text NOT NULL
 );
 

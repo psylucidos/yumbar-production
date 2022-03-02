@@ -197,7 +197,7 @@ module.exports = {
     }
   }),
 
-  getFlavourEntrys: (date, productionType) => new Promise((resolve, reject) => {
+  getFlavourEntries: (date, productionType) => new Promise((resolve, reject) => {
     if (productionType === 'Cutting Day') {
       db.query('SELECT * FROM cuttingflavourentries WHERE date=$1;', [date], (err, res) => {
         if (err) {
