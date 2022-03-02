@@ -7,6 +7,9 @@ router.prefix('/flavours');
 router.post('/add', (ctx) => {
   const { date, productionType, flavourEntryData } = ctx.body;
 
+  // TODO: check all flavour data entry properties exist
+  // TODO: maybe use koa bouncer
+
   flavorEntriesController
     .addFlavorEntry(date, productionType, flavourEntryData)
     .then((res, newEntry) => {
