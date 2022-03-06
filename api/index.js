@@ -2,10 +2,8 @@ require('dotenv').config();
 
 const Koa = require('koa');
 const Router = require('@koa/router');
-// TODO: install body parser
-// TODO: install cors
-// TODO: install todo plugin!
-// TODO: install koa-bouncer
+const bodyParser = require('koa-bodyparser');
+const cors = require('@koa/cors');
 // TODO: setup JWT and require auth for API routes
 // TODO: setup route logging and error handling
 
@@ -19,8 +17,14 @@ router.get('/ping', (ctx) => {
 });
 
 app
+  .use(cors({
+    origin: '*',
+  }))
+  .use(bodyParser())
   .use(apiRouter.routes())
   .use(apiRouter.allowedMethods())
   .use(router.routes())
   .use(router.allowedMethods())
   .listen(process.env.PORT);
+
+console.log(`Listening on port ${process.env.PORT}`); // eslint-disable-line

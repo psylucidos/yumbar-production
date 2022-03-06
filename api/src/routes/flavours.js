@@ -5,7 +5,7 @@ const router = new Router();
 router.prefix('/flavours');
 
 router.post('/add', (ctx) => {
-  const { date, productionType, flavourEntryData } = ctx.body;
+  const { date, productionType, flavourEntryData } = ctx.request.body;
 
   // TODO: check all flavour data entry properties exist
   // TODO: maybe use koa bouncer
@@ -27,7 +27,7 @@ router.post('/add', (ctx) => {
 });
 
 router.post('/update', (ctx) => {
-  const { id, productionType, flavourEntryData } = ctx.body;
+  const { id, productionType, flavourEntryData } = ctx.request.body;
 
   flavourEntriesController
     .updateFlavorEntry(id, productionType, flavourEntryData)
@@ -46,7 +46,7 @@ router.post('/update', (ctx) => {
 });
 
 router.post('/delete', (ctx) => {
-  const { id, productionType } = ctx.body;
+  const { id, productionType } = ctx.request.body;
 
   flavourEntriesController
     .deleteFlavorEntry(id, productionType)
@@ -64,7 +64,7 @@ router.post('/delete', (ctx) => {
 });
 
 router.post('/get', (ctx) => {
-  const { date, productionType } = ctx.body;
+  const { date, productionType } = ctx.request.body;
 
   flavourEntriesController
     .getFlavourEntries(date, productionType)

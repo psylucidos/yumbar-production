@@ -5,7 +5,7 @@ const router = new Router();
 router.prefix('/days');
 
 router.post('/add', (ctx) => {
-  const { date, productionType } = ctx.body;
+  const { date, productionType } = ctx.request.body;
 
   daysController
     .addDay(date, productionType)
@@ -24,7 +24,7 @@ router.post('/add', (ctx) => {
 });
 
 router.post('/get', (ctx) => {
-  const { date } = ctx.body;
+  const { date } = ctx.request.body;
 
   daysController
     .getDay(date)
@@ -41,3 +41,5 @@ router.post('/get', (ctx) => {
       console.error(err);
     });
 });
+
+module.exports = router;

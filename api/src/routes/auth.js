@@ -5,7 +5,7 @@ const router = new Router();
 router.prefix('/auth');
 
 router.post('/login', (ctx) => {
-  const { username, password } = ctx.body;
+  const { username, password } = ctx.request.body;
 
   authController
     .login(username, password)
@@ -28,7 +28,7 @@ router.post('/login', (ctx) => {
 });
 
 router.post('/register', (ctx) => {
-  const { username, password } = ctx.body;
+  const { username, password } = ctx.request.body;
 
   authController
     .register(username, password)

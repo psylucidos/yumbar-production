@@ -800,6 +800,10 @@ export default defineComponent({
         .post(`${PATHTOAPI}/flavours/get`, {
           date: String(self.date),
           productionType: String(self.productionType),
+        }, {
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+          },
         })
         .then((res) => {
           if (this.productionType === 'Packing Day') {
@@ -842,6 +846,10 @@ export default defineComponent({
             id: String(flavourEntryData[i].id),
             productionType: String(self.productionType),
             flavourEntryData: flavourEntryData[i], // TODO: send data through JSON maybe
+          }, {
+            headers: {
+              'Access-Control-Allow-Origin': '*',
+            },
           })
           .then((res) => {
             console.log('saved flavour data', res); // eslint-ignore-line
@@ -858,6 +866,10 @@ export default defineComponent({
           .post(`${PATHTOAPI}/staff/update`, {
             id: String(self.staffData[i].id),
             staffEntryData: Object(self.staffData[i]), // TODO: send data through JSON maybe
+          }, {
+            headers: {
+              'Access-Control-Allow-Origin': '*',
+            },
           })
           .then((res) => {
             console.log('saved staff data', res); // eslint-ignore-line
@@ -930,6 +942,10 @@ export default defineComponent({
           date: String(self.date),
           productionType: String(self.productionType),
           flavourEntryData,
+        }, {
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+          },
         })
         .then((res) => {
           if (this.productionType === 'Packing Day') {
@@ -963,6 +979,10 @@ export default defineComponent({
       axios
         .post(`${PATHTOAPI}/flavours/delete`, {
           id: String(flavourEntries[index].id),
+        }, {
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+          },
         })
         .then((res) => {
           console.log('deleted cutting', res);
@@ -992,6 +1012,10 @@ export default defineComponent({
             endTime: '',
             breakLength: 0,
           },
+        }, {
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+          },
         })
         .then((res) => {
           this.staffFlavour.push(res);
@@ -1006,6 +1030,10 @@ export default defineComponent({
       axios
         .post(`${PATHTOAPI}/staff/delete`, {
           id: String(self.staffFlavour[index].id),
+        }, {
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+          },
         })
         .then((res) => {
           console.log('deleted cutting', res);

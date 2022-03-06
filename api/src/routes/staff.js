@@ -5,7 +5,7 @@ const router = new Router();
 router.prefix('/staff');
 
 router.post('/add', (ctx) => {
-  const { date, staffEntryData } = ctx.body;
+  const { date, staffEntryData } = ctx.request.body;
 
   staffEntriesController
     .addStaffEntry(date, staffEntryData)
@@ -24,7 +24,7 @@ router.post('/add', (ctx) => {
 });
 
 router.post('/update', (ctx) => {
-  const { id, staffEntryData } = ctx.body;
+  const { id, staffEntryData } = ctx.request.body;
 
   staffEntriesController
     .updateStaffEntry(id, staffEntryData)
@@ -43,7 +43,7 @@ router.post('/update', (ctx) => {
 });
 
 router.post('/delete', (ctx) => {
-  const { id } = ctx.body;
+  const { id } = ctx.request.body;
 
   staffEntriesController
     .deleteStaffEntry(id)
@@ -61,7 +61,7 @@ router.post('/delete', (ctx) => {
 });
 
 router.post('/get', (ctx) => {
-  const { date } = ctx.body;
+  const { date } = ctx.request.body;
 
   staffEntriesController
     .getStaffEntries(date)
