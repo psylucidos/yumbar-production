@@ -20,6 +20,12 @@ app
   .use(cors({
     origin: '*',
   }))
+  .use(async (ctx, next) => {
+    let start = new Date().getTime();
+    await next();
+    let end = new Date().getTime();
+    console.log(`[${ctx.method}] ${ctx.path} ${ctx.status} - ${end - start}ms`);
+  })
   .use(bodyParser())
   .use(apiRouter.routes())
   .use(apiRouter.allowedMethods())

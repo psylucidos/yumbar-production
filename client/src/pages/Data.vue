@@ -750,7 +750,7 @@ export default defineComponent({
   data() {
     return {
       date: '',
-      loading: true,
+      loading: false,
       productionType: 'Select Production Type',
       productionTypeOptions: ['Cutting Day', 'Packing Day', 'Base Day', 'Ice Cream Day'],
       staffOptions: ['Bob', 'Jane', 'Januel'],
@@ -782,7 +782,7 @@ export default defineComponent({
   },
   mounted() {
     const currentDate = new Date();
-    const DD = currentDate.getDate();
+    const DD = currentDate.getDate() < 10 ? `0${currentDate.getDate()}` : currentDate.getDate();
     const MM = currentDate.getMonth() < 10 ? `0${currentDate.getMonth()}` : currentDate.getMonth();
     const YYYY = currentDate.getFullYear();
     this.date = `${DD}-${MM}-${YYYY}`;
@@ -794,6 +794,7 @@ export default defineComponent({
   },
   methods: {
     getData() {
+      console.log('trying to get data');
       this.startLoading();
       const self = this;
       axios
@@ -828,15 +829,17 @@ export default defineComponent({
       if (this.productionType === 'Packing Day') {
         console.log(this.packingFlavourEntries); // eslint-ignore-line
         flavourEntryData = this.packingFlavourEntries;
-      } if (this.productionType === 'Cutting Day') {
+      } else if (this.productionType === 'Cutting Day') {
         console.log(this.cuttingFlavourEntries); // eslint-ignore-line
         flavourEntryData = this.cuttingFlavourEntries;
-      } if (this.productionType === 'Icecream Day') {
+      } else if (this.productionType === 'Icecream Day') {
         console.log(this.icecreamFlavourEntries); // eslint-ignore-line
         flavourEntryData = this.icecreamFlavourEntries;
-      } if (this.productionType === 'Base Day') {
+      } else if (this.productionType === 'Base Day') {
         console.log(this.baseFlavourEntries); // eslint-ignore-line
         flavourEntryData = this.baseFlavourEntries;
+      } else {
+        return;
       }
 
       const self = this;

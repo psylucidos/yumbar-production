@@ -199,7 +199,7 @@ module.exports = {
 
   getFlavourEntries: (date, productionType) => new Promise((resolve, reject) => {
     if (productionType === 'Cutting Day') {
-      db.query('SELECT * FROM cuttingflavourentries WHERE date=$1;', [date], (err, res) => {
+      db.query('SELECT * FROM cuttingflavourentries WHERE productiondate=$1;', [date], (err, res) => {
         if (err) {
           reject(err);
         } else if (res.rows) {
@@ -209,7 +209,7 @@ module.exports = {
         }
       });
     } else if (productionType === 'Packing Day') {
-      db.query('SELECT * FROM packingflavourentries WHERE date=$1;', [date], (err, res) => {
+      db.query('SELECT * FROM packingflavourentries WHERE productiondate=$1;', [date], (err, res) => {
         if (err) {
           reject(err);
         } else if (res.rows[0]) {
@@ -219,7 +219,7 @@ module.exports = {
         }
       });
     } else if (productionType === 'Base Day') {
-      db.query('SELECT * FROM baseflavourentries WHERE date=$1;', [date], (err, res) => {
+      db.query('SELECT * FROM baseflavourentries WHERE productiondate=$1;', [date], (err, res) => {
         if (err) {
           reject(err);
         } else if (res.rows[0]) {
@@ -229,7 +229,7 @@ module.exports = {
         }
       });
     } else if (productionType === 'Ice Cream Day') {
-      db.query('SELECT * FROM icecreamflavourentires WHERE date=$1;', [date], (err, res) => {
+      db.query('SELECT * FROM icecreamflavourentires WHERE productiondate=$1;', [date], (err, res) => {
         if (err) {
           reject(err);
         } else if (res.rows[0]) {

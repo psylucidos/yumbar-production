@@ -63,7 +63,7 @@ router.post('/delete', (ctx) => {
     });
 });
 
-router.post('/get', (ctx) => {
+router.post('/get', async (ctx) => {
   const { date, productionType } = ctx.request.body;
 
   flavourEntriesController

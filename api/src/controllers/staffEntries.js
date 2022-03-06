@@ -62,7 +62,7 @@ module.exports = {
   }),
 
   getStaffEntries: (date) => new Promise((resolve, reject) => {
-    db.query('SELECT * FROM staffentries WHERE date=$1;', [date], (err, res) => {
+    db.query('SELECT * FROM staffentries WHERE productiondate=$1;', [date], (err, res) => {
       if (err) {
         reject(err);
       } else if (res.rows) {
