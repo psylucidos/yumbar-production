@@ -21,9 +21,9 @@ app
     origin: '*',
   }))
   .use(async (ctx, next) => {
-    let start = new Date().getTime();
+    const start = new Date().getTime();
     await next();
-    let end = new Date().getTime();
+    const end = new Date().getTime();
     console.log(`[${ctx.method}] ${ctx.path} ${ctx.status} - ${end - start}ms`);
   })
   .use(bodyParser())
