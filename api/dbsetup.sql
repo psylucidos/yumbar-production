@@ -27,7 +27,7 @@ CREATE TABLE cuttingflavourentries (
   basebatch integer NOT NULL,
   slabamount integer NOT NULL,
   boxamount integer NOT NULL,
-  notes text NOT NULL
+  notes text
 );
 
 CREATE TABLE packingflavourentries (
@@ -39,7 +39,7 @@ CREATE TABLE packingflavourentries (
   boxamount integer NOT NULL,
   usebydate date NOT NULL,
   sampleamount integer NOT NULL,
-  notes text NOT NULL
+  notes text
 );
 
 CREATE TABLE baseflavourentries (
@@ -53,10 +53,10 @@ CREATE TABLE baseflavourentries (
   smallcakeamount integer NOT NULL,
   mediumcakeamount integer NOT NULL,
   largecakeamount integer NOT NULL,
-  notes text NOT NULL
+  notes text
 );
 
-CREATE TABLE icecreamflavourentires (
+CREATE TABLE icecreamflavourentries (
   id SERIAL PRIMARY KEY,
   productiondate date NOT NULL,
   flavour text NOT NULL,
@@ -64,5 +64,5 @@ CREATE TABLE icecreamflavourentires (
   jugsamount integer NOT NULL,
   traysamount integer NOT NULL,
   unsaleabletraysamount integer NOT NULL,
-  notes text NOT NULL
+  notes text
 );

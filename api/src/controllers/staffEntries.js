@@ -15,9 +15,9 @@ module.exports = {
         if (err) {
           reject(err);
         } else if (res.rows[0]) {
-          resolve(200, res.rows[0]);
+          resolve(res.rows[0]);
         } else {
-          resolve(new Error('Staff entry not added!'));
+          reject(new Error('Staff entry not added!'));
         }
       },
     );
@@ -37,9 +37,9 @@ module.exports = {
         if (err) {
           reject(err);
         } else if (res.rows[0]) {
-          resolve(200, res.rows[0]);
+          resolve(res.rows[0]);
         } else {
-          resolve(new Error('Staff entry not updated!'));
+          resolve(404);
         }
       },
     );
@@ -55,7 +55,7 @@ module.exports = {
         } else if (res.rows[0]) {
           resolve(200);
         } else {
-          resolve(new Error('Staff entry not deleted!'));
+          resolve(404);
         }
       },
     );
@@ -66,9 +66,9 @@ module.exports = {
       if (err) {
         reject(err);
       } else if (res.rows) {
-        resolve(200, res.rows);
+        resolve(res.rows);
       } else {
-        resolve(200, undefined);
+        reject(new Error('Unable to get staff entries!'));
       }
     });
   }),

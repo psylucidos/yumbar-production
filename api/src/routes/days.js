@@ -4,42 +4,34 @@ const daysController = require('../controllers/days');
 const router = new Router();
 router.prefix('/days');
 
-router.post('/add', (ctx) => {
+router.post('/add', async (ctx) => {
   const { date, productionType } = ctx.request.body;
 
-  daysController
-    .addDay(date, productionType)
-    .then((res, newDay) => {
-      if (res === 200) {
-        ctx.status = 201;
-        ctx.body = newDay;
-      } else {
-        ctx.status = 500;
-      }
-    })
-    .catch((err) => {
-      ctx.status = 500;
-      console.error(err);
-    });
+  const result = await daysController
+    .addDay(date, productionType);
+
+  if (result.id) {
+    ctx.status = 200;
+    ctx.body = result;
+  } else {
+    ctx.status = 500;
+    console.error(result);
+  }
 });
 
-router.post('/get', (ctx) => {
+router.post('/get', async (ctx) => {
   const { date } = ctx.request.body;
 
-  daysController
-    .getDay(date)
-    .then((res, day) => {
-      if (res === 200) {
-        ctx.status = 200;
-        ctx.body = day;
-      } else {
-        ctx.status = 500;
-      }
-    })
-    .catch((err) => {
-      ctx.status = 500;
-      console.error(err);
-    });
+  const result = await daysController
+    .getDay(date);
+
+  if (result.id) {
+    ctx.status = 200;
+    ctx.body = result;
+  } else {
+    ctx.status = 500;
+    console.error(result);
+  }
 });
 
 module.exports = router;

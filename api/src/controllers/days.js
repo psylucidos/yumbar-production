@@ -7,7 +7,7 @@ module.exports = {
       if (err) {
         reject(err);
       } else if (res.rows[0]) {
-        resolve(200, res.rows[0]);
+        resolve(res.rows[0]);
       } else {
         resolve(new Error('Day not added!'));
       }
@@ -19,9 +19,9 @@ module.exports = {
       if (err) {
         reject(err);
       } else if (res.rows[0]) {
-        resolve(200, res.rows[0]);
+        resolve(res.rows[0]);
       } else {
-        resolve(200, undefined);
+        resolve(404);
       }
     });
   }),

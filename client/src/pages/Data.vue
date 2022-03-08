@@ -76,7 +76,7 @@ Flavour<template>
                       v-if="!loading"
                       label="Use by Date"
                       required
-                      v-model="packingFlavourEntries[index].useByDate"
+                      v-model="packingFlavourEntries[index].usebydate"
                       mask="##-##-####"
                       class="q-field--with-bottom"
                     >
@@ -89,7 +89,7 @@ Flavour<template>
                             transition-hide="scale"
                           >
                             <q-date
-                              v-model="packingFlavourEntries[index].useByDate"
+                              v-model="packingFlavourEntries[index].usebydate"
                               mask="DD-MM-YYYY"
                             >
                               <div class="row items-center justify-end">
@@ -108,7 +108,7 @@ Flavour<template>
                       flat
                       round
                       icon="delete"
-                      @click="deletePackingFlavour(index)"
+                      @click="deleteFlavourEntry(index)"
                     />
                   </div>
                 </div>
@@ -118,7 +118,7 @@ Flavour<template>
                     v-if="!loading"
                     label="Slab Batch #"
                     required
-                    v-model.number="packingFlavourEntries[index].batchNumber"
+                    v-model.number="packingFlavourEntries[index].batchnumber"
                     :rules="[ val => val >= 1 || 'Batch must be positive!' ]"
                     type="number"
                     :color="flavourColors[packingFlavourEntries[index].flavour]"
@@ -129,8 +129,8 @@ Flavour<template>
                     v-if="!loading"
                     label="Number of Slabs"
                     required
-                    v-model.number="packingFlavourEntries[index].slabAmount"
-                    :rules="[ val => val >= 1 || 'Amount must be positive!' ]"
+                    v-model.number="packingFlavourEntries[index].slabamount"
+                    :rules="[ val => val >= 1 || 'amount must be positive!' ]"
                     type="number"
                     :color="flavourColors[packingFlavourEntries[index].flavour]"
                   />
@@ -140,8 +140,8 @@ Flavour<template>
                     v-if="!loading"
                     label="Number of Boxes"
                     required
-                    v-model.number="packingFlavourEntries[index].boxAmount"
-                    :rules="[ val => val >= 1 || 'Amount must be positive!' ]"
+                    v-model.number="packingFlavourEntries[index].boxamount"
+                    :rules="[ val => val >= 1 || 'amount must be positive!' ]"
                     type="number"
                     :color="flavourColors[packingFlavourEntries[index].flavour]"
                   />
@@ -151,8 +151,8 @@ Flavour<template>
                     v-if="!loading"
                     label="Number of Samples"
                     required
-                    v-model.number="packingFlavourEntries[index].sampleAmount"
-                    :rules="[ val => val >= 1 || 'Amount must be positive!' ]"
+                    v-model.number="packingFlavourEntries[index].sampleamount"
+                    :rules="[ val => val >= 1 || 'amount must be positive!' ]"
                     type="number"
                     :color="flavourColors[packingFlavourEntries[index].flavour]"
                   />
@@ -177,7 +177,7 @@ Flavour<template>
                 label="Add Flavour"
                 class="full-width"
                 color="primary"
-                @click="addPackingFlavour"
+                @click="addFlavourEntry"
               />
             </q-tab-panel>
 
@@ -206,7 +206,7 @@ Flavour<template>
                       flat
                       round
                       icon="delete"
-                      @click="deleteFlavour(index)"
+                      @click="deleteFlavourEntry(index)"
                     />
                   </div>
                 </div>
@@ -216,7 +216,7 @@ Flavour<template>
                     v-if="!loading"
                     label="Slab Batch"
                     required
-                    v-model.number="cuttingFlavourEntries[index].slabBatch"
+                    v-model.number="cuttingFlavourEntries[index].slabbatch"
                     :rules="[ val => val >= 1 || 'Batch must be positive!' ]"
                     type="number"
                     :color="flavourColors[cuttingFlavourEntries[index].flavour]"
@@ -227,7 +227,7 @@ Flavour<template>
                     v-if="!loading"
                     label="Base Batch"
                     required
-                    v-model.number="cuttingFlavourEntries[index].baseBatch"
+                    v-model.number="cuttingFlavourEntries[index].basebatch"
                     :rules="[ val => val >= 1 || 'Batch must be positive!' ]"
                     type="number"
                     :color="flavourColors[cuttingFlavourEntries[index].flavour]"
@@ -236,10 +236,10 @@ Flavour<template>
                 <div class="col-3 pad-right">
                   <q-input
                     v-if="!loading"
-                    label="Slab Amount"
+                    label="Slab amount"
                     required
-                    v-model.number="cuttingFlavourEntries[index].slabAmount"
-                    :rules="[ val => val >= 1 || 'Amount must be positive!' ]"
+                    v-model.number="cuttingFlavourEntries[index].slabamount"
+                    :rules="[ val => val >= 1 || 'amount must be positive!' ]"
                     type="number"
                     :color="flavourColors[cuttingFlavourEntries[index].flavour]"
                   />
@@ -247,10 +247,10 @@ Flavour<template>
                 <div class="col-3">
                   <q-input
                     v-if="!loading"
-                    label="Box Amount"
+                    label="Box amount"
                     required
-                    v-model.number="cuttingFlavourEntries[index].boxAmount"
-                    :rules="[ val => val >= 1 || 'Amount must be positive!' ]"
+                    v-model.number="cuttingFlavourEntries[index].boxamount"
+                    :rules="[ val => val >= 1 || 'amount must be positive!' ]"
                     type="number"
                     :color="flavourColors[cuttingFlavourEntries[index].flavour]"
                   />
@@ -274,7 +274,7 @@ Flavour<template>
                 label="Add Flavour"
                 class="full-width"
                 color="primary"
-                @click="addCuttingFlavour"
+                @click="addFlavourEntry"
               />
             </q-tab-panel>
 
@@ -303,7 +303,7 @@ Flavour<template>
                       flat
                       round
                       icon="delete"
-                      @click="deleteBaseFlavour(index)"
+                      @click="deleteFlavourEntry(index)"
                     />
                   </div>
                 </div>
@@ -313,7 +313,7 @@ Flavour<template>
                     v-if="!loading"
                     label="Base Batch"
                     required
-                    v-model.number="baseFlavourEntries[index].batchNumber"
+                    v-model.number="baseFlavourEntries[index].batchnumber"
                     :rules="[ val => val >= 1 || 'Batch must be positive!' ]"
                     type="number"
                     :color="flavourColors[baseFlavourEntries[index].flavour]"
@@ -324,8 +324,8 @@ Flavour<template>
                     v-if="!loading"
                     label="Number of Blender Batches"
                     required
-                    v-model.number="baseFlavourEntries[index].blenderAmount"
-                    :rules="[ val => val >= 1 || 'Amount must be positive!' ]"
+                    v-model.number="baseFlavourEntries[index].blenderamount"
+                    :rules="[ val => val >= 1 || 'amount must be positive!' ]"
                     type="number"
                     :color="flavourColors[baseFlavourEntries[index].flavour]"
                   />
@@ -335,8 +335,8 @@ Flavour<template>
                     v-if="!loading"
                     label="Number of Large Bases"
                     required
-                    v-model.number="baseFlavourEntries[index].largeAmount"
-                    :rules="[ val => val >= 0 || 'Amount must not be negative!' ]"
+                    v-model.number="baseFlavourEntries[index].largeamount"
+                    :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
                     type="number"
                     :color="flavourColors[baseFlavourEntries[index].flavour]"
                   />
@@ -346,8 +346,8 @@ Flavour<template>
                     v-if="!loading"
                     label="Number of Small Bases"
                     required
-                    v-model.number="baseFlavourEntries[index].smallAmount"
-                    :rules="[ val => val >= 0 || 'Amount must not be negative!' ]"
+                    v-model.number="baseFlavourEntries[index].smallamount"
+                    :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
                     type="number"
                     :color="flavourColors[baseFlavourEntries[index].flavour]"
                   />
@@ -357,8 +357,8 @@ Flavour<template>
                     v-if="!loading"
                     label="Number of Small Cake Bases"
                     required
-                    v-model.number="baseFlavourEntries[index].smallCakeAmount"
-                    :rules="[ val => val >= 0 || 'Amount must not be negative!' ]"
+                    v-model.number="baseFlavourEntries[index].smallcakeamount"
+                    :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
                     type="number"
                     :color="flavourColors[baseFlavourEntries[index].flavour]"
                   />
@@ -368,8 +368,8 @@ Flavour<template>
                     v-if="!loading"
                     label="Number of Medium Cake Bases"
                     required
-                    v-model.number="baseFlavourEntries[index].mediumCakeAmount"
-                    :rules="[ val => val >= 0 || 'Amount must not be negative!' ]"
+                    v-model.number="baseFlavourEntries[index].mediumcakeamount"
+                    :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
                     type="number"
                     :color="flavourColors[baseFlavourEntries[index].flavour]"
                   />
@@ -379,8 +379,8 @@ Flavour<template>
                     v-if="!loading"
                     label="Number of Large Cake Bases"
                     required
-                    v-model.number="baseFlavourEntries[index].largeCakeAmount"
-                    :rules="[ val => val >= 0 || 'Amount must not be negative!' ]"
+                    v-model.number="baseFlavourEntries[index].largecakeamount"
+                    :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
                     type="number"
                     :color="flavourColors[baseFlavourEntries[index].flavour]"
                   />
@@ -404,7 +404,7 @@ Flavour<template>
                 label="Add Flavour"
                 class="full-width"
                 color="primary"
-                @click="addBaseFlavour"
+                @click="addFlavourEntry"
               />
             </q-tab-panel>
 
@@ -433,7 +433,7 @@ Flavour<template>
                       flat
                       round
                       icon="delete"
-                      @click="deleteIcecreamFlavour(index)"
+                      @click="deleteFlavourEntry(index)"
                     />
                   </div>
                 </div>
@@ -443,7 +443,7 @@ Flavour<template>
                     v-if="!loading"
                     label="Batch Number"
                     required
-                    v-model.number="icecreamFlavourEntries[index].batchNumber"
+                    v-model.number="icecreamFlavourEntries[index].batchnumber"
                     :rules="[ val => val >= 1 || 'Batch must be positive!' ]"
                     type="number"
                     :color="flavourColors[icecreamFlavourEntries[index].flavour]"
@@ -454,8 +454,8 @@ Flavour<template>
                     v-if="!loading"
                     label="Number of Jugs"
                     required
-                    v-model.number="icecreamFlavourEntries[index].jugsAmount"
-                    :rules="[ val => val >= 0 || 'Amount must not be negative!' ]"
+                    v-model.number="icecreamFlavourEntries[index].jugsamount"
+                    :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
                     type="number"
                     :color="flavourColors[icecreamFlavourEntries[index].flavour]"
                   />
@@ -465,8 +465,8 @@ Flavour<template>
                     v-if="!loading"
                     label="Number of Trays"
                     required
-                    v-model.number="icecreamFlavourEntries[index].traysAmount"
-                    :rules="[ val => val >= 0 || 'Amount must not be negative!' ]"
+                    v-model.number="icecreamFlavourEntries[index].traysamount"
+                    :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
                     type="number"
                     :color="flavourColors[icecreamFlavourEntries[index].flavour]"
                   />
@@ -476,8 +476,8 @@ Flavour<template>
                     v-if="!loading"
                     label="Number of Unsaleable Trays"
                     required
-                    v-model.number="icecreamFlavourEntries[index].unsaleableTraysAmount"
-                    :rules="[ val => val >= 0 || 'Amount must not be negative!' ]"
+                    v-model.number="icecreamFlavourEntries[index].unsaleabletraysamount"
+                    :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
                     type="number"
                     :color="flavourColors[icecreamFlavourEntries[index].flavour]"
                   />
@@ -501,7 +501,7 @@ Flavour<template>
                 label="Add Flavour"
                 class="full-width"
                 color="primary"
-                @click="addIcecreamFlavour"
+                @click="addFlavourEntry"
               />
             </q-tab-panel>
 
@@ -789,6 +789,7 @@ export default defineComponent({
 
     const self = this;
     setInterval(() => {
+      console.log('Auto saving!');
       self.onUpdate();
     }, AUTOUPDATEINTERVAL * 1000);
   },
@@ -807,14 +808,16 @@ export default defineComponent({
           },
         })
         .then((res) => {
+          console.log('received response', res);
+          const { data } = res;
           if (this.productionType === 'Packing Day') {
-            this.packingFlavourEntries = res;
+            this.packingFlavourEntries = data;
           } if (this.productionType === 'Cutting Day') {
-            this.cuttingFlavourEntries = res;
+            this.cuttingFlavourEntries = data;
           } if (this.productionType === 'Icecream Day') {
-            this.icecreamFlavourEntries = res;
+            this.icecreamFlavourEntries = data;
           } if (this.productionType === 'Base Day') {
-            this.baseFlavourEntries = res;
+            this.baseFlavourEntries = data;
           }
           self.endLoading();
         })
@@ -824,7 +827,7 @@ export default defineComponent({
         });
     },
     onUpdate() {
-      console.log('Auto Update'); // eslint-ignore-line
+      console.log('Saving data');
       let flavourEntryData = null;
       if (this.productionType === 'Packing Day') {
         console.log(this.packingFlavourEntries); // eslint-ignore-line
@@ -842,6 +845,7 @@ export default defineComponent({
         return;
       }
 
+      // will not execute if there are no entries
       const self = this;
       for (let i = 0; i < flavourEntryData.length; i += 1) {
         axios
@@ -890,7 +894,10 @@ export default defineComponent({
     },
     endLoading() {
       console.log('End Loading!');
-      this.loading = false;
+      const self = this;
+      setTimeout(() => {
+        self.loading = false;
+      }, 300);
     },
     // TODO: for adding flavours and all requests, create loading feedback
     addFlavourEntry() {
@@ -898,43 +905,44 @@ export default defineComponent({
       if (this.productionType === 'Packing Day') {
         flavourEntryData = {
           flavour: '',
-          batchNumber: 0,
-          slabAmount: 0,
-          boxAmount: 0,
-          useByDate: '',
-          sampleAmount: 0,
+          batchnumber: 0,
+          slabamount: 0,
+          boxamount: 0,
+          usebydate: '',
+          sampleamount: 0,
           notes: '',
         };
       } if (this.productionType === 'Cutting Day') {
         flavourEntryData = {
           flavour: '',
-          slabBatch: 0,
-          baseBatch: 0,
-          slabAmount: 0,
-          boxAmount: 0,
+          slabbatch: 0,
+          basebatch: 0,
+          slabamount: 0,
+          boxamount: 0,
+          notes: '',
         };
       } if (this.productionType === 'Icecream Day') {
         flavourEntryData = {
           flavour: '',
-          blenderAmount: 0,
-          batchNumber: 0,
-          smallAmount: 0,
-          largeAmount: 0,
-          smallCakeAmount: 0,
-          mediumCakeAmount: 0,
-          largeCakeAmount: 0,
+          blenderamount: 0,
+          batchnumber: 0,
+          smallamount: 0,
+          largeamount: 0,
+          smallcakeamount: 0,
+          mediumcakeamount: 0,
+          largecakeamount: 0,
           notes: '',
         };
       } if (this.productionType === 'Base Day') {
         flavourEntryData = {
           flavour: '',
-          blenderAmount: 0,
-          batchNumber: 0,
-          smallAmount: 0,
-          largeAmount: 0,
-          smallCakeAmount: 0,
-          mediumCakeAmount: 0,
-          largeCakeAmount: 0,
+          blenderamount: 0,
+          batchnumber: 0,
+          smallamount: 0,
+          largeamount: 0,
+          smallcakeamount: 0,
+          mediumcakeamount: 0,
+          largecakeamount: 0,
           notes: '',
         };
       }

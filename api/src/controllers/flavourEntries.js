@@ -8,19 +8,19 @@ module.exports = {
         [
           date,
           flavourEntryData.flavour,
-          flavourEntryData.slabBatch,
-          flavourEntryData.baseBatch,
-          flavourEntryData.slabAmount,
-          flavourEntryData.boxAmount,
+          flavourEntryData.slabbatch,
+          flavourEntryData.basebatch,
+          flavourEntryData.slabamount,
+          flavourEntryData.boxamount,
           flavourEntryData.notes,
         ],
         (err, res) => {
           if (err) {
             reject(err);
           } else if (res.rows[0]) {
-            resolve(200, res.rows[0]);
+            resolve(res.rows[0]);
           } else {
-            resolve(new Error('Flavor entry not added!'));
+            reject(new Error('Flavor entry not added!'));
           }
         },
       );
@@ -30,20 +30,20 @@ module.exports = {
         [
           date,
           flavourEntryData.flavour,
-          flavourEntryData.batchNumber,
-          flavourEntryData.slabAmount,
-          flavourEntryData.boxAmount,
-          flavourEntryData.useByDate,
-          flavourEntryData.sampleAmount,
+          flavourEntryData.batchnumber,
+          flavourEntryData.slabamount,
+          flavourEntryData.boxamount,
+          flavourEntryData.usebydate,
+          flavourEntryData.sampleamount,
           flavourEntryData.notes,
         ],
         (err, res) => {
           if (err) {
             reject(err);
           } else if (res.rows[0]) {
-            resolve(200, res.rows[0]);
+            resolve(res.rows[0]);
           } else {
-            resolve(new Error('Flavor entry not added!'));
+            reject(new Error('Flavor entry not added!'));
           }
         },
       );
@@ -53,44 +53,44 @@ module.exports = {
         [
           date,
           flavourEntryData.flavour,
-          flavourEntryData.blenderAmount,
-          flavourEntryData.batchNumber,
-          flavourEntryData.smallAmount,
-          flavourEntryData.largeAmount,
-          flavourEntryData.smallCakeAmount,
-          flavourEntryData.mediumCakeAmount,
-          flavourEntryData.largeCakeAmount,
+          flavourEntryData.blenderamount,
+          flavourEntryData.batchnumber,
+          flavourEntryData.smallamount,
+          flavourEntryData.largeamount,
+          flavourEntryData.smallcakeamount,
+          flavourEntryData.mediumcakeamount,
+          flavourEntryData.largecakeamount,
           flavourEntryData.notes,
         ],
         (err, res) => {
           if (err) {
             reject(err);
           } else if (res.rows[0]) {
-            resolve(200, res.rows[0]);
+            resolve(res.rows[0]);
           } else {
-            resolve(new Error('Flavor entry not added!'));
+            reject(new Error('Flavor entry not added!'));
           }
         },
       );
     } else if (productionType === 'Ice Cream Day') {
       db.query(
-        'INSERT INTO icecreamflavourentires(productiondate, flavour, blenderamount, batchnumber, smallamount, largeamount, smallcakeamount, mediumcakeamount, largecakeamount, notes) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *;',
+        'INSERT INTO icecreamflavourentries(productiondate, flavour, batchnumber, jugsamount, traysamount, unsaleabletraysamount, notes) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *;',
         [
           date,
           flavourEntryData.flavour,
-          flavourEntryData.batchNumber,
-          flavourEntryData.jugsAmount,
-          flavourEntryData.traysAmount,
-          flavourEntryData.unsaleableTraysAmount,
+          flavourEntryData.batchnumber,
+          flavourEntryData.jugsamount,
+          flavourEntryData.traysamount,
+          flavourEntryData.unsaleabletraysamount,
           flavourEntryData.notes,
         ],
         (err, res) => {
           if (err) {
             reject(err);
           } else if (res.rows[0]) {
-            resolve(200, res.rows[0]);
+            resolve(res.rows[0]);
           } else {
-            resolve(new Error('Flavor entry not added!'));
+            reject(new Error('Flavor entry not added!'));
           }
         },
       );
@@ -106,19 +106,19 @@ module.exports = {
         [
           id,
           flavourEntryData.flavour,
-          flavourEntryData.slabBatch,
-          flavourEntryData.baseBatch,
-          flavourEntryData.slabAmount,
-          flavourEntryData.boxAmount,
+          flavourEntryData.slabbatch,
+          flavourEntryData.basebatch,
+          flavourEntryData.slabamount,
+          flavourEntryData.boxamount,
           flavourEntryData.notes,
         ],
         (err, res) => {
           if (err) {
             reject(err);
-          } else if (res.rows[0]) {
-            resolve(200, res.rows[0]);
+          } else if (res.rows.length === 0) {
+            resolve(200);
           } else {
-            resolve(new Error('Flavor entry not added!'));
+            resolve(404);
           }
         },
       );
@@ -128,20 +128,20 @@ module.exports = {
         [
           id,
           flavourEntryData.flavour,
-          flavourEntryData.batchNumber,
-          flavourEntryData.slabAmount,
-          flavourEntryData.boxAmount,
-          flavourEntryData.useByDate,
-          flavourEntryData.sampleAmount,
+          flavourEntryData.batchnumber,
+          flavourEntryData.slabamount,
+          flavourEntryData.boxamount,
+          flavourEntryData.usebydate,
+          flavourEntryData.sampleamount,
           flavourEntryData.notes,
         ],
         (err, res) => {
           if (err) {
             reject(err);
-          } else if (res.rows[0]) {
-            resolve(200, res.rows[0]);
+          } else if (res.rows.length === 0) {
+            resolve(200);
           } else {
-            resolve(new Error('Flavor entry not added!'));
+            resolve(404);
           }
         },
       );
@@ -151,44 +151,44 @@ module.exports = {
         [
           id,
           flavourEntryData.flavour,
-          flavourEntryData.blenderAmount,
-          flavourEntryData.batchNumber,
-          flavourEntryData.smallAmount,
-          flavourEntryData.largeAmount,
-          flavourEntryData.smallCakeAmount,
-          flavourEntryData.mediumCakeAmount,
-          flavourEntryData.largeCakeAmount,
+          flavourEntryData.blenderamount,
+          flavourEntryData.batchnumber,
+          flavourEntryData.smallamount,
+          flavourEntryData.largeamount,
+          flavourEntryData.smallcakeamount,
+          flavourEntryData.mediumcakeamount,
+          flavourEntryData.largecakeamount,
           flavourEntryData.notes,
         ],
         (err, res) => {
           if (err) {
             reject(err);
-          } else if (res.rows[0]) {
-            resolve(200, res.rows[0]);
+          } else if (res.rows.length === 0) {
+            resolve(200);
           } else {
-            resolve(new Error('Flavor entry not added!'));
+            resolve(404);
           }
         },
       );
     } else if (productionType === 'Ice Cream Day') {
       db.query(
-        'UPDATE icecreamflavourentires SET flavour=$2, blenderamount=$3, batchnumber=$4, smallamount=$5, largeamount=$6, smallcakeamount=$7, mediumcakeamount=$8, largecakeamount=$9, notes=$10 WHERE id=$1',
+        'UPDATE icecreamflavourentries SET flavour=$2, batchnumber=$3, jugsamount=$4, traysamount=$5, unsaleabletraysamount=$6, notes=$7 WHERE id=$1',
         [
           id,
           flavourEntryData.flavour,
-          flavourEntryData.batchNumber,
-          flavourEntryData.jugsAmount,
-          flavourEntryData.traysAmount,
-          flavourEntryData.unsaleableTraysAmount,
+          flavourEntryData.batchnumber,
+          flavourEntryData.jugsamount,
+          flavourEntryData.traysamount,
+          flavourEntryData.unsaleabletraysamount,
           flavourEntryData.notes,
         ],
         (err, res) => {
           if (err) {
             reject(err);
-          } else if (res.rows[0]) {
-            resolve(200, res.rows[0]);
+          } else if (res.rows.length === 0) {
+            resolve(200);
           } else {
-            resolve(new Error('Flavor entry not added!'));
+            resolve(404);
           }
         },
       );
@@ -203,39 +203,39 @@ module.exports = {
         if (err) {
           reject(err);
         } else if (res.rows) {
-          resolve(200, res.rows);
+          resolve(res.rows);
         } else {
-          resolve(200, undefined);
+          reject(new Error('Unable to find flavour entries!'));
         }
       });
     } else if (productionType === 'Packing Day') {
       db.query('SELECT * FROM packingflavourentries WHERE productiondate=$1;', [date], (err, res) => {
         if (err) {
           reject(err);
-        } else if (res.rows[0]) {
-          resolve(200, res.rows);
+        } else if (res.rows) {
+          resolve(res.rows);
         } else {
-          resolve(200, undefined);
+          reject(new Error('Unable to find flavour entries!'));
         }
       });
     } else if (productionType === 'Base Day') {
       db.query('SELECT * FROM baseflavourentries WHERE productiondate=$1;', [date], (err, res) => {
         if (err) {
           reject(err);
-        } else if (res.rows[0]) {
-          resolve(200, res.rows);
+        } else if (res.rows) {
+          resolve(res.rows);
         } else {
-          resolve(200, undefined);
+          reject(new Error('Unable to find flavour entries!'));
         }
       });
     } else if (productionType === 'Ice Cream Day') {
-      db.query('SELECT * FROM icecreamflavourentires WHERE productiondate=$1;', [date], (err, res) => {
+      db.query('SELECT * FROM icecreamflavourentries WHERE productiondate=$1;', [date], (err, res) => {
         if (err) {
           reject(err);
-        } else if (res.rows[0]) {
-          resolve(200, res.rows);
+        } else if (res.rows) {
+          resolve(res.rows);
         } else {
-          resolve(200, undefined);
+          reject(new Error('Unable to find flavour entries!'));
         }
       });
     }
@@ -252,7 +252,7 @@ module.exports = {
           } else if (res.rows[0]) {
             resolve(200);
           } else {
-            resolve(new Error('Flavor entry not deleted!'));
+            resolve(404);
           }
         },
       );
@@ -266,7 +266,7 @@ module.exports = {
           } else if (res.rows[0]) {
             resolve(200);
           } else {
-            resolve(new Error('Flavor entry not deleted!'));
+            resolve(404);
           }
         },
       );
@@ -280,13 +280,13 @@ module.exports = {
           } else if (res.rows[0]) {
             resolve(200);
           } else {
-            resolve(new Error('Flavor entry not deleted!'));
+            resolve(404);
           }
         },
       );
     } else if (productionType === 'Ice Cream Day') {
       db.query(
-        'DELETE FROM icecreamflavourentires WHERE id=$1;',
+        'DELETE FROM icecreamflavourentries WHERE id=$1;',
         [id],
         (err, res) => {
           if (err) {
@@ -294,7 +294,7 @@ module.exports = {
           } else if (res.rows[0]) {
             resolve(200);
           } else {
-            resolve(new Error('Flavor entry not deleted!'));
+            resolve(404);
           }
         },
       );

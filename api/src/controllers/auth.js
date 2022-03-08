@@ -17,10 +17,10 @@ module.exports = {
         if (match) {
           resolve(200);
         } else {
-          reject(new Error('Incorrect login details!'));
+          resolve(401);
         }
       } else {
-        reject(new Error('User not found!'));
+        resolve(404);
       }
     });
   }),
@@ -35,15 +35,15 @@ module.exports = {
       if (selectErr) {
         reject(selectErr);
       } else if (selectRes.rows[0]) {
-        reject(new Error('Username taken!'));
+        resolve(401);
       } else {
         db.query('INSERT INTO yumbarusers(username, password) VALUES($1, $2) RETURNING *;', [newUsername, userPassword], (err, res) => {
           if (err) {
             reject(err);
           } else if (res.rows[0]) {
-            resolve(200, res.rows[0]);
+            resolve(200);
           } else {
-            resolve(new Error('User not created!'));
+            resolve(new Error('User not registered!'));
           }
         });
       }
