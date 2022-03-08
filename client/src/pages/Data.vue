@@ -560,7 +560,7 @@ Flavour<template>
           v-if="!loading"
         >
           <q-card
-            v-for="(item, index) in staffData"
+            v-for="(item, index) in staffEntries"
             v-bind:key="index"
             class="row items-center full-width staff-item"
           >
@@ -569,7 +569,7 @@ Flavour<template>
                 <q-select
                   label="Staff Member"
                   required
-                  v-model="staffData[index].name"
+                  v-model="staffEntries[index].name"
                   :rules="[ val => staffOptions.includes(val) || 'Please select staff member!' ]"
                   :options="staffOptions"
                 />
@@ -578,7 +578,7 @@ Flavour<template>
               <div class="col-3 pad-right">
                 <q-input
                   label="Start Time"
-                  v-model="staffData[index].startTime"
+                  v-model="staffEntries[index].startTime"
                   required
                   mask="##:##"
                   class="q-field--with-bottom"
@@ -586,7 +586,7 @@ Flavour<template>
                   <template v-slot:append>
                     <q-icon name="access_time" class="cursor-pointer">
                       <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                        <q-time v-model="staffData[index].startTime">
+                        <q-time v-model="staffEntries[index].startTime">
                           <div class="row items-center justify-end">
                             <q-btn v-close-popup label="Close" color="primary" flat />
                           </div>
@@ -600,7 +600,7 @@ Flavour<template>
               <div class="col-3 pad-right">
                 <q-input
                   label="End Time"
-                  v-model="staffData[index].endTime"
+                  v-model="staffEntries[index].endTime"
                   required
                   mask="##:##"
                   class="q-field--with-bottom"
@@ -608,7 +608,7 @@ Flavour<template>
                   <template v-slot:append>
                     <q-icon name="access_time" class="cursor-pointer">
                       <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                        <q-time v-model="staffData[index].endTime">
+                        <q-time v-model="staffEntries[index].endTime">
                           <div class="row items-center justify-end">
                             <q-btn v-close-popup label="Close" color="primary" flat />
                           </div>
@@ -622,7 +622,7 @@ Flavour<template>
               <div class="col-3 pad-right">
                 <q-input
                   label="Break Length (Minutes)"
-                  v-model="staffData[index].breakLength"
+                  v-model="staffEntries[index].breakLength"
                   required
                   type="number"
                   class="q-field--with-bottom"
@@ -777,7 +777,7 @@ export default defineComponent({
       packingFlavourEntries: [],
       baseFlavourEntries: [],
       icecreamFlavourEntries: [],
-      staffData: [],
+      staffEntries: [],
     };
   },
   mounted() {
@@ -807,19 +807,37 @@ export default defineComponent({
             'Access-Control-Allow-Origin': '*',
           },
         })
-        .then((res) => {
-          console.log('received response', res);
-          const { data } = res;
-          if (this.productionType === 'Packing Day') {
-            this.packingFlavourEntries = data;
-          } if (this.productionType === 'Cutting Day') {
-            this.cuttingFlavourEntries = data;
-          } if (this.productionType === 'Icecream Day') {
-            this.icecreamFlavourEntries = data;
-          } if (this.productionType === 'Base Day') {
-            this.baseFlavourEntries = data;
+        .then((flavoursRes) => {
+          console.log('received flavours response', flavoursRes);
+          const { flavourData } = flavoursRes;
+          if (self.productionType === 'Packing Day') {
+            self.packingFlavourEntries = flavourData;
+          } if (self.productionType === 'Cutting Day') {
+            self.cuttingFlavourEntries = flavourData;
+          } if (self.productionType === 'Icecream Day') {
+            self.icecreamFlavourEntries = flavourData;
+          } if (self.productionType === 'Base Day') {
+            self.baseFlavourEntries = flavourData;
           }
-          self.endLoading();
+
+          axios
+            .post(`${PATHTOAPI}/staff/get`, {
+              date: String(self.date),
+            }, {
+              headers: {
+                'Access-Control-Allow-Origin': '*',
+              },
+            })
+            .then((staffRes) => {
+              console.log('received staff response', staffRes);
+              const { staffData } = staffRes;
+              self.staffEntries = staffData;
+              self.endLoading();
+            })
+            .catch((err) => {
+              // TODO: use $q.prompt to create alert that there was an error
+              throw err;
+            });
         })
         .catch((err) => {
           // TODO: use $q.prompt to create alert that there was an error
@@ -868,11 +886,11 @@ export default defineComponent({
           });
       }
 
-      for (let i = 0; i < self.staffData.length; i += 1) {
+      for (let i = 0; i < self.staffEntries.length; i += 1) {
         axios
           .post(`${PATHTOAPI}/staff/update`, {
-            id: String(self.staffData[i].id),
-            staffEntryData: Object(self.staffData[i]), // TODO: send data through JSON maybe
+            id: String(self.staffEntries[i].id),
+            staffEntryData: Object(self.staffEntries[i]), // TODO: send data through JSON maybe
           }, {
             headers: {
               'Access-Control-Allow-Origin': '*',
@@ -959,14 +977,15 @@ export default defineComponent({
           },
         })
         .then((res) => {
-          if (this.productionType === 'Packing Day') {
-            this.packingFlavourEntries.push(res);
-          } if (this.productionType === 'Cutting Day') {
-            this.cuttingFlavourEntries.push(res);
-          } if (this.productionType === 'Icecream Day') {
-            this.icecreamFlavourEntries.push(res);
-          } if (this.productionType === 'Base Day') {
-            this.baseFlavourEntries.push(res);
+          const { data } = res;
+          if (self.productionType === 'Packing Day') {
+            self.packingFlavourEntries.push(data);
+          } if (self.productionType === 'Cutting Day') {
+            self.cuttingFlavourEntries.push(data);
+          } if (self.productionType === 'Icecream Day') {
+            self.icecreamFlavourEntries.push(data);
+          } if (self.productionType === 'Base Day') {
+            self.baseFlavourEntries.push(data);
           }
         })
         .catch((err) => {
@@ -1017,7 +1036,7 @@ export default defineComponent({
       axios
         .post(`${PATHTOAPI}/staff/add`, {
           date: String(self.date),
-          flavourEntryData: {
+          staffEntryData: {
             name: '',
             startTime: '',
             endTime: '',
@@ -1029,7 +1048,8 @@ export default defineComponent({
           },
         })
         .then((res) => {
-          this.staffFlavour.push(res);
+          const { data } = res;
+          self.staffEntries.push(data);
         })
         .catch((err) => {
           // TODO: use $q.prompt to create alert that there was an error

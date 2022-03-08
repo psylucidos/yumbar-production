@@ -28,12 +28,12 @@ router.post('/update', async (ctx) => {
     .updateStaffEntry(id, staffEntryData);
 
   if (typeof result === 'number') {
-    if (result === 404) {
+    if (result === 200) {
+      ctx.status = 200;
+      ctx.body = result;
+    } else if (result === 404) {
       ctx.status = 404;
     }
-  } else if (result.id) {
-    ctx.status = 200;
-    ctx.body = result;
   } else {
     ctx.status = 500;
     console.error(result);

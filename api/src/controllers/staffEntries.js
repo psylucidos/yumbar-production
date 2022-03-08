@@ -36,8 +36,8 @@ module.exports = {
       (err, res) => {
         if (err) {
           reject(err);
-        } else if (res.rows[0]) {
-          resolve(res.rows[0]);
+        } else if (res.rows.length === 0) {
+          resolve(200);
         } else {
           resolve(404);
         }
