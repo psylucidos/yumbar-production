@@ -25,6 +25,9 @@ module.exports = {
         },
       );
     } else if (productionType === 'Packing Day') {
+      if (flavourEntryData.usebydate === '') {
+        flavourEntryData.usebydate = null;
+      }
       db.query(
         'INSERT INTO packingflavourentries(productiondate, flavour, batchnumber, slabamount, boxamount, usebydate, sampleamount, notes) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *;',
         [

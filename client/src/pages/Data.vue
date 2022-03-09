@@ -816,7 +816,7 @@ export default defineComponent({
             self.packingFlavourEntries = flavourData;
           } if (self.productionType === 'Cutting Day') {
             self.cuttingFlavourEntries = flavourData;
-          } if (self.productionType === 'Icecream Day') {
+          } if (self.productionType === 'Ice Cream Day') {
             self.icecreamFlavourEntries = flavourData;
           } if (self.productionType === 'Base Day') {
             self.baseFlavourEntries = flavourData;
@@ -855,7 +855,7 @@ export default defineComponent({
       } else if (this.productionType === 'Cutting Day') {
         console.log(this.cuttingFlavourEntries); // eslint-ignore-line
         flavourEntryData = this.cuttingFlavourEntries;
-      } else if (this.productionType === 'Icecream Day') {
+      } else if (this.productionType === 'Ice Cream Day') {
         console.log(this.icecreamFlavourEntries); // eslint-ignore-line
         flavourEntryData = this.icecreamFlavourEntries;
       } else if (this.productionType === 'Base Day') {
@@ -942,16 +942,13 @@ export default defineComponent({
           boxamount: 0,
           notes: '',
         };
-      } if (this.productionType === 'Icecream Day') {
+      } if (this.productionType === 'Ice Cream Day') {
         flavourEntryData = {
           flavour: '',
-          blenderamount: 0,
           batchnumber: 0,
-          smallamount: 0,
-          largeamount: 0,
-          smallcakeamount: 0,
-          mediumcakeamount: 0,
-          largecakeamount: 0,
+          jugsamount: 0,
+          traysamount: 0,
+          unsaleabletraysamount: 0,
           notes: '',
         };
       } if (this.productionType === 'Base Day') {
@@ -985,11 +982,11 @@ export default defineComponent({
             self.packingFlavourEntries.push(data);
           } if (self.productionType === 'Cutting Day') {
             self.cuttingFlavourEntries.push(data);
-          } if (self.productionType === 'Icecream Day') {
+          } if (self.productionType === 'Ice Cream Day') {
             self.icecreamFlavourEntries.push(data);
           } if (self.productionType === 'Base Day') {
             self.baseFlavourEntries.push(data);
-          }
+          } // TODO: handle no production type for all these
         })
         .catch((err) => {
           // TODO: use $q.prompt to create alert that there was an error
@@ -1003,7 +1000,7 @@ export default defineComponent({
         flavourEntries = this.packingFlavourEntries;
       } if (this.productionType === 'Cutting Day') {
         flavourEntries = this.cuttingFlavourEntries;
-      } if (this.productionType === 'Icecream Day') {
+      } if (this.productionType === 'Ice Cream Day') {
         flavourEntries = this.icecreamFlavourEntries;
       } if (this.productionType === 'Base Day') {
         flavourEntries = this.baseFlavourEntries;
@@ -1026,7 +1023,7 @@ export default defineComponent({
             self.packingFlavourEntries.splice(index, 1);
           } if (self.productionType === 'Cutting Day') {
             self.cuttingFlavourEntries.splice(index, 1);
-          } if (self.productionType === 'Icecream Day') {
+          } if (self.productionType === 'Ice Cream Day') {
             self.icecreamFlavourEntries.splice(index, 1);
           } if (self.productionType === 'Base Day') {
             self.baseFlavourEntries.splice(index, 1);
