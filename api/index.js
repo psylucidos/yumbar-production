@@ -21,17 +21,20 @@ app
   .use(cors({
     origin: '*',
   }))
+  .use(bodyParser())
   .use(async (ctx, next) => {
+    console.log(` --- [${ctx.method}] ${ctx.path} ---`);
+    if (process.env.VERBOSE) {
+      console.log('[REQ]', ctx.request.body);
+    }
     const start = new Date().getTime();
     await next();
     const end = new Date().getTime();
-    console.log(`[${ctx.method}] ${ctx.path} ${ctx.status} - ${end - start}ms`);
+    console.log(` --- [${ctx.method}] ${ctx.path} ${ctx.status} - ${end - start}ms ---`);
     if (process.env.VERBOSE) {
-      console.log('[REQ]', ctx.request.body);
       console.log('[RES]', ctx.body);
     }
   })
-  .use(bodyParser())
   .use(apiRouter.routes())
   .use(apiRouter.allowedMethods())
   .use(router.routes())

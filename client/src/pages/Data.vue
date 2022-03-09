@@ -579,7 +579,7 @@ Flavour<template>
               <div class="col-3 pad-right">
                 <q-input
                   label="Start Time"
-                  v-model="staffEntries[index].startTime"
+                  v-model="staffEntries[index].starttime"
                   required
                   mask="##:##"
                   class="q-field--with-bottom"
@@ -587,7 +587,7 @@ Flavour<template>
                   <template v-slot:append>
                     <q-icon name="access_time" class="cursor-pointer">
                       <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                        <q-time v-model="staffEntries[index].startTime">
+                        <q-time v-model="staffEntries[index].starttime">
                           <div class="row items-center justify-end">
                             <q-btn v-close-popup label="Close" color="primary" flat />
                           </div>
@@ -601,7 +601,7 @@ Flavour<template>
               <div class="col-3 pad-right">
                 <q-input
                   label="End Time"
-                  v-model="staffEntries[index].endTime"
+                  v-model="staffEntries[index].endtime"
                   required
                   mask="##:##"
                   class="q-field--with-bottom"
@@ -609,7 +609,7 @@ Flavour<template>
                   <template v-slot:append>
                     <q-icon name="access_time" class="cursor-pointer">
                       <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                        <q-time v-model="staffEntries[index].endTime">
+                        <q-time v-model="staffEntries[index].endtime">
                           <div class="row items-center justify-end">
                             <q-btn v-close-popup label="Close" color="primary" flat />
                           </div>
@@ -623,7 +623,7 @@ Flavour<template>
               <div class="col-3 pad-right">
                 <q-input
                   label="Break Length (Minutes)"
-                  v-model="staffEntries[index].breakLength"
+                  v-model="staffEntries[index].breaklength"
                   required
                   type="number"
                   class="q-field--with-bottom"
@@ -1041,9 +1041,9 @@ export default defineComponent({
           date: String(self.date),
           staffEntryData: {
             name: '',
-            startTime: '',
-            endTime: '',
-            breakLength: 0,
+            starttime: '',
+            endtime: '',
+            breaklength: 0,
           },
         }, {
           headers: {
@@ -1063,7 +1063,7 @@ export default defineComponent({
       const self = this;
       axios
         .post(`${PATHTOAPI}/staff/delete`, {
-          id: String(self.staffFlavour[index].id),
+          id: String(self.staffEntries[index].id),
         }, {
           headers: {
             'Access-Control-Allow-Origin': '*',
@@ -1071,7 +1071,7 @@ export default defineComponent({
         })
         .then((res) => {
           console.log('deleted cutting', res);
-          this.staffFlavour.splice(index, 1);
+          this.staffEntries.splice(index, 1);
         })
         .catch((err) => {
           // TODO: use $q.prompt to create alert that there was an error

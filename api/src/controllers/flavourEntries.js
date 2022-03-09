@@ -25,9 +25,6 @@ module.exports = {
         },
       );
     } else if (productionType === 'Packing Day') {
-      if (flavourEntryData.usebydate === '') {
-        flavourEntryData.usebydate = null;
-      }
       db.query(
         'INSERT INTO packingflavourentries(productiondate, flavour, batchnumber, slabamount, boxamount, usebydate, sampleamount, notes) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *;',
         [
@@ -36,7 +33,7 @@ module.exports = {
           flavourEntryData.batchnumber,
           flavourEntryData.slabamount,
           flavourEntryData.boxamount,
-          flavourEntryData.usebydate,
+          flavourEntryData.usebydate === '' ? null : flavourEntryData.usebydate,
           flavourEntryData.sampleamount,
           flavourEntryData.notes,
         ],
@@ -118,7 +115,7 @@ module.exports = {
         (err, res) => {
           if (err) {
             reject(err);
-          } else if (res.rows.length === 0) {
+          } else if (res.rows) {
             resolve(200);
           } else {
             resolve(404);
@@ -141,7 +138,7 @@ module.exports = {
         (err, res) => {
           if (err) {
             reject(err);
-          } else if (res.rows.length === 0) {
+          } else if (res.rows) {
             resolve(200);
           } else {
             resolve(404);
@@ -166,7 +163,7 @@ module.exports = {
         (err, res) => {
           if (err) {
             reject(err);
-          } else if (res.rows.length === 0) {
+          } else if (res.rows) {
             resolve(200);
           } else {
             resolve(404);
@@ -188,7 +185,7 @@ module.exports = {
         (err, res) => {
           if (err) {
             reject(err);
-          } else if (res.rows.length === 0) {
+          } else if (res.rows) {
             resolve(200);
           } else {
             resolve(404);

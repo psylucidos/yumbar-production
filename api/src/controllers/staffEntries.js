@@ -7,9 +7,9 @@ module.exports = {
       [
         date,
         staffEntryData.name,
-        staffEntryData.startTime,
-        staffEntryData.endTime,
-        staffEntryData.breakLength,
+        staffEntryData.starttime,
+        staffEntryData.endtime,
+        staffEntryData.breaklength,
       ],
       (err, res) => {
         if (err) {
@@ -29,14 +29,15 @@ module.exports = {
       [
         id,
         staffEntryData.name,
-        staffEntryData.startTime,
-        staffEntryData.endTime,
-        staffEntryData.breakLength,
+        staffEntryData.starttime,
+        staffEntryData.endtime,
+        staffEntryData.breaklength,
       ],
       (err, res) => {
+        console.log('updated staff', err, res);
         if (err) {
           reject(err);
-        } else if (res.rows.length === 0) {
+        } else if (res.rowCount === 1) {
           resolve(200);
         } else {
           resolve(404);
@@ -52,7 +53,7 @@ module.exports = {
       (err, res) => {
         if (err) {
           reject(err);
-        } else if (res.rows[0]) {
+        } else if (res.rows) {
           resolve(200);
         } else {
           resolve(404);

@@ -24,13 +24,14 @@ router.post('/add', async (ctx) => {
 router.post('/update', async (ctx) => {
   const { id, staffEntryData } = ctx.request.body;
 
-  const result = staffEntriesController
+  const result = await staffEntriesController
     .updateStaffEntry(id, staffEntryData);
+
+  console.log('update result', result);
 
   if (typeof result === 'number') {
     if (result === 200) {
       ctx.status = 200;
-      ctx.body = result;
     } else if (result === 404) {
       ctx.status = 404;
     }
