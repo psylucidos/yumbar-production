@@ -28,6 +28,9 @@ router.post('/get', async (ctx) => {
   if (result.id) {
     ctx.status = 200;
     ctx.body = result;
+  } else if (result === 404) {
+    ctx.status = 200;
+    ctx.body = {};
   } else {
     ctx.status = 500;
     console.error(result);

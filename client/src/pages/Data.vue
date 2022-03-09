@@ -779,6 +779,7 @@ export default defineComponent({
       baseFlavourEntries: [],
       icecreamFlavourEntries: [],
       staffEntries: [],
+      dateCreated: false,
     };
   },
   mounted() {
@@ -1083,10 +1084,58 @@ export default defineComponent({
     date(newDate) {
       console.log('changed Date', newDate);
       this.productionType = 'Select Production Type';
+      this.staffEntries = [];
+      const self = this;
+      axios
+        .post(`${PATHTOAPI}/days/get`, {
+          date: String(self.date),
+        }, {
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+          },
+        })
+        .then((res) => {
+          const { data } = res;
+          console.log('get day', data);
+          if (data.id) {
+            self.productionType = data.productiontype;
+            self.dateCreated = true;
+          } else {
+            self.dateCreated = false;
+          }
+        })
+        .catch((err) => {
+          // TODO: use $q.prompt to create alert that there was an error
+          throw err;
+        });
     },
     productionType(newProductionType) {
-      console.log('changed production type', newProductionType); // eslint-ignore-line
-      this.getData();
+      console.log('changed production type', newProductionType);
+
+      if (!this.dateCreated) {
+        const self = this;
+        axios
+          .post(`${PATHTOAPI}/days/add`, {
+            date: String(self.date),
+            productionType: String(newProductionType),
+          }, {
+            headers: {
+              'Access-Control-Allow-Origin': '*',
+            },
+          })
+          .then((res) => {
+            const { data } = res;
+            console.log('add day data', data);
+          })
+          .catch((err) => {
+            // TODO: use $q.prompt to create alert that there was an error
+            throw err;
+          });
+      }
+
+      if (this.productionType !== 'Select Production Type') {
+        this.getData();
+      }
     },
   },
 });

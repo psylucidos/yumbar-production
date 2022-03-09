@@ -10,13 +10,13 @@ module.exports = {
       } else if (res.rows[0]) {
         resolve(res.rows[0]);
       } else {
-        resolve(new Error('Day not added!'));
+        reject(new Error('Day not added!'));
       }
     });
   }),
 
   getDay: (date) => new Promise((resolve, reject) => {
-    db.query('SELECT * FROM days WHERE productiondate=$1;', [date], (err, res) => {
+    db.query('SELECT * FROM productiondays WHERE productiondate=$1;', [date], (err, res) => {
       if (err) {
         reject(err);
       } else if (res.rows[0]) {
