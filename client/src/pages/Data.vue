@@ -741,10 +741,8 @@ Flavour<template>
 
 <script>
 import { defineComponent } from 'vue';
-import axios from 'axios';
 
 const AUTOUPDATEINTERVAL = 30;
-const PATHTOAPI = 'http://localhost:8888/api'; // TODO: Convert to ENV system
 
 export default defineComponent({
   name: 'PageData',
@@ -801,8 +799,8 @@ export default defineComponent({
       console.log('trying to get data');
       this.startLoading();
       const self = this;
-      axios
-        .post(`${PATHTOAPI}/flavours/get`, {
+      this.$api
+        .post('/flavours/get', {
           date: String(self.date),
           productionType: String(self.productionType),
         }, {
@@ -823,8 +821,8 @@ export default defineComponent({
             self.baseFlavourEntries = flavourData;
           }
 
-          axios
-            .post(`${PATHTOAPI}/staff/get`, {
+          this.$api
+            .post('/staff/get', {
               date: String(self.date),
             }, {
               headers: {
@@ -870,8 +868,8 @@ export default defineComponent({
       // will not execute if there are no entries
       const self = this;
       for (let i = 0; i < flavourEntryData.length; i += 1) {
-        axios
-          .post(`${PATHTOAPI}/flavours/update`, {
+        this.$api
+          .post('/flavours/update', {
             id: String(flavourEntryData[i].id),
             productionType: String(self.productionType),
             flavourEntryData: flavourEntryData[i], // TODO: send data through JSON maybe
@@ -891,8 +889,8 @@ export default defineComponent({
       }
 
       for (let i = 0; i < self.staffEntries.length; i += 1) {
-        axios
-          .post(`${PATHTOAPI}/staff/update`, {
+        this.$api
+          .post('/staff/update', {
             id: String(self.staffEntries[i].id),
             staffEntryData: Object(self.staffEntries[i]), // TODO: send data through JSON maybe
           }, {
@@ -967,8 +965,8 @@ export default defineComponent({
       }
 
       const self = this;
-      axios
-        .post(`${PATHTOAPI}/flavours/add`, {
+      this.$api
+        .post('/flavours/add', {
           date: String(self.date),
           productionType: String(self.productionType),
           flavourEntryData,
@@ -1009,8 +1007,8 @@ export default defineComponent({
 
       console.log('Posting delete REQ! with flavour entry:', flavourEntries[index]);
       const self = this;
-      axios
-        .post(`${PATHTOAPI}/flavours/delete`, {
+      this.$api
+        .post('/flavours/delete', {
           id: String(flavourEntries[index].id),
           productionType: String(self.productionType),
         }, {
@@ -1037,8 +1035,8 @@ export default defineComponent({
     },
     addStaffMember() {
       const self = this;
-      axios
-        .post(`${PATHTOAPI}/staff/add`, {
+      this.$api
+        .post('/staff/add', {
           date: String(self.date),
           staffEntryData: {
             name: '',
@@ -1062,8 +1060,8 @@ export default defineComponent({
     },
     deleteStaffMember(index) {
       const self = this;
-      axios
-        .post(`${PATHTOAPI}/staff/delete`, {
+      this.$api
+        .post('/staff/delete', {
           id: String(self.staffEntries[index].id),
         }, {
           headers: {
@@ -1086,8 +1084,8 @@ export default defineComponent({
       this.productionType = 'Select Production Type';
       this.staffEntries = [];
       const self = this;
-      axios
-        .post(`${PATHTOAPI}/days/get`, {
+      this.$api
+        .post('/days/get', {
           date: String(self.date),
         }, {
           headers: {
@@ -1114,8 +1112,8 @@ export default defineComponent({
 
       if (!this.dateCreated) {
         const self = this;
-        axios
-          .post(`${PATHTOAPI}/days/add`, {
+        this.$api
+          .post('/days/add', {
             date: String(self.date),
             productionType: String(newProductionType),
           }, {
