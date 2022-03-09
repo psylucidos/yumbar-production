@@ -836,12 +836,20 @@ export default defineComponent({
               self.endLoading();
             })
             .catch((err) => {
-              // TODO: use $q.prompt to create alert that there was an error
+              self.$q.notify({
+                message: 'Unexpected Error! Please Reload Page!',
+                icon: 'warning',
+                color: 'red',
+              });
               throw err;
             });
         })
         .catch((err) => {
-          // TODO: use $q.prompt to create alert that there was an error
+          self.$q.notify({
+            message: 'Unexpected Error! Please Reload Page!',
+            icon: 'warning',
+            color: 'red',
+          });
           throw err;
         });
     },
@@ -883,7 +891,11 @@ export default defineComponent({
             // TODO: handle this somehow
           })
           .catch((err) => {
-            // TODO: use $q.prompt to create alert that there was an error
+            self.$q.notify({
+              message: 'Unexpected Error! Please Reload Page!',
+              icon: 'warning',
+              color: 'red',
+            });
             throw err;
           });
       }
@@ -903,7 +915,11 @@ export default defineComponent({
             // TODO: handle this somehow
           })
           .catch((err) => {
-            // TODO: use $q.prompt to create alert that there was an error
+            self.$q.notify({
+              message: 'Unexpected Error! Please Reload Page!',
+              icon: 'warning',
+              color: 'red',
+            });
             throw err;
           });
       }
@@ -988,7 +1004,11 @@ export default defineComponent({
           } // TODO: handle no production type for all these
         })
         .catch((err) => {
-          // TODO: use $q.prompt to create alert that there was an error
+          self.$q.notify({
+            message: 'Unexpected Error! Please Reload Page!',
+            icon: 'warning',
+            color: 'red',
+          });
           throw err;
         });
     },
@@ -1029,7 +1049,11 @@ export default defineComponent({
           }
         })
         .catch((err) => {
-          // TODO: use $q.prompt to create alert that there was an error
+          self.$q.notify({
+            message: 'Unexpected Error! Please Reload Page!',
+            icon: 'warning',
+            color: 'red',
+          });
           throw err;
         });
     },
@@ -1054,7 +1078,11 @@ export default defineComponent({
           self.staffEntries.push(data);
         })
         .catch((err) => {
-          // TODO: use $q.prompt to create alert that there was an error
+          self.$q.notify({
+            message: 'Unexpected Error! Please Reload Page!',
+            icon: 'warning',
+            color: 'red',
+          });
           throw err;
         });
     },
@@ -1070,10 +1098,14 @@ export default defineComponent({
         })
         .then((res) => {
           console.log('deleted cutting', res);
-          this.staffEntries.splice(index, 1);
+          self.staffEntries.splice(index, 1);
         })
         .catch((err) => {
-          // TODO: use $q.prompt to create alert that there was an error
+          self.$q.notify({
+            message: 'Unexpected Error! Please Reload Page!',
+            icon: 'warning',
+            color: 'red',
+          });
           throw err;
         });
     },
@@ -1103,7 +1135,11 @@ export default defineComponent({
           }
         })
         .catch((err) => {
-          // TODO: use $q.prompt to create alert that there was an error
+          self.$q.notify({
+            message: 'Unexpected Error! Please Reload Page!',
+            icon: 'warning',
+            color: 'red',
+          });
           throw err;
         });
     },
@@ -1126,7 +1162,11 @@ export default defineComponent({
             console.log('add day data', data);
           })
           .catch((err) => {
-            // TODO: use $q.prompt to create alert that there was an error
+            self.$q.notify({
+              message: 'Unexpected Error! Please Reload Page!',
+              icon: 'warning',
+              color: 'red',
+            });
             throw err;
           });
       }
