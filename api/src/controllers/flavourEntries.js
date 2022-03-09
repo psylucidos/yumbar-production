@@ -249,7 +249,7 @@ module.exports = {
         (err, res) => {
           if (err) {
             reject(err);
-          } else if (res.rows[0]) {
+          } else if (res) {
             resolve(200);
           } else {
             resolve(404);
@@ -263,7 +263,7 @@ module.exports = {
         (err, res) => {
           if (err) {
             reject(err);
-          } else if (res.rows[0]) {
+          } else if (res) {
             resolve(200);
           } else {
             resolve(404);
@@ -277,7 +277,7 @@ module.exports = {
         (err, res) => {
           if (err) {
             reject(err);
-          } else if (res.rows[0]) {
+          } else if (res) {
             resolve(200);
           } else {
             resolve(404);
@@ -291,7 +291,7 @@ module.exports = {
         (err, res) => {
           if (err) {
             reject(err);
-          } else if (res.rows[0]) {
+          } else if (res) {
             resolve(200);
           } else {
             resolve(404);
@@ -299,5 +299,6 @@ module.exports = {
         },
       );
     }
+    // TODO: handle no production type
   }),
 };

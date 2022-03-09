@@ -53,6 +53,7 @@ Flavour<template>
         <q-card-section class="bg-grey-2">
           <q-tab-panels v-model="productionType" class="bg-grey-2">
             <q-tab-panel name="Packing Day">
+              <!-- TODO: move v-ifs to container -->
               <q-card
                 v-for="(item, index) in packingFlavourEntries"
                 v-bind:key="index"
@@ -783,7 +784,8 @@ export default defineComponent({
   mounted() {
     const currentDate = new Date();
     const DD = currentDate.getDate() < 10 ? `0${currentDate.getDate()}` : currentDate.getDate();
-    const MM = currentDate.getMonth() < 10 ? `0${currentDate.getMonth()}` : currentDate.getMonth();
+    const M = currentDate.getMonth() + 1; // account for dates starting at 0
+    const MM = M < 10 ? `0${M}` : M;
     const YYYY = currentDate.getFullYear();
     this.date = `${DD}-${MM}-${YYYY}`;
 
@@ -809,7 +811,7 @@ export default defineComponent({
         })
         .then((flavoursRes) => {
           console.log('received flavours response', flavoursRes);
-          const { flavourData } = flavoursRes;
+          const flavourData = flavoursRes.data;
           if (self.productionType === 'Packing Day') {
             self.packingFlavourEntries = flavourData;
           } if (self.productionType === 'Cutting Day') {
@@ -830,7 +832,7 @@ export default defineComponent({
             })
             .then((staffRes) => {
               console.log('received staff response', staffRes);
-              const { staffData } = staffRes;
+              const staffData = staffRes.data;
               self.staffEntries = staffData;
               self.endLoading();
             })
@@ -845,7 +847,7 @@ export default defineComponent({
         });
     },
     onUpdate() {
-      console.log('Saving data');
+      console.log('Attempting auto save');
       let flavourEntryData = null;
       if (this.productionType === 'Packing Day') {
         console.log(this.packingFlavourEntries); // eslint-ignore-line
@@ -863,6 +865,7 @@ export default defineComponent({
         return;
       }
 
+      console.log('Posting update REQ');
       // will not execute if there are no entries
       const self = this;
       for (let i = 0; i < flavourEntryData.length; i += 1) {
@@ -994,6 +997,7 @@ export default defineComponent({
         });
     },
     deleteFlavourEntry(index) {
+      console.log('Deleting flavour entry');
       let flavourEntries = null;
       if (this.productionType === 'Packing Day') {
         flavourEntries = this.packingFlavourEntries;
@@ -1005,17 +1009,19 @@ export default defineComponent({
         flavourEntries = this.baseFlavourEntries;
       }
 
+      console.log('Posting delete REQ! with flavour entry:', flavourEntries[index]);
       const self = this;
       axios
         .post(`${PATHTOAPI}/flavours/delete`, {
           id: String(flavourEntries[index].id),
+          productionType: String(self.productionType),
         }, {
           headers: {
             'Access-Control-Allow-Origin': '*',
           },
         })
         .then((res) => {
-          console.log('deleted cutting', res);
+          console.log('deleted flavour entry', res);
           if (self.productionType === 'Packing Day') {
             self.packingFlavourEntries.splice(index, 1);
           } if (self.productionType === 'Cutting Day') {
