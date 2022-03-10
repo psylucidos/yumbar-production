@@ -115,7 +115,7 @@ module.exports = {
         (err, res) => {
           if (err) {
             reject(err);
-          } else if (res.rows) {
+          } else if (res.rowCount === 1) {
             resolve(200);
           } else {
             resolve(404);
@@ -138,7 +138,7 @@ module.exports = {
         (err, res) => {
           if (err) {
             reject(err);
-          } else if (res.rows) {
+          } else if (res.rowCount === 1) {
             resolve(200);
           } else {
             resolve(404);
@@ -163,7 +163,7 @@ module.exports = {
         (err, res) => {
           if (err) {
             reject(err);
-          } else if (res.rows) {
+          } else if (res.rowCount === 1) {
             resolve(200);
           } else {
             resolve(404);
@@ -185,7 +185,7 @@ module.exports = {
         (err, res) => {
           if (err) {
             reject(err);
-          } else if (res.rows) {
+          } else if (res.rowCount === 1) {
             resolve(200);
           } else {
             resolve(404);
@@ -249,7 +249,7 @@ module.exports = {
         (err, res) => {
           if (err) {
             reject(err);
-          } else if (res) {
+          } else if (res.rowCount === 1) {
             resolve(200);
           } else {
             resolve(404);
@@ -263,7 +263,7 @@ module.exports = {
         (err, res) => {
           if (err) {
             reject(err);
-          } else if (res) {
+          } else if (res.rowCount === 1) {
             resolve(200);
           } else {
             resolve(404);
@@ -277,7 +277,7 @@ module.exports = {
         (err, res) => {
           if (err) {
             reject(err);
-          } else if (res) {
+          } else if (res.rowCount === 1) {
             resolve(200);
           } else {
             resolve(404);
@@ -291,7 +291,7 @@ module.exports = {
         (err, res) => {
           if (err) {
             reject(err);
-          } else if (res) {
+          } else if (res.rowCount === 1) {
             resolve(200);
           } else {
             resolve(404);

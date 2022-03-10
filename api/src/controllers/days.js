@@ -15,6 +15,18 @@ module.exports = {
     });
   }),
 
+  updateDay: (id, productionType) => new Promise((resolve, reject) => {
+    db.query('UPDATE productiondays SET productiontype=$2 WHERE id=$1;', [id, productionType], (err, res) => {
+      if (err) {
+        reject(err);
+      } else if (res.rowCount === 1) {
+        resolve(200);
+      } else {
+        reject(new Error('Day not added!'));
+      }
+    });
+  }),
+
   getDay: (date) => new Promise((resolve, reject) => {
     db.query('SELECT * FROM productiondays WHERE productiondate=$1;', [date], (err, res) => {
       if (err) {

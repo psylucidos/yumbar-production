@@ -19,6 +19,20 @@ router.post('/add', async (ctx) => {
   }
 });
 
+router.post('/update', async (ctx) => {
+  const { id, productionType } = ctx.request.body;
+
+  const result = await daysController
+    .updateDay(id, productionType);
+
+  if (result === 200) {
+    ctx.status = 200;
+  } else {
+    ctx.status = 500;
+    console.error(result);
+  }
+});
+
 router.post('/get', async (ctx) => {
   const { date } = ctx.request.body;
 

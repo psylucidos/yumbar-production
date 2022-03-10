@@ -40,6 +40,7 @@ Flavour<template>
               <q-select
                 dense
                 v-model="productionType"
+                @update:model-value="productionTypeSelecterUpdate"
                 :options="productionTypeOptions"
                 :disable="loading"
               />
@@ -53,7 +54,6 @@ Flavour<template>
         <q-card-section class="bg-grey-2">
           <q-tab-panels v-model="productionType" class="bg-grey-2">
             <q-tab-panel name="Packing Day">
-              <!-- TODO: move v-ifs to container -->
               <q-card
                 v-for="(item, index) in packingFlavourEntries"
                 v-bind:key="index"
@@ -62,7 +62,6 @@ Flavour<template>
                 <div class="row full-width items-center no-wrap">
                   <div class="col pad-right">
                     <q-select
-                      v-if="!loading"
                       label="Batch Flavour"
                       required
                       v-model="packingFlavourEntries[index].flavour"
@@ -74,7 +73,6 @@ Flavour<template>
 
                   <div class="col-auto pad-right">
                     <q-input
-                      v-if="!loading"
                       label="Use by Date"
                       required
                       v-model="packingFlavourEntries[index].usebydate"
@@ -105,7 +103,6 @@ Flavour<template>
 
                   <div class="col-auto">
                     <q-btn
-                      v-if="!loading"
                       flat
                       round
                       icon="delete"
@@ -116,7 +113,6 @@ Flavour<template>
 
                 <div class="col-3 pad-right">
                   <q-input
-                    v-if="!loading"
                     label="Slab Batch #"
                     required
                     v-model.number="packingFlavourEntries[index].batchnumber"
@@ -127,7 +123,6 @@ Flavour<template>
                 </div>
                 <div class="col-3 pad-right">
                   <q-input
-                    v-if="!loading"
                     label="Number of Slabs"
                     required
                     v-model.number="packingFlavourEntries[index].slabamount"
@@ -138,7 +133,6 @@ Flavour<template>
                 </div>
                 <div class="col-3 pad-right">
                   <q-input
-                    v-if="!loading"
                     label="Number of Boxes"
                     required
                     v-model.number="packingFlavourEntries[index].boxamount"
@@ -149,7 +143,6 @@ Flavour<template>
                 </div>
                 <div class="col-3">
                   <q-input
-                    v-if="!loading"
                     label="Number of Samples"
                     required
                     v-model.number="packingFlavourEntries[index].sampleamount"
@@ -161,7 +154,6 @@ Flavour<template>
 
                 <div class="col-12">
                   <q-input
-                    v-if="!loading"
                     label="Notes"
                     v-model="packingFlavourEntries[index].notes"
                     type="text"
@@ -191,7 +183,7 @@ Flavour<template>
                 <div class="row full-width items-center no-wrap">
                   <div class="col pad-right">
                     <q-select
-                      v-if="!loading"
+
                       label="Batch Flavour"
                       required
                       v-model="cuttingFlavourEntries[index].flavour"
@@ -203,7 +195,6 @@ Flavour<template>
 
                   <div class="col-auto">
                     <q-btn
-                      v-if="!loading"
                       flat
                       round
                       icon="delete"
@@ -214,7 +205,7 @@ Flavour<template>
 
                 <div class="col-3 pad-right">
                   <q-input
-                    v-if="!loading"
+
                     label="Slab Batch"
                     required
                     v-model.number="cuttingFlavourEntries[index].slabbatch"
@@ -225,7 +216,6 @@ Flavour<template>
                 </div>
                 <div class="col-3 pad-right">
                   <q-input
-                    v-if="!loading"
                     label="Base Batch"
                     required
                     v-model.number="cuttingFlavourEntries[index].basebatch"
@@ -236,7 +226,7 @@ Flavour<template>
                 </div>
                 <div class="col-3 pad-right">
                   <q-input
-                    v-if="!loading"
+
                     label="Slab amount"
                     required
                     v-model.number="cuttingFlavourEntries[index].slabamount"
@@ -247,7 +237,6 @@ Flavour<template>
                 </div>
                 <div class="col-3">
                   <q-input
-                    v-if="!loading"
                     label="Box amount"
                     required
                     v-model.number="cuttingFlavourEntries[index].boxamount"
@@ -258,7 +247,7 @@ Flavour<template>
                 </div>
                 <div class="col-12">
                   <q-input
-                    v-if="!loading"
+
                     label="Notes"
                     v-model="cuttingFlavourEntries[index].notes"
                     type="text"
@@ -288,7 +277,7 @@ Flavour<template>
                 <div class="row full-width items-center no-wrap">
                   <div class="col pad-right">
                     <q-select
-                      v-if="!loading"
+
                       label="Batch Flavour"
                       required
                       v-model="baseFlavourEntries[index].flavour"
@@ -300,7 +289,6 @@ Flavour<template>
 
                   <div class="col-auto">
                     <q-btn
-                      v-if="!loading"
                       flat
                       round
                       icon="delete"
@@ -311,7 +299,7 @@ Flavour<template>
 
                 <div class="col-3 pad-right">
                   <q-input
-                    v-if="!loading"
+
                     label="Base Batch"
                     required
                     v-model.number="baseFlavourEntries[index].batchnumber"
@@ -322,7 +310,6 @@ Flavour<template>
                 </div>
                 <div class="col-3 pad-right">
                   <q-input
-                    v-if="!loading"
                     label="Number of Blender Batches"
                     required
                     v-model.number="baseFlavourEntries[index].blenderamount"
@@ -333,7 +320,6 @@ Flavour<template>
                 </div>
                 <div class="col-3 pad-right">
                   <q-input
-                    v-if="!loading"
                     label="Number of Large Bases"
                     required
                     v-model.number="baseFlavourEntries[index].largeamount"
@@ -344,7 +330,6 @@ Flavour<template>
                 </div>
                 <div class="col-3">
                   <q-input
-                    v-if="!loading"
                     label="Number of Small Bases"
                     required
                     v-model.number="baseFlavourEntries[index].smallamount"
@@ -355,7 +340,6 @@ Flavour<template>
                 </div>
                 <div class="col-4 pad-right">
                   <q-input
-                    v-if="!loading"
                     label="Number of Small Cake Bases"
                     required
                     v-model.number="baseFlavourEntries[index].smallcakeamount"
@@ -366,7 +350,6 @@ Flavour<template>
                 </div>
                 <div class="col-4 pad-right">
                   <q-input
-                    v-if="!loading"
                     label="Number of Medium Cake Bases"
                     required
                     v-model.number="baseFlavourEntries[index].mediumcakeamount"
@@ -377,7 +360,6 @@ Flavour<template>
                 </div>
                 <div class="col-4">
                   <q-input
-                    v-if="!loading"
                     label="Number of Large Cake Bases"
                     required
                     v-model.number="baseFlavourEntries[index].largecakeamount"
@@ -388,7 +370,6 @@ Flavour<template>
                 </div>
                 <div class="col-12">
                   <q-input
-                    v-if="!loading"
                     label="Notes"
                     v-model="baseFlavourEntries[index].notes"
                     type="text"
@@ -418,7 +399,6 @@ Flavour<template>
                 <div class="row full-width items-center no-wrap">
                   <div class="col pad-right">
                     <q-select
-                      v-if="!loading"
                       label="Batch Flavour"
                       required
                       v-model="icecreamFlavourEntries[index].flavour"
@@ -430,7 +410,6 @@ Flavour<template>
 
                   <div class="col-auto">
                     <q-btn
-                      v-if="!loading"
                       flat
                       round
                       icon="delete"
@@ -441,7 +420,6 @@ Flavour<template>
 
                 <div class="col-3 pad-right">
                   <q-input
-                    v-if="!loading"
                     label="Batch Number"
                     required
                     v-model.number="icecreamFlavourEntries[index].batchnumber"
@@ -452,7 +430,6 @@ Flavour<template>
                 </div>
                 <div class="col-3 pad-right">
                   <q-input
-                    v-if="!loading"
                     label="Number of Jugs"
                     required
                     v-model.number="icecreamFlavourEntries[index].jugsamount"
@@ -463,7 +440,6 @@ Flavour<template>
                 </div>
                 <div class="col-3 pad-right">
                   <q-input
-                    v-if="!loading"
                     label="Number of Trays"
                     required
                     v-model.number="icecreamFlavourEntries[index].traysamount"
@@ -474,7 +450,6 @@ Flavour<template>
                 </div>
                 <div class="col-3">
                   <q-input
-                    v-if="!loading"
                     label="Number of Unsaleable Trays"
                     required
                     v-model.number="icecreamFlavourEntries[index].unsaleabletraysamount"
@@ -485,7 +460,6 @@ Flavour<template>
                 </div>
                 <div class="col-12">
                   <q-input
-                    v-if="!loading"
                     label="Notes"
                     v-model="icecreamFlavourEntries[index].notes"
                     type="text"
@@ -513,45 +487,46 @@ Flavour<template>
               >
                 Please Select Production Type
               </div>
-
-              <div v-if="loading">
-                <q-card
-                  v-for="index in 3"
-                  v-bind:key="index"
-                  class="row items-center full-width flavour-item"
-                >
-                  <div class="row full-width items-center no-wrap">
-                    <div class="col pad-right">
-                      <q-skeleton type="QInput" />
-                    </div>
-
-                    <div class="col-auto">
-                      <q-skeleton type="QAvatar" />
-                    </div>
-                  </div>
-
-                  <div class="col-3 pad-right">
-                    <q-skeleton type="QInput" />
-                  </div>
-                  <div class="col-3 pad-right">
-                    <q-skeleton type="QInput" />
-                  </div>
-                  <div class="col-3 pad-right">
-                    <q-skeleton type="QInput" />
-                  </div>
-                  <div class="col-3">
-                    <q-skeleton type="QInput" />
-                  </div>
-
-                  <div class="col-12">
-                    <q-skeleton type="QInput" />
-                  </div>
-                </q-card>
-              </div>
-
-              <q-skeleton v-if="loading" type="QBtn" class="full-width" />
             </q-tab-panel>
           </q-tab-panels>
+
+          <div v-if="loading">
+            <q-card
+              v-for="index in 3"
+              v-bind:key="index"
+              class="row items-center full-width flavour-item"
+            >
+              <div class="row full-width items-center no-wrap">
+                <div class="col pad-right">
+                  <q-skeleton type="QInput" />
+                </div>
+
+                <div class="col-auto">
+                  <q-skeleton type="QAvatar" />
+                </div>
+              </div>
+
+              <div class="col-3 pad-right">
+                <q-skeleton type="QInput" />
+              </div>
+              <div class="col-3 pad-right">
+                <q-skeleton type="QInput" />
+              </div>
+              <div class="col-3 pad-right">
+                <q-skeleton type="QInput" />
+              </div>
+              <div class="col-3">
+                <q-skeleton type="QInput" />
+              </div>
+
+              <div class="col-12">
+                <q-skeleton type="QInput" />
+              </div>
+            </q-card>
+
+            <q-skeleton v-if="loading" type="QBtn" class="full-width" />
+          </div>
+
         </q-card-section>
 
         <q-separator />
@@ -643,7 +618,6 @@ Flavour<template>
           </q-card>
 
           <q-btn
-            v-if="!loading"
             icon="add"
             id="add-staff-btn"
             label="Add Staff Member"
@@ -687,7 +661,14 @@ Flavour<template>
         </q-card-section>
 
         <q-card-section id="save-btn-container">
-          <q-btn label="Save" class="full-width" :disable="loading" type="submit" color="primary"/>
+          <q-btn
+            label="Save"
+            class="full-width"
+            :loading="saveLoading"
+            :disable="loading"
+            type="submit"
+            color="primary"
+          />
         </q-card-section>
       </q-form>
     </q-card>
@@ -749,8 +730,9 @@ export default defineComponent({
   data() {
     return {
       date: '',
-      loading: false,
+      loading: true,
       productionType: 'Select Production Type',
+      oldProductionType: '',
       productionTypeOptions: ['Cutting Day', 'Packing Day', 'Base Day', 'Ice Cream Day'],
       staffOptions: ['Bob', 'Jane', 'Januel'],
       flavourOptions: [
@@ -778,6 +760,9 @@ export default defineComponent({
       icecreamFlavourEntries: [],
       staffEntries: [],
       dateCreated: false,
+      saveLoading: false,
+      dayID: null,
+      test: 3,
     };
   },
   mounted() {
@@ -796,8 +781,15 @@ export default defineComponent({
   },
   methods: {
     getData() {
-      console.log('trying to get data');
+      console.log('trying to get data on', this.date, 'for', this.productionType);
       this.startLoading();
+
+      this.cuttingFlavourEntries = [];
+      this.packingFlavourEntries = [];
+      this.baseFlavourEntries = [];
+      this.icecreamFlavourEntries = [];
+      this.staffEntries = [];
+
       const self = this;
       this.$api
         .post('/flavours/get', {
@@ -813,12 +805,15 @@ export default defineComponent({
           const flavourData = flavoursRes.data;
           if (self.productionType === 'Packing Day') {
             self.packingFlavourEntries = flavourData;
-          } if (self.productionType === 'Cutting Day') {
+          } else if (self.productionType === 'Cutting Day') {
             self.cuttingFlavourEntries = flavourData;
-          } if (self.productionType === 'Ice Cream Day') {
+          } else if (self.productionType === 'Ice Cream Day') {
             self.icecreamFlavourEntries = flavourData;
-          } if (self.productionType === 'Base Day') {
+          } else if (self.productionType === 'Base Day') {
             self.baseFlavourEntries = flavourData;
+          } else {
+            console.log(self.productionType);
+            throw new Error('Cannot get flavour with no local production date!');
           }
 
           this.$api
@@ -837,7 +832,7 @@ export default defineComponent({
             })
             .catch((err) => {
               self.$q.notify({
-                message: 'Unexpected Error! Please Reload Page!',
+                message: 'Unexpected Error! Please Reload Page! Server May be Down!',
                 icon: 'warning',
                 color: 'red',
               });
@@ -846,7 +841,7 @@ export default defineComponent({
         })
         .catch((err) => {
           self.$q.notify({
-            message: 'Unexpected Error! Please Reload Page!',
+            message: 'Unexpected Error! Please Reload Page! Server May be Down!',
             icon: 'warning',
             color: 'red',
           });
@@ -854,19 +849,20 @@ export default defineComponent({
         });
     },
     onUpdate() {
-      console.log('Attempting auto save');
+      this.saveLoading = true;
+      console.log('Attempting to save');
       let flavourEntryData = null;
       if (this.productionType === 'Packing Day') {
-        console.log(this.packingFlavourEntries); // eslint-ignore-line
+        console.log(this.packingFlavourEntries);
         flavourEntryData = this.packingFlavourEntries;
       } else if (this.productionType === 'Cutting Day') {
-        console.log(this.cuttingFlavourEntries); // eslint-ignore-line
+        console.log(this.cuttingFlavourEntries);
         flavourEntryData = this.cuttingFlavourEntries;
       } else if (this.productionType === 'Ice Cream Day') {
-        console.log(this.icecreamFlavourEntries); // eslint-ignore-line
+        console.log(this.icecreamFlavourEntries);
         flavourEntryData = this.icecreamFlavourEntries;
       } else if (this.productionType === 'Base Day') {
-        console.log(this.baseFlavourEntries); // eslint-ignore-line
+        console.log(this.baseFlavourEntries);
         flavourEntryData = this.baseFlavourEntries;
       } else {
         return;
@@ -887,16 +883,19 @@ export default defineComponent({
             },
           })
           .then((res) => {
-            console.log('saved flavour data', res); // eslint-ignore-line
-            // TODO: handle this somehow
+            console.log('saved flavour data', res);
           })
           .catch((err) => {
             self.$q.notify({
-              message: 'Unexpected Error! Please Reload Page!',
+              message: 'Unexpected Error! Please Reload Page! Server May be Down!',
               icon: 'warning',
               color: 'red',
             });
             throw err;
+          })
+          .finally(() => {
+            console.log('turning off save loader');
+            self.saveLoading = false;
           });
       }
 
@@ -911,12 +910,11 @@ export default defineComponent({
             },
           })
           .then((res) => {
-            console.log('saved staff data', res); // eslint-ignore-line
-            // TODO: handle this somehow
+            console.log('saved staff data', res);
           })
           .catch((err) => {
             self.$q.notify({
-              message: 'Unexpected Error! Please Reload Page!',
+              message: 'Unexpected Error! Please Reload Page! Server May be Down!',
               icon: 'warning',
               color: 'red',
             });
@@ -935,7 +933,6 @@ export default defineComponent({
         self.loading = false;
       }, 300);
     },
-    // TODO: for adding flavours and all requests, create loading feedback
     addFlavourEntry() {
       let flavourEntryData = null;
       if (this.productionType === 'Packing Day') {
@@ -948,7 +945,7 @@ export default defineComponent({
           sampleamount: 0,
           notes: '',
         };
-      } if (this.productionType === 'Cutting Day') {
+      } else if (this.productionType === 'Cutting Day') {
         flavourEntryData = {
           flavour: '',
           slabbatch: 0,
@@ -957,7 +954,7 @@ export default defineComponent({
           boxamount: 0,
           notes: '',
         };
-      } if (this.productionType === 'Ice Cream Day') {
+      } else if (this.productionType === 'Ice Cream Day') {
         flavourEntryData = {
           flavour: '',
           batchnumber: 0,
@@ -966,7 +963,7 @@ export default defineComponent({
           unsaleabletraysamount: 0,
           notes: '',
         };
-      } if (this.productionType === 'Base Day') {
+      } else if (this.productionType === 'Base Day') {
         flavourEntryData = {
           flavour: '',
           blenderamount: 0,
@@ -978,6 +975,8 @@ export default defineComponent({
           largecakeamount: 0,
           notes: '',
         };
+      } else {
+        throw new Error('Cannot add flavour with no local production date!');
       }
 
       const self = this;
@@ -995,17 +994,19 @@ export default defineComponent({
           const { data } = res;
           if (self.productionType === 'Packing Day') {
             self.packingFlavourEntries.push(data);
-          } if (self.productionType === 'Cutting Day') {
+          } else if (self.productionType === 'Cutting Day') {
             self.cuttingFlavourEntries.push(data);
-          } if (self.productionType === 'Ice Cream Day') {
+          } else if (self.productionType === 'Ice Cream Day') {
             self.icecreamFlavourEntries.push(data);
-          } if (self.productionType === 'Base Day') {
+          } else if (self.productionType === 'Base Day') {
             self.baseFlavourEntries.push(data);
-          } // TODO: handle no production type for all these
+          } else {
+            throw new Error('Cannot add flavour with no local production date!');
+          }
         })
         .catch((err) => {
           self.$q.notify({
-            message: 'Unexpected Error! Please Reload Page!',
+            message: 'Unexpected Error! Please Reload Page! Server may be down!',
             icon: 'warning',
             color: 'red',
           });
@@ -1017,12 +1018,14 @@ export default defineComponent({
       let flavourEntries = null;
       if (this.productionType === 'Packing Day') {
         flavourEntries = this.packingFlavourEntries;
-      } if (this.productionType === 'Cutting Day') {
+      } else if (this.productionType === 'Cutting Day') {
         flavourEntries = this.cuttingFlavourEntries;
-      } if (this.productionType === 'Ice Cream Day') {
+      } else if (this.productionType === 'Ice Cream Day') {
         flavourEntries = this.icecreamFlavourEntries;
-      } if (this.productionType === 'Base Day') {
+      } else if (this.productionType === 'Base Day') {
         flavourEntries = this.baseFlavourEntries;
+      } else {
+        throw new Error('Cannot delete flavour with no local production date!');
       }
 
       console.log('Posting delete REQ! with flavour entry:', flavourEntries[index]);
@@ -1040,17 +1043,19 @@ export default defineComponent({
           console.log('deleted flavour entry', res);
           if (self.productionType === 'Packing Day') {
             self.packingFlavourEntries.splice(index, 1);
-          } if (self.productionType === 'Cutting Day') {
+          } else if (self.productionType === 'Cutting Day') {
             self.cuttingFlavourEntries.splice(index, 1);
-          } if (self.productionType === 'Ice Cream Day') {
+          } else if (self.productionType === 'Ice Cream Day') {
             self.icecreamFlavourEntries.splice(index, 1);
-          } if (self.productionType === 'Base Day') {
+          } else if (self.productionType === 'Base Day') {
             self.baseFlavourEntries.splice(index, 1);
+          } else {
+            throw new Error('Cannot delete flavour with no local production date!');
           }
         })
         .catch((err) => {
           self.$q.notify({
-            message: 'Unexpected Error! Please Reload Page!',
+            message: 'Unexpected Error! Please Reload Page! Server May be Down!',
             icon: 'warning',
             color: 'red',
           });
@@ -1079,7 +1084,7 @@ export default defineComponent({
         })
         .catch((err) => {
           self.$q.notify({
-            message: 'Unexpected Error! Please Reload Page!',
+            message: 'Unexpected Error! Please Reload Page! Server May be Down!',
             icon: 'warning',
             color: 'red',
           });
@@ -1102,49 +1107,16 @@ export default defineComponent({
         })
         .catch((err) => {
           self.$q.notify({
-            message: 'Unexpected Error! Please Reload Page!',
+            message: 'Unexpected Error! Please Reload Page! Server May be Down!',
             icon: 'warning',
             color: 'red',
           });
           throw err;
         });
     },
-  },
-  watch: {
-    date(newDate) {
-      console.log('changed Date', newDate);
-      this.productionType = 'Select Production Type';
-      this.staffEntries = [];
-      const self = this;
-      this.$api
-        .post('/days/get', {
-          date: String(self.date),
-        }, {
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-          },
-        })
-        .then((res) => {
-          const { data } = res;
-          console.log('get day', data);
-          if (data.id) {
-            self.productionType = data.productiontype;
-            self.dateCreated = true;
-          } else {
-            self.dateCreated = false;
-          }
-        })
-        .catch((err) => {
-          self.$q.notify({
-            message: 'Unexpected Error! Please Reload Page!',
-            icon: 'warning',
-            color: 'red',
-          });
-          throw err;
-        });
-    },
-    productionType(newProductionType) {
-      console.log('changed production type', newProductionType);
+    updateLocalProductionType(newProductionType, oldProductionType, updateFromUser) {
+      console.log('update local production type to', newProductionType, 'from', oldProductionType);
+      console.log('from user', updateFromUser, 'date created?', this.dateCreated);
 
       if (!this.dateCreated) {
         const self = this;
@@ -1163,17 +1135,99 @@ export default defineComponent({
           })
           .catch((err) => {
             self.$q.notify({
-              message: 'Unexpected Error! Please Reload Page!',
+              message: 'Unexpected Error! Please Reload Page! Server May be Down!',
               icon: 'warning',
               color: 'red',
             });
             throw err;
           });
+      } else if (this.dateCreated && newProductionType !== 'Select Production Type'
+              && oldProductionType !== 'Select Production Type'
+              && updateFromUser) {
+        const self = this;
+        this.$q.dialog({
+          title: 'Confirm',
+          message: `Would you like to change the production type on the ${this.date} to a ${newProductionType}? This will delete all previously created data entries on this date.`,
+          cancel: true,
+          persistent: true,
+        }).onOk(() => {
+          console.log('updating day production type');
+          self.$api
+            .post('/days/update', {
+              id: String(self.dayID),
+              productionType: String(newProductionType),
+            }, {
+              headers: {
+                'Access-Control-Allow-Origin': '*',
+              },
+            })
+            .then((res) => {
+              const { data } = res;
+              console.log('update day data', data);
+              self.getData();
+            })
+            .catch((err) => {
+              self.$q.notify({
+                message: 'Unexpected Error! Please Reload Page! Server May be Down!',
+                icon: 'warning',
+                color: 'red',
+              });
+              throw err;
+            });
+        }).onCancel(() => {
+          console.log('cancelling to', oldProductionType);
+          self.productionType = oldProductionType;
+          self.endLoading();
+        });
       }
 
-      if (this.productionType !== 'Select Production Type') {
+      if (newProductionType !== 'Select Production Type' && !updateFromUser) {
+        this.productionType = newProductionType;
+        this.oldProductionType = newProductionType;
         this.getData();
       }
+    },
+    productionTypeSelecterUpdate(newValue) {
+      console.log('User changed production type!');
+      this.startLoading();
+      this.updateLocalProductionType(newValue, this.oldProductionType, true);
+      this.oldProductionType = newValue;
+    },
+  },
+  watch: {
+    date(newDate) {
+      this.startLoading();
+      console.log('User changed date to', newDate);
+      const self = this;
+      this.$api
+        .post('/days/get', {
+          date: String(self.date),
+        }, {
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+          },
+        })
+        .then((res) => {
+          const { data } = res;
+          console.log('get day', data);
+          if (data.id) {
+            self.dayID = data.id;
+            self.dateCreated = true;
+            self.updateLocalProductionType(data.productiontype, self.productionType, false);
+          } else {
+            self.dateCreated = false;
+            self.updateLocalProductionType('Select Production Type', self.productionType, false);
+          }
+        })
+        .catch((err) => {
+          self.$q.notify({
+            message: 'Unexpected Error! Please Reload Page! Server May be Down!',
+            icon: 'warning',
+            color: 'red',
+          });
+          self.updateLocalProductionType('Select Production Type', self.productionType, false);
+          throw err;
+        });
     },
   },
 });
