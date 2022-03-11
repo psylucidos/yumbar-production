@@ -892,10 +892,6 @@ export default defineComponent({
               color: 'red',
             });
             throw err;
-          })
-          .finally(() => {
-            console.log('turning off save loader');
-            self.saveLoading = false;
           });
       }
 
@@ -921,6 +917,10 @@ export default defineComponent({
             throw err;
           });
       }
+
+      setTimeout(() => {
+        self.saveLoading = false;
+      }, 1 * 1000);
     },
     startLoading() {
       console.log('Begin Loading...');
@@ -1190,7 +1190,7 @@ export default defineComponent({
     productionTypeSelecterUpdate(newValue) {
       console.log('User changed production type!');
       this.startLoading();
-      this.updateLocalProductionType(newValue, this.oldProductionType, true);
+      this.updateLocalProductionType(newValue, String(this.oldProductionType), true);
       this.oldProductionType = newValue;
     },
   },
@@ -1213,10 +1213,10 @@ export default defineComponent({
           if (data.id) {
             self.dayID = data.id;
             self.dateCreated = true;
-            self.updateLocalProductionType(data.productiontype, self.productionType, false);
+            self.updateLocalProductionType(data.productiontype, String(self.productionType), false);
           } else {
             self.dateCreated = false;
-            self.updateLocalProductionType('Select Production Type', self.productionType, false);
+            self.updateLocalProductionType('Select Production Type', String(self.productionType), false);
           }
         })
         .catch((err) => {
@@ -1225,7 +1225,7 @@ export default defineComponent({
             icon: 'warning',
             color: 'red',
           });
-          self.updateLocalProductionType('Select Production Type', self.productionType, false);
+          self.updateLocalProductionType('Select Production Type', String(self.productionType), false);
           throw err;
         });
     },
