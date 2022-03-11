@@ -15,12 +15,19 @@ module.exports = {
         const match = timingSafeEqual(hashedBuffer, keyBuffer);
 
         if (match) {
-          resolve(200);
+          resolve({
+            status: 200,
+            body: targetUser,
+          });
         } else {
-          resolve(401);
+          resolve({
+            status: 401,
+          });
         }
       } else {
-        resolve(404);
+        resolve({
+          status: 404,
+        });
       }
     });
   }),
@@ -35,15 +42,20 @@ module.exports = {
       if (selectErr) {
         reject(selectErr);
       } else if (selectRes.rows[0]) {
-        resolve(401);
+        resolve({
+          status: 401,
+        });
       } else {
         db.query('INSERT INTO yumbarusers(username, password) VALUES($1, $2) RETURNING *;', [newUsername, userPassword], (err, res) => {
           if (err) {
             reject(err);
           } else if (res.rows[0]) {
-            resolve(200);
+            resolve({
+              status: 200,
+              body: res.rows[0],
+            });
           } else {
-            resolve(new Error('User not registered!'));
+            reject(new Error('User not registered!'));
           }
         });
       }

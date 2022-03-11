@@ -52,7 +52,28 @@ export default defineComponent({
   methods: {
     onSubmit() {
       console.log(this.username, this.password); //eslint-disable-line
-      this.$router.push('/data');
+      const self = this;
+      this.$api
+        .post('/auth/login', {
+          username: String(self.username),
+          password: String(self.password),
+        }, {
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+          },
+        })
+        .then((res) => {
+          console.log(res);
+          if (res.data.token) {
+            this.$store.commit('setToken', res.data.token);
+            this.$router.push('/data');
+          } else {
+            throw new Error('No token!');
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     },
   },
 });

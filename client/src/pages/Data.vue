@@ -791,53 +791,55 @@ export default defineComponent({
       this.staffEntries = [];
 
       const self = this;
+      if (self.productionType !== 'Select Production Type') {
+        this.$api
+          .post('/flavours/get', {
+            date: String(self.date),
+            productionType: String(self.productionType),
+          }, {
+            headers: {
+              Authorization: `Bearer ${self.$store.state.token}`,
+            },
+          })
+          .then((flavoursRes) => {
+            console.log('received flavours response', flavoursRes);
+            const flavourData = flavoursRes.data;
+            if (self.productionType === 'Packing Day') {
+              self.packingFlavourEntries = flavourData;
+            } else if (self.productionType === 'Cutting Day') {
+              self.cuttingFlavourEntries = flavourData;
+            } else if (self.productionType === 'Ice Cream Day') {
+              self.icecreamFlavourEntries = flavourData;
+            } else if (self.productionType === 'Base Day') {
+              self.baseFlavourEntries = flavourData;
+            } else {
+              console.log(self.productionType);
+              throw new Error('Cannot get flavour with no local production date!');
+            }
+          })
+          .catch((err) => {
+            self.$q.notify({
+              message: 'Unexpected Error! Please Reload Page! Server May be Down!',
+              icon: 'warning',
+              color: 'red',
+            });
+            throw err;
+          });
+      }
+
       this.$api
-        .post('/flavours/get', {
+        .post('/staff/get', {
           date: String(self.date),
-          productionType: String(self.productionType),
         }, {
           headers: {
-            'Access-Control-Allow-Origin': '*',
+            Authorization: `Bearer ${self.$store.state.token}`,
           },
         })
-        .then((flavoursRes) => {
-          console.log('received flavours response', flavoursRes);
-          const flavourData = flavoursRes.data;
-          if (self.productionType === 'Packing Day') {
-            self.packingFlavourEntries = flavourData;
-          } else if (self.productionType === 'Cutting Day') {
-            self.cuttingFlavourEntries = flavourData;
-          } else if (self.productionType === 'Ice Cream Day') {
-            self.icecreamFlavourEntries = flavourData;
-          } else if (self.productionType === 'Base Day') {
-            self.baseFlavourEntries = flavourData;
-          } else {
-            console.log(self.productionType);
-            throw new Error('Cannot get flavour with no local production date!');
-          }
-
-          this.$api
-            .post('/staff/get', {
-              date: String(self.date),
-            }, {
-              headers: {
-                'Access-Control-Allow-Origin': '*',
-              },
-            })
-            .then((staffRes) => {
-              console.log('received staff response', staffRes);
-              const staffData = staffRes.data;
-              self.staffEntries = staffData;
-              self.endLoading();
-            })
-            .catch((err) => {
-              self.$q.notify({
-                message: 'Unexpected Error! Please Reload Page! Server May be Down!',
-                icon: 'warning',
-                color: 'red',
-              });
-              throw err;
-            });
+        .then((staffRes) => {
+          console.log('received staff response', staffRes);
+          const staffData = staffRes.data;
+          self.staffEntries = staffData;
+          self.endLoading();
         })
         .catch((err) => {
           self.$q.notify({
@@ -879,7 +881,7 @@ export default defineComponent({
             flavourEntryData: flavourEntryData[i], // TODO: send data through JSON maybe
           }, {
             headers: {
-              'Access-Control-Allow-Origin': '*',
+              Authorization: `Bearer ${self.$store.state.token}`,
             },
           })
           .then((res) => {
@@ -902,7 +904,7 @@ export default defineComponent({
             staffEntryData: Object(self.staffEntries[i]), // TODO: send data through JSON maybe
           }, {
             headers: {
-              'Access-Control-Allow-Origin': '*',
+              Authorization: `Bearer ${self.$store.state.token}`,
             },
           })
           .then((res) => {
@@ -987,7 +989,7 @@ export default defineComponent({
           flavourEntryData,
         }, {
           headers: {
-            'Access-Control-Allow-Origin': '*',
+            Authorization: `Bearer ${self.$store.state.token}`,
           },
         })
         .then((res) => {
@@ -1036,7 +1038,7 @@ export default defineComponent({
           productionType: String(self.productionType),
         }, {
           headers: {
-            'Access-Control-Allow-Origin': '*',
+            Authorization: `Bearer ${self.$store.state.token}`,
           },
         })
         .then((res) => {
@@ -1075,7 +1077,7 @@ export default defineComponent({
           },
         }, {
           headers: {
-            'Access-Control-Allow-Origin': '*',
+            Authorization: `Bearer ${self.$store.state.token}`,
           },
         })
         .then((res) => {
@@ -1098,7 +1100,7 @@ export default defineComponent({
           id: String(self.staffEntries[index].id),
         }, {
           headers: {
-            'Access-Control-Allow-Origin': '*',
+            Authorization: `Bearer ${self.$store.state.token}`,
           },
         })
         .then((res) => {
@@ -1118,7 +1120,12 @@ export default defineComponent({
       console.log('update local production type to', newProductionType, 'from', oldProductionType);
       console.log('from user', updateFromUser, 'date created?', this.dateCreated);
 
-      if (!this.dateCreated) {
+      if (!updateFromUser) {
+        this.productionType = newProductionType;
+        this.oldProductionType = newProductionType;
+      }
+
+      if (!this.dateCreated && newProductionType !== 'Select Production Type') {
         const self = this;
         this.$api
           .post('/days/add', {
@@ -1126,11 +1133,12 @@ export default defineComponent({
             productionType: String(newProductionType),
           }, {
             headers: {
-              'Access-Control-Allow-Origin': '*',
+              Authorization: `Bearer ${self.$store.state.token}`,
             },
           })
           .then((res) => {
             const { data } = res;
+            self.endLoading();
             console.log('add day data', data);
           })
           .catch((err) => {
@@ -1158,7 +1166,7 @@ export default defineComponent({
               productionType: String(newProductionType),
             }, {
               headers: {
-                'Access-Control-Allow-Origin': '*',
+                Authorization: `Bearer ${self.$store.state.token}`,
               },
             })
             .then((res) => {
@@ -1179,11 +1187,7 @@ export default defineComponent({
           self.productionType = oldProductionType;
           self.endLoading();
         });
-      }
-
-      if (newProductionType !== 'Select Production Type' && !updateFromUser) {
-        this.productionType = newProductionType;
-        this.oldProductionType = newProductionType;
+      } else {
         this.getData();
       }
     },
@@ -1204,7 +1208,7 @@ export default defineComponent({
           date: String(self.date),
         }, {
           headers: {
-            'Access-Control-Allow-Origin': '*',
+            Authorization: `Bearer ${self.$store.state.token}`,
           },
         })
         .then((res) => {
