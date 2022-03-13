@@ -6,6 +6,7 @@ const db = require('./src/database');
 const setupQuery = fs.readFileSync('./dbsetup.sql', { encoding: 'utf8', flag: 'r' });
 const clearQuery = fs.readFileSync('./cleardb.sql', { encoding: 'utf8', flag: 'r' });
 
+console.log(' -- REMEMBER TO SET DATESTYLE TO DMY IN CONFIG! --');
 console.log('Clearing database tables...');
 db.query(clearQuery, [], (clearErr, clearRes) => {
   console.log(clearRes);

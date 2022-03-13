@@ -818,12 +818,26 @@ export default defineComponent({
             }
           })
           .catch((err) => {
-            self.$q.notify({
-              message: 'Unexpected Error! Please Reload Page! Server May be Down!',
-              icon: 'warning',
-              color: 'red',
-            });
-            throw err;
+            if (err.response) {
+              if (err.response.status === 401) {
+                self.$router.push('/');
+                throw err;
+              } else {
+                self.$q.notify({
+                  message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
+                  icon: 'warning',
+                  color: 'red',
+                });
+                throw err;
+              }
+            } else {
+              self.$q.notify({
+                message: 'Unexpected Error! Server May be Down!',
+                icon: 'warning',
+                color: 'red',
+              });
+              throw err;
+            }
           });
       }
 
@@ -842,12 +856,26 @@ export default defineComponent({
           self.endLoading();
         })
         .catch((err) => {
-          self.$q.notify({
-            message: 'Unexpected Error! Please Reload Page! Server May be Down!',
-            icon: 'warning',
-            color: 'red',
-          });
-          throw err;
+          if (err.response) {
+            if (err.response.status === 401) {
+              self.$router.push('/');
+              throw err;
+            } else {
+              self.$q.notify({
+                message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
+                icon: 'warning',
+                color: 'red',
+              });
+              throw err;
+            }
+          } else {
+            self.$q.notify({
+              message: 'Unexpected Error! Server May be Down!',
+              icon: 'warning',
+              color: 'red',
+            });
+            throw err;
+          }
         });
     },
     onUpdate() {
@@ -888,12 +916,26 @@ export default defineComponent({
             console.log('saved flavour data', res);
           })
           .catch((err) => {
-            self.$q.notify({
-              message: 'Unexpected Error! Please Reload Page! Server May be Down!',
-              icon: 'warning',
-              color: 'red',
-            });
-            throw err;
+            if (err.response) {
+              if (err.response.status === 401) {
+                self.$router.push('/');
+                throw err;
+              } else {
+                self.$q.notify({
+                  message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
+                  icon: 'warning',
+                  color: 'red',
+                });
+                throw err;
+              }
+            } else {
+              self.$q.notify({
+                message: 'Unexpected Error! Server May be Down!',
+                icon: 'warning',
+                color: 'red',
+              });
+              throw err;
+            }
           });
       }
 
@@ -911,12 +953,26 @@ export default defineComponent({
             console.log('saved staff data', res);
           })
           .catch((err) => {
-            self.$q.notify({
-              message: 'Unexpected Error! Please Reload Page! Server May be Down!',
-              icon: 'warning',
-              color: 'red',
-            });
-            throw err;
+            if (err.response) {
+              if (err.response.status === 401) {
+                self.$router.push('/');
+                throw err;
+              } else {
+                self.$q.notify({
+                  message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
+                  icon: 'warning',
+                  color: 'red',
+                });
+                throw err;
+              }
+            } else {
+              self.$q.notify({
+                message: 'Unexpected Error! Server May be Down!',
+                icon: 'warning',
+                color: 'red',
+              });
+              throw err;
+            }
           });
       }
 
@@ -1007,12 +1063,26 @@ export default defineComponent({
           }
         })
         .catch((err) => {
-          self.$q.notify({
-            message: 'Unexpected Error! Please Reload Page! Server may be down!',
-            icon: 'warning',
-            color: 'red',
-          });
-          throw err;
+          if (err.response) {
+            if (err.response.status === 401) {
+              self.$router.push('/');
+              throw err;
+            } else {
+              self.$q.notify({
+                message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
+                icon: 'warning',
+                color: 'red',
+              });
+              throw err;
+            }
+          } else {
+            self.$q.notify({
+              message: 'Unexpected Error! Server May be Down!',
+              icon: 'warning',
+              color: 'red',
+            });
+            throw err;
+          }
         });
     },
     deleteFlavourEntry(index) {
@@ -1056,12 +1126,26 @@ export default defineComponent({
           }
         })
         .catch((err) => {
-          self.$q.notify({
-            message: 'Unexpected Error! Please Reload Page! Server May be Down!',
-            icon: 'warning',
-            color: 'red',
-          });
-          throw err;
+          if (err.response) {
+            if (err.response.status === 401) {
+              self.$router.push('/');
+              throw err;
+            } else {
+              self.$q.notify({
+                message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
+                icon: 'warning',
+                color: 'red',
+              });
+              throw err;
+            }
+          } else {
+            self.$q.notify({
+              message: 'Unexpected Error! Server May be Down!',
+              icon: 'warning',
+              color: 'red',
+            });
+            throw err;
+          }
         });
     },
     addStaffMember() {
@@ -1085,12 +1169,26 @@ export default defineComponent({
           self.staffEntries.push(data);
         })
         .catch((err) => {
-          self.$q.notify({
-            message: 'Unexpected Error! Please Reload Page! Server May be Down!',
-            icon: 'warning',
-            color: 'red',
-          });
-          throw err;
+          if (err.response) {
+            if (err.response.status === 401) {
+              self.$router.push('/');
+              throw err;
+            } else {
+              self.$q.notify({
+                message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
+                icon: 'warning',
+                color: 'red',
+              });
+              throw err;
+            }
+          } else {
+            self.$q.notify({
+              message: 'Unexpected Error! Server May be Down!',
+              icon: 'warning',
+              color: 'red',
+            });
+            throw err;
+          }
         });
     },
     deleteStaffMember(index) {
@@ -1108,12 +1206,26 @@ export default defineComponent({
           self.staffEntries.splice(index, 1);
         })
         .catch((err) => {
-          self.$q.notify({
-            message: 'Unexpected Error! Please Reload Page! Server May be Down!',
-            icon: 'warning',
-            color: 'red',
-          });
-          throw err;
+          if (err.response) {
+            if (err.response.status === 401) {
+              self.$router.push('/');
+              throw err;
+            } else {
+              self.$q.notify({
+                message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
+                icon: 'warning',
+                color: 'red',
+              });
+              throw err;
+            }
+          } else {
+            self.$q.notify({
+              message: 'Unexpected Error! Server May be Down!',
+              icon: 'warning',
+              color: 'red',
+            });
+            throw err;
+          }
         });
     },
     updateLocalProductionType(newProductionType, oldProductionType, updateFromUser) {
@@ -1139,15 +1251,30 @@ export default defineComponent({
           .then((res) => {
             const { data } = res;
             self.endLoading();
+            self.dateCreated = true;
             console.log('add day data', data);
           })
           .catch((err) => {
-            self.$q.notify({
-              message: 'Unexpected Error! Please Reload Page! Server May be Down!',
-              icon: 'warning',
-              color: 'red',
-            });
-            throw err;
+            if (err.response) {
+              if (err.response.status === 401) {
+                self.$router.push('/');
+                throw err;
+              } else {
+                self.$q.notify({
+                  message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
+                  icon: 'warning',
+                  color: 'red',
+                });
+                throw err;
+              }
+            } else {
+              self.$q.notify({
+                message: 'Unexpected Error! Server May be Down!',
+                icon: 'warning',
+                color: 'red',
+              });
+              throw err;
+            }
           });
       } else if (this.dateCreated && newProductionType !== 'Select Production Type'
               && oldProductionType !== 'Select Production Type'
@@ -1175,12 +1302,26 @@ export default defineComponent({
               self.getData();
             })
             .catch((err) => {
-              self.$q.notify({
-                message: 'Unexpected Error! Please Reload Page! Server May be Down!',
-                icon: 'warning',
-                color: 'red',
-              });
-              throw err;
+              if (err.response) {
+                if (err.response.status === 401) {
+                  self.$router.push('/');
+                  throw err;
+                } else {
+                  self.$q.notify({
+                    message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
+                    icon: 'warning',
+                    color: 'red',
+                  });
+                  throw err;
+                }
+              } else {
+                self.$q.notify({
+                  message: 'Unexpected Error! Server May be Down!',
+                  icon: 'warning',
+                  color: 'red',
+                });
+                throw err;
+              }
             });
         }).onCancel(() => {
           console.log('cancelling to', oldProductionType);
@@ -1224,13 +1365,28 @@ export default defineComponent({
           }
         })
         .catch((err) => {
-          self.$q.notify({
-            message: 'Unexpected Error! Please Reload Page! Server May be Down!',
-            icon: 'warning',
-            color: 'red',
-          });
-          self.updateLocalProductionType('Select Production Type', String(self.productionType), false);
-          throw err;
+          if (err.response) {
+            if (err.response.status === 401) {
+              self.$router.push('/');
+              throw err;
+            } else {
+              self.$q.notify({
+                message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
+                icon: 'warning',
+                color: 'red',
+              });
+              self.updateLocalProductionType('Select Production Type', String(self.productionType), false);
+              throw err;
+            }
+          } else {
+            self.$q.notify({
+              message: 'Unexpected Error! Server May be Down!',
+              icon: 'warning',
+              color: 'red',
+            });
+            self.updateLocalProductionType('Select Production Type', String(self.productionType), false);
+            throw err;
+          }
         });
     },
   },
