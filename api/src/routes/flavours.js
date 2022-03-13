@@ -87,4 +87,17 @@ router.post('/getall', async (ctx) => {
   }
 });
 
+router.post('/getallflavours', async (ctx) => {
+  const result = await flavourEntriesController
+    .getAllFlavoursFromFlavourEntries();
+
+  if (Array.isArray(result.cuttingData)) {
+    ctx.status = 200;
+    ctx.body = result;
+  } else {
+    ctx.status = 500;
+    console.error(result);
+  }
+});
+
 module.exports = router;

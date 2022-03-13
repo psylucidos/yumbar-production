@@ -286,6 +286,51 @@ module.exports = {
     });
   }),
 
+  getAllFlavoursFromFlavourEntries: () => new Promise((resolve, reject) => {
+    db.query('SELECT flavour FROM cuttingflavourentries;', [], (cuttingErr, cuttingRes) => {
+      if (cuttingErr) {
+        reject(cuttingErr);
+      } else if (cuttingRes.rows) {
+        const cuttingData = cuttingRes.rows;
+        db.query('SELECT flavour FROM packingflavourentries;', [], (packingErr, packingRes) => {
+          if (packingErr) {
+            reject(packingErr);
+          } else if (packingRes.rows) {
+            const packingData = packingRes.rows;
+            db.query('SELECT flavour FROM baseflavourentries;', [], (baseErr, baseRes) => {
+              if (baseErr) {
+                reject(baseErr);
+              } else if (baseRes.rows) {
+                const baseData = baseRes.rows;
+                db.query('SELECT flavour FROM icecreamflavourentries;', [], (icecreamErr, icecreamRes) => {
+                  if (icecreamErr) {
+                    reject(icecreamErr);
+                  } else if (icecreamRes.rows) {
+                    const icecreamData = icecreamRes.rows;
+                    resolve({
+                      cuttingData,
+                      packingData,
+                      baseData,
+                      icecreamData,
+                    });
+                  } else {
+                    reject(new Error('Unable to find flavour entries!'));
+                  }
+                });
+              } else {
+                reject(new Error('Unable to find flavour entries!'));
+              }
+            });
+          } else {
+            reject(new Error('Unable to find flavour entries!'));
+          }
+        });
+      } else {
+        reject(new Error('Unable to find flavour entries!'));
+      }
+    });
+  }),
+
   deleteFlavorEntry: (id, productionType) => new Promise((resolve, reject) => {
     if (productionType === 'Cutting Day') {
       db.query(

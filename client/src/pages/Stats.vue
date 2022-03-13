@@ -121,7 +121,7 @@ export default defineComponent({
   mounted() {
     const self = this;
     this.$api
-      .post('/flavours/getall', {}, {
+      .post('/flavours/getallflavours', {}, {
         headers: {
           Authorization: `Bearer ${self.$store.state.token}`,
         },
