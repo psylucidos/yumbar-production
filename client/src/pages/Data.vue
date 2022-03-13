@@ -776,7 +776,9 @@ export default defineComponent({
     const self = this;
     setInterval(() => {
       console.log('Auto saving!');
-      self.onUpdate();
+      if (self.$router.path === '/data') {
+        self.onUpdate();
+      }
     }, AUTOUPDATEINTERVAL * 1000);
   },
   methods: {

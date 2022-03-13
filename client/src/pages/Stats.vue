@@ -11,7 +11,7 @@
           <q-separator inset />
 
           <q-card-section>
-            <IcecreamFlavourChart v-if="!loading" />
+            <IcecreamFlavourChart v-if="!loading" :data="icecreamData" />
             <q-skeleton v-if="loading" height="400px" square />
           </q-card-section>
         </q-card>
@@ -115,13 +115,67 @@ export default defineComponent({
   data() {
     return {
       loading: true,
+      icecreamData: '',
     };
   },
-  created() {
+  mounted() {
     const self = this;
-    setTimeout(() => {
-      self.loading = false;
-    }, 3 * 1000);
+    this.$api
+      .post('/flavours/getall', {}, {
+        headers: {
+          Authorization: `Bearer ${self.$store.state.token}`,
+        },
+      })
+      .then((flavoursRes) => {
+        console.log('received flavours response', flavoursRes);
+        const entriesData = flavoursRes.data;
+        const newData = {
+          Vanilla: 0,
+          Chocolate: 0,
+          Jaffa: 0,
+          Hazelnut: 0,
+          Mint: 0,
+          Mango: 0,
+          Strawberry: 0,
+          Blueberry: 0,
+          Raspberry: 0,
+          Coffee: 0,
+        };
+        const keys = Object.keys(entriesData);
+        for (let n = 0; n < keys.length; n += 1) {
+          const target = entriesData[keys[n]];
+          for (let i = 0; i < target.length; i += 1) {
+            if (target[i].flavour) {
+              newData[target[i].flavour] += 1;
+            }
+          }
+        }
+        console.log('created data', newData);
+        self.icecreamData = newData;
+        self.loading = false;
+      })
+      .catch((err) => {
+        if (err.response) {
+          if (err.response.status === 401) {
+            self.$router.push('/');
+            throw err;
+          } else {
+            self.$q.notify({
+              message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
+              icon: 'warning',
+              color: 'red',
+            });
+            throw err;
+          }
+        } else {
+          self.$q.notify({
+            message: 'Unexpected Error! Server May be Down!',
+            icon: 'warning',
+            color: 'red',
+          });
+          throw err;
+        }
+      });
   },
   components: {
     IcecreamFlavourChart,
