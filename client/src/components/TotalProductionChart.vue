@@ -12,25 +12,25 @@ Chart.register(...registerables);
 export default defineComponent({
   name: 'TotalProductionChart',
   components: { LineChart },
-  setup() {
+  props: [
+    'data',
+    'labels',
+  ],
+  setup(props) {
+    console.log('incoming props', props);
     const testData = {
-      labels: ['Jan', 'Feb', 'March', 'April', 'May', 'June', 'July'],
+      labels: props.labels,
       datasets: [{
-        label: 'Number of Vanilla Boxes',
-        data: [65, 59, 80, 81, 56, 55, 40],
+        label: 'Number of Boxes',
+        data: props.data,
         fill: true,
         borderColor: 'rgb(218, 165, 32)',
         backgroundColor: 'rgb(218, 165, 32, 0.1)',
-        tension: 0.1,
-      }, {
-        label: 'Number of Chocolate Boxes',
-        data: [15, 32, 56, 55, 43, 22, 15],
-        fill: true,
-        borderColor: 'rgb(139, 69, 19)',
-        backgroundColor: 'rgb(139, 69, 19, 0.1)',
-        tension: 0.1,
+        tension: 0.3,
       }],
     };
+
+    console.log('test data', testData);
 
     return { testData };
   },

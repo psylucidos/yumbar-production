@@ -27,7 +27,11 @@
           <q-separator inset />
 
           <q-card-section>
-            <TotalProductionChart v-if="!loading" />
+            <TotalProductionChart
+              :data="totalProductionData"
+              :labels="totalProductionLabels"
+              v-if="!loading"
+            />
             <q-skeleton v-if="loading" height="400px" square />
           </q-card-section>
         </q-card>
@@ -110,12 +114,22 @@ import TotalProductionChart from 'components/TotalProductionChart.vue';
 import ProductionDataTable from 'components/ProductionDataTable.vue';
 import { defineComponent } from 'vue';
 
+function prettifyDate(targetDate) {
+  const DD = targetDate.getDate() < 10 ? `0${targetDate.getDate()}` : targetDate.getDate();
+  const M = targetDate.getMonth() + 1; // account for dates starting at 0
+  const MM = M < 10 ? `0${M}` : M;
+  const YYYY = targetDate.getFullYear();
+  return `${DD}-${MM}-${YYYY}`;
+}
+
 export default defineComponent({
   name: 'PageStats',
   data() {
     return {
       loading: true,
-      icecreamData: '',
+      icecreamData: [],
+      totalProductionData: [],
+      totalProductionLabels: [],
     };
   },
   mounted() {
@@ -126,9 +140,9 @@ export default defineComponent({
           Authorization: `Bearer ${self.$store.state.token}`,
         },
       })
-      .then((flavoursRes) => {
-        console.log('received flavours response', flavoursRes);
-        const entriesData = flavoursRes.data;
+      .then((res) => {
+        console.log('received flavours response', res);
+        const entriesData = res.data;
         const newData = {
           Vanilla: 0,
           Chocolate: 0,
@@ -152,6 +166,68 @@ export default defineComponent({
         }
         console.log('created data', newData);
         self.icecreamData = newData;
+        // self.loading = false;
+      })
+      .catch((err) => {
+        if (err.response) {
+          if (err.response.status === 401) {
+            self.$router.push('/');
+            throw err;
+          } else {
+            self.$q.notify({
+              message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
+              icon: 'warning',
+              color: 'red',
+            });
+            throw err;
+          }
+        } else {
+          self.$q.notify({
+            message: 'Unexpected Error! Server May be Down!',
+            icon: 'warning',
+            color: 'red',
+          });
+          throw err;
+        }
+      });
+
+    const dateRanges = [];
+    const targetDate = new Date();
+    for (let i = 0; i < 12; i += 1) {
+      const firstDayInMonth = new Date(targetDate.getFullYear(), targetDate.getMonth(), 1);
+      const lastDayInMonth = new Date(targetDate.getFullYear(), targetDate.getMonth() + 1, 0);
+
+      dateRanges.push({
+        start: prettifyDate(firstDayInMonth),
+        end: prettifyDate(lastDayInMonth),
+      });
+      targetDate.setMonth(targetDate.getMonth() - 1);
+    }
+
+    console.log('created date ranges', dateRanges);
+
+    this.$api
+      .post('/flavours/getboxesinrange', dateRanges, {
+        headers: {
+          Authorization: `Bearer ${self.$store.state.token}`,
+        },
+      })
+      .then((res) => {
+        console.log('received boxes response', res);
+        const { data } = res;
+
+        const labels = [];
+        const totalProductionData = [];
+        for (let i = 0; i < data.length; i += 1) {
+          const [d, m, y] = data[i].start.split('-');
+          const monthString = new Date(`${y}/${m}/${d}`).toLocaleString('default', { month: 'long' });
+          labels.push(monthString);
+          totalProductionData.push(data[i].boxes);
+        }
+        console.log('DAT ___ ');
+        console.log(totalProductionData, labels);
+        self.totalProductionData = totalProductionData.reverse();
+        self.totalProductionLabels = labels.reverse();
         self.loading = false;
       })
       .catch((err) => {
