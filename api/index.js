@@ -16,14 +16,7 @@ router.get('/ping', async (ctx) => {
 });
 
 app
-  .use(cors({
-    origin: '*',
-  })
-  .use(async (ctx, next) => {
-    ctx.set('Access-Control-Allow-Origin', '*');
-    ctx.set('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
-    await next();
-  })
+  .use(cors())
   .use(bodyParser())
   .use(jwt({
     secret: process.env.SECRET,
