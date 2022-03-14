@@ -7,21 +7,33 @@ module.exports = {
       if (err) {
         reject(err);
       } else if (res.rows[0]) {
-        resolve(200, res.rows[0]);
+        resolve(res.rows[0]);
       } else {
-        resolve(new Error('Day not added!'));
+        reject(new Error('Day not added!'));
+      }
+    });
+  }),
+
+  updateDay: (id, productionType) => new Promise((resolve, reject) => {
+    db.query('UPDATE productiondays SET productiontype=$2 WHERE id=$1;', [id, productionType], (err, res) => {
+      if (err) {
+        reject(err);
+      } else if (res.rowCount === 1) {
+        resolve(200);
+      } else {
+        reject(new Error('Day not added!'));
       }
     });
   }),
 
   getDay: (date) => new Promise((resolve, reject) => {
-    db.query('SELECT * FROM days WHERE date=$1;', [date], (err, res) => {
+    db.query('SELECT * FROM productiondays WHERE productiondate=$1;', [date], (err, res) => {
       if (err) {
         reject(err);
       } else if (res.rows[0]) {
-        resolve(200, res.rows[0]);
+        resolve(res.rows[0]);
       } else {
-        resolve(200, undefined);
+        resolve(404);
       }
     });
   }),

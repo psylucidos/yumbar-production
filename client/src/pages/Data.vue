@@ -40,6 +40,7 @@ Flavour<template>
               <q-select
                 dense
                 v-model="productionType"
+                @update:model-value="productionTypeSelecterUpdate"
                 :options="productionTypeOptions"
                 :disable="loading"
               />
@@ -61,7 +62,6 @@ Flavour<template>
                 <div class="row full-width items-center no-wrap">
                   <div class="col pad-right">
                     <q-select
-                      v-if="!loading"
                       label="Batch Flavour"
                       required
                       v-model="packingFlavourEntries[index].flavour"
@@ -73,10 +73,9 @@ Flavour<template>
 
                   <div class="col-auto pad-right">
                     <q-input
-                      v-if="!loading"
                       label="Use by Date"
                       required
-                      v-model="packingFlavourEntries[index].useByDate"
+                      v-model="packingFlavourEntries[index].usebydate"
                       mask="##-##-####"
                       class="q-field--with-bottom"
                     >
@@ -89,7 +88,7 @@ Flavour<template>
                             transition-hide="scale"
                           >
                             <q-date
-                              v-model="packingFlavourEntries[index].useByDate"
+                              v-model="packingFlavourEntries[index].usebydate"
                               mask="DD-MM-YYYY"
                             >
                               <div class="row items-center justify-end">
@@ -104,21 +103,19 @@ Flavour<template>
 
                   <div class="col-auto">
                     <q-btn
-                      v-if="!loading"
                       flat
                       round
                       icon="delete"
-                      @click="deletePackingFlavour(index)"
+                      @click="deleteFlavourEntry(index)"
                     />
                   </div>
                 </div>
 
                 <div class="col-3 pad-right">
                   <q-input
-                    v-if="!loading"
                     label="Slab Batch #"
                     required
-                    v-model.number="packingFlavourEntries[index].batchNumber"
+                    v-model.number="packingFlavourEntries[index].batchnumber"
                     :rules="[ val => val >= 1 || 'Batch must be positive!' ]"
                     type="number"
                     :color="flavourColors[packingFlavourEntries[index].flavour]"
@@ -126,33 +123,30 @@ Flavour<template>
                 </div>
                 <div class="col-3 pad-right">
                   <q-input
-                    v-if="!loading"
                     label="Number of Slabs"
                     required
-                    v-model.number="packingFlavourEntries[index].slabAmount"
-                    :rules="[ val => val >= 1 || 'Amount must be positive!' ]"
+                    v-model.number="packingFlavourEntries[index].slabamount"
+                    :rules="[ val => val >= 1 || 'amount must be positive!' ]"
                     type="number"
                     :color="flavourColors[packingFlavourEntries[index].flavour]"
                   />
                 </div>
                 <div class="col-3 pad-right">
                   <q-input
-                    v-if="!loading"
                     label="Number of Boxes"
                     required
-                    v-model.number="packingFlavourEntries[index].boxAmount"
-                    :rules="[ val => val >= 1 || 'Amount must be positive!' ]"
+                    v-model.number="packingFlavourEntries[index].boxamount"
+                    :rules="[ val => val >= 1 || 'amount must be positive!' ]"
                     type="number"
                     :color="flavourColors[packingFlavourEntries[index].flavour]"
                   />
                 </div>
                 <div class="col-3">
                   <q-input
-                    v-if="!loading"
                     label="Number of Samples"
                     required
-                    v-model.number="packingFlavourEntries[index].sampleAmount"
-                    :rules="[ val => val >= 1 || 'Amount must be positive!' ]"
+                    v-model.number="packingFlavourEntries[index].sampleamount"
+                    :rules="[ val => val >= 1 || 'amount must be positive!' ]"
                     type="number"
                     :color="flavourColors[packingFlavourEntries[index].flavour]"
                   />
@@ -160,7 +154,6 @@ Flavour<template>
 
                 <div class="col-12">
                   <q-input
-                    v-if="!loading"
                     label="Notes"
                     v-model="packingFlavourEntries[index].notes"
                     type="text"
@@ -177,7 +170,7 @@ Flavour<template>
                 label="Add Flavour"
                 class="full-width"
                 color="primary"
-                @click="addPackingFlavour"
+                @click="addFlavourEntry"
               />
             </q-tab-panel>
 
@@ -190,7 +183,7 @@ Flavour<template>
                 <div class="row full-width items-center no-wrap">
                   <div class="col pad-right">
                     <q-select
-                      v-if="!loading"
+
                       label="Batch Flavour"
                       required
                       v-model="cuttingFlavourEntries[index].flavour"
@@ -202,21 +195,20 @@ Flavour<template>
 
                   <div class="col-auto">
                     <q-btn
-                      v-if="!loading"
                       flat
                       round
                       icon="delete"
-                      @click="deleteFlavour(index)"
+                      @click="deleteFlavourEntry(index)"
                     />
                   </div>
                 </div>
 
                 <div class="col-3 pad-right">
                   <q-input
-                    v-if="!loading"
+
                     label="Slab Batch"
                     required
-                    v-model.number="cuttingFlavourEntries[index].slabBatch"
+                    v-model.number="cuttingFlavourEntries[index].slabbatch"
                     :rules="[ val => val >= 1 || 'Batch must be positive!' ]"
                     type="number"
                     :color="flavourColors[cuttingFlavourEntries[index].flavour]"
@@ -224,10 +216,9 @@ Flavour<template>
                 </div>
                 <div class="col-3 pad-right">
                   <q-input
-                    v-if="!loading"
                     label="Base Batch"
                     required
-                    v-model.number="cuttingFlavourEntries[index].baseBatch"
+                    v-model.number="cuttingFlavourEntries[index].basebatch"
                     :rules="[ val => val >= 1 || 'Batch must be positive!' ]"
                     type="number"
                     :color="flavourColors[cuttingFlavourEntries[index].flavour]"
@@ -235,29 +226,28 @@ Flavour<template>
                 </div>
                 <div class="col-3 pad-right">
                   <q-input
-                    v-if="!loading"
-                    label="Slab Amount"
+
+                    label="Slab amount"
                     required
-                    v-model.number="cuttingFlavourEntries[index].slabAmount"
-                    :rules="[ val => val >= 1 || 'Amount must be positive!' ]"
+                    v-model.number="cuttingFlavourEntries[index].slabamount"
+                    :rules="[ val => val >= 1 || 'amount must be positive!' ]"
                     type="number"
                     :color="flavourColors[cuttingFlavourEntries[index].flavour]"
                   />
                 </div>
                 <div class="col-3">
                   <q-input
-                    v-if="!loading"
-                    label="Box Amount"
+                    label="Box amount"
                     required
-                    v-model.number="cuttingFlavourEntries[index].boxAmount"
-                    :rules="[ val => val >= 1 || 'Amount must be positive!' ]"
+                    v-model.number="cuttingFlavourEntries[index].boxamount"
+                    :rules="[ val => val >= 1 || 'amount must be positive!' ]"
                     type="number"
                     :color="flavourColors[cuttingFlavourEntries[index].flavour]"
                   />
                 </div>
                 <div class="col-12">
                   <q-input
-                    v-if="!loading"
+
                     label="Notes"
                     v-model="cuttingFlavourEntries[index].notes"
                     type="text"
@@ -274,7 +264,7 @@ Flavour<template>
                 label="Add Flavour"
                 class="full-width"
                 color="primary"
-                @click="addCuttingFlavour"
+                @click="addFlavourEntry"
               />
             </q-tab-panel>
 
@@ -287,7 +277,7 @@ Flavour<template>
                 <div class="row full-width items-center no-wrap">
                   <div class="col pad-right">
                     <q-select
-                      v-if="!loading"
+
                       label="Batch Flavour"
                       required
                       v-model="baseFlavourEntries[index].flavour"
@@ -299,21 +289,20 @@ Flavour<template>
 
                   <div class="col-auto">
                     <q-btn
-                      v-if="!loading"
                       flat
                       round
                       icon="delete"
-                      @click="deleteBaseFlavour(index)"
+                      @click="deleteFlavourEntry(index)"
                     />
                   </div>
                 </div>
 
                 <div class="col-3 pad-right">
                   <q-input
-                    v-if="!loading"
+
                     label="Base Batch"
                     required
-                    v-model.number="baseFlavourEntries[index].batchNumber"
+                    v-model.number="baseFlavourEntries[index].batchnumber"
                     :rules="[ val => val >= 1 || 'Batch must be positive!' ]"
                     type="number"
                     :color="flavourColors[baseFlavourEntries[index].flavour]"
@@ -321,73 +310,66 @@ Flavour<template>
                 </div>
                 <div class="col-3 pad-right">
                   <q-input
-                    v-if="!loading"
                     label="Number of Blender Batches"
                     required
-                    v-model.number="baseFlavourEntries[index].blenderAmount"
-                    :rules="[ val => val >= 1 || 'Amount must be positive!' ]"
+                    v-model.number="baseFlavourEntries[index].blenderamount"
+                    :rules="[ val => val >= 1 || 'amount must be positive!' ]"
                     type="number"
                     :color="flavourColors[baseFlavourEntries[index].flavour]"
                   />
                 </div>
                 <div class="col-3 pad-right">
                   <q-input
-                    v-if="!loading"
                     label="Number of Large Bases"
                     required
-                    v-model.number="baseFlavourEntries[index].largeAmount"
-                    :rules="[ val => val >= 0 || 'Amount must not be negative!' ]"
+                    v-model.number="baseFlavourEntries[index].largeamount"
+                    :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
                     type="number"
                     :color="flavourColors[baseFlavourEntries[index].flavour]"
                   />
                 </div>
                 <div class="col-3">
                   <q-input
-                    v-if="!loading"
                     label="Number of Small Bases"
                     required
-                    v-model.number="baseFlavourEntries[index].smallAmount"
-                    :rules="[ val => val >= 0 || 'Amount must not be negative!' ]"
+                    v-model.number="baseFlavourEntries[index].smallamount"
+                    :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
                     type="number"
                     :color="flavourColors[baseFlavourEntries[index].flavour]"
                   />
                 </div>
                 <div class="col-4 pad-right">
                   <q-input
-                    v-if="!loading"
                     label="Number of Small Cake Bases"
                     required
-                    v-model.number="baseFlavourEntries[index].smallCakeAmount"
-                    :rules="[ val => val >= 0 || 'Amount must not be negative!' ]"
+                    v-model.number="baseFlavourEntries[index].smallcakeamount"
+                    :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
                     type="number"
                     :color="flavourColors[baseFlavourEntries[index].flavour]"
                   />
                 </div>
                 <div class="col-4 pad-right">
                   <q-input
-                    v-if="!loading"
                     label="Number of Medium Cake Bases"
                     required
-                    v-model.number="baseFlavourEntries[index].mediumCakeAmount"
-                    :rules="[ val => val >= 0 || 'Amount must not be negative!' ]"
+                    v-model.number="baseFlavourEntries[index].mediumcakeamount"
+                    :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
                     type="number"
                     :color="flavourColors[baseFlavourEntries[index].flavour]"
                   />
                 </div>
                 <div class="col-4">
                   <q-input
-                    v-if="!loading"
                     label="Number of Large Cake Bases"
                     required
-                    v-model.number="baseFlavourEntries[index].largeCakeAmount"
-                    :rules="[ val => val >= 0 || 'Amount must not be negative!' ]"
+                    v-model.number="baseFlavourEntries[index].largecakeamount"
+                    :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
                     type="number"
                     :color="flavourColors[baseFlavourEntries[index].flavour]"
                   />
                 </div>
                 <div class="col-12">
                   <q-input
-                    v-if="!loading"
                     label="Notes"
                     v-model="baseFlavourEntries[index].notes"
                     type="text"
@@ -404,7 +386,7 @@ Flavour<template>
                 label="Add Flavour"
                 class="full-width"
                 color="primary"
-                @click="addBaseFlavour"
+                @click="addFlavourEntry"
               />
             </q-tab-panel>
 
@@ -417,7 +399,6 @@ Flavour<template>
                 <div class="row full-width items-center no-wrap">
                   <div class="col pad-right">
                     <q-select
-                      v-if="!loading"
                       label="Batch Flavour"
                       required
                       v-model="icecreamFlavourEntries[index].flavour"
@@ -429,21 +410,19 @@ Flavour<template>
 
                   <div class="col-auto">
                     <q-btn
-                      v-if="!loading"
                       flat
                       round
                       icon="delete"
-                      @click="deleteIcecreamFlavour(index)"
+                      @click="deleteFlavourEntry(index)"
                     />
                   </div>
                 </div>
 
                 <div class="col-3 pad-right">
                   <q-input
-                    v-if="!loading"
                     label="Batch Number"
                     required
-                    v-model.number="icecreamFlavourEntries[index].batchNumber"
+                    v-model.number="icecreamFlavourEntries[index].batchnumber"
                     :rules="[ val => val >= 1 || 'Batch must be positive!' ]"
                     type="number"
                     :color="flavourColors[icecreamFlavourEntries[index].flavour]"
@@ -451,40 +430,36 @@ Flavour<template>
                 </div>
                 <div class="col-3 pad-right">
                   <q-input
-                    v-if="!loading"
                     label="Number of Jugs"
                     required
-                    v-model.number="icecreamFlavourEntries[index].jugsAmount"
-                    :rules="[ val => val >= 0 || 'Amount must not be negative!' ]"
+                    v-model.number="icecreamFlavourEntries[index].jugsamount"
+                    :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
                     type="number"
                     :color="flavourColors[icecreamFlavourEntries[index].flavour]"
                   />
                 </div>
                 <div class="col-3 pad-right">
                   <q-input
-                    v-if="!loading"
                     label="Number of Trays"
                     required
-                    v-model.number="icecreamFlavourEntries[index].traysAmount"
-                    :rules="[ val => val >= 0 || 'Amount must not be negative!' ]"
+                    v-model.number="icecreamFlavourEntries[index].traysamount"
+                    :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
                     type="number"
                     :color="flavourColors[icecreamFlavourEntries[index].flavour]"
                   />
                 </div>
                 <div class="col-3">
                   <q-input
-                    v-if="!loading"
                     label="Number of Unsaleable Trays"
                     required
-                    v-model.number="icecreamFlavourEntries[index].unsaleableTraysAmount"
-                    :rules="[ val => val >= 0 || 'Amount must not be negative!' ]"
+                    v-model.number="icecreamFlavourEntries[index].unsaleabletraysamount"
+                    :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
                     type="number"
                     :color="flavourColors[icecreamFlavourEntries[index].flavour]"
                   />
                 </div>
                 <div class="col-12">
                   <q-input
-                    v-if="!loading"
                     label="Notes"
                     v-model="icecreamFlavourEntries[index].notes"
                     type="text"
@@ -501,7 +476,7 @@ Flavour<template>
                 label="Add Flavour"
                 class="full-width"
                 color="primary"
-                @click="addIcecreamFlavour"
+                @click="addFlavourEntry"
               />
             </q-tab-panel>
 
@@ -512,45 +487,46 @@ Flavour<template>
               >
                 Please Select Production Type
               </div>
-
-              <div v-if="loading">
-                <q-card
-                  v-for="index in 3"
-                  v-bind:key="index"
-                  class="row items-center full-width flavour-item"
-                >
-                  <div class="row full-width items-center no-wrap">
-                    <div class="col pad-right">
-                      <q-skeleton type="QInput" />
-                    </div>
-
-                    <div class="col-auto">
-                      <q-skeleton type="QAvatar" />
-                    </div>
-                  </div>
-
-                  <div class="col-3 pad-right">
-                    <q-skeleton type="QInput" />
-                  </div>
-                  <div class="col-3 pad-right">
-                    <q-skeleton type="QInput" />
-                  </div>
-                  <div class="col-3 pad-right">
-                    <q-skeleton type="QInput" />
-                  </div>
-                  <div class="col-3">
-                    <q-skeleton type="QInput" />
-                  </div>
-
-                  <div class="col-12">
-                    <q-skeleton type="QInput" />
-                  </div>
-                </q-card>
-              </div>
-
-              <q-skeleton v-if="loading" type="QBtn" class="full-width" />
             </q-tab-panel>
           </q-tab-panels>
+
+          <div v-if="loading">
+            <q-card
+              v-for="index in 3"
+              v-bind:key="index"
+              class="row items-center full-width flavour-item"
+            >
+              <div class="row full-width items-center no-wrap">
+                <div class="col pad-right">
+                  <q-skeleton type="QInput" />
+                </div>
+
+                <div class="col-auto">
+                  <q-skeleton type="QAvatar" />
+                </div>
+              </div>
+
+              <div class="col-3 pad-right">
+                <q-skeleton type="QInput" />
+              </div>
+              <div class="col-3 pad-right">
+                <q-skeleton type="QInput" />
+              </div>
+              <div class="col-3 pad-right">
+                <q-skeleton type="QInput" />
+              </div>
+              <div class="col-3">
+                <q-skeleton type="QInput" />
+              </div>
+
+              <div class="col-12">
+                <q-skeleton type="QInput" />
+              </div>
+            </q-card>
+
+            <q-skeleton v-if="loading" type="QBtn" class="full-width" />
+          </div>
+
         </q-card-section>
 
         <q-separator />
@@ -560,7 +536,7 @@ Flavour<template>
           v-if="!loading"
         >
           <q-card
-            v-for="(item, index) in staffData"
+            v-for="(item, index) in staffEntries"
             v-bind:key="index"
             class="row items-center full-width staff-item"
           >
@@ -569,7 +545,7 @@ Flavour<template>
                 <q-select
                   label="Staff Member"
                   required
-                  v-model="staffData[index].name"
+                  v-model="staffEntries[index].name"
                   :rules="[ val => staffOptions.includes(val) || 'Please select staff member!' ]"
                   :options="staffOptions"
                 />
@@ -578,7 +554,7 @@ Flavour<template>
               <div class="col-3 pad-right">
                 <q-input
                   label="Start Time"
-                  v-model="staffData[index].startTime"
+                  v-model="staffEntries[index].starttime"
                   required
                   mask="##:##"
                   class="q-field--with-bottom"
@@ -586,7 +562,7 @@ Flavour<template>
                   <template v-slot:append>
                     <q-icon name="access_time" class="cursor-pointer">
                       <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                        <q-time v-model="staffData[index].startTime">
+                        <q-time v-model="staffEntries[index].starttime">
                           <div class="row items-center justify-end">
                             <q-btn v-close-popup label="Close" color="primary" flat />
                           </div>
@@ -600,7 +576,7 @@ Flavour<template>
               <div class="col-3 pad-right">
                 <q-input
                   label="End Time"
-                  v-model="staffData[index].endTime"
+                  v-model="staffEntries[index].endtime"
                   required
                   mask="##:##"
                   class="q-field--with-bottom"
@@ -608,7 +584,7 @@ Flavour<template>
                   <template v-slot:append>
                     <q-icon name="access_time" class="cursor-pointer">
                       <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                        <q-time v-model="staffData[index].endTime">
+                        <q-time v-model="staffEntries[index].endtime">
                           <div class="row items-center justify-end">
                             <q-btn v-close-popup label="Close" color="primary" flat />
                           </div>
@@ -622,7 +598,7 @@ Flavour<template>
               <div class="col-3 pad-right">
                 <q-input
                   label="Break Length (Minutes)"
-                  v-model="staffData[index].breakLength"
+                  v-model="staffEntries[index].breaklength"
                   required
                   type="number"
                   class="q-field--with-bottom"
@@ -642,7 +618,6 @@ Flavour<template>
           </q-card>
 
           <q-btn
-            v-if="!loading"
             icon="add"
             id="add-staff-btn"
             label="Add Staff Member"
@@ -686,7 +661,14 @@ Flavour<template>
         </q-card-section>
 
         <q-card-section id="save-btn-container">
-          <q-btn label="Save" class="full-width" :disable="loading" type="submit" color="primary"/>
+          <q-btn
+            label="Save"
+            class="full-width"
+            :loading="saveLoading"
+            :disable="loading"
+            type="submit"
+            color="primary"
+          />
         </q-card-section>
       </q-form>
     </q-card>
@@ -740,10 +722,8 @@ Flavour<template>
 
 <script>
 import { defineComponent } from 'vue';
-import axios from 'axios';
 
 const AUTOUPDATEINTERVAL = 30;
-const PATHTOAPI = 'http://localhost:8888/api'; // TODO: Convert to ENV system
 
 export default defineComponent({
   name: 'PageData',
@@ -752,6 +732,7 @@ export default defineComponent({
       date: '',
       loading: true,
       productionType: 'Select Production Type',
+      oldProductionType: '',
       productionTypeOptions: ['Cutting Day', 'Packing Day', 'Base Day', 'Ice Cream Day'],
       staffOptions: ['Bob', 'Jane', 'Januel'],
       flavourOptions: [
@@ -777,97 +758,229 @@ export default defineComponent({
       packingFlavourEntries: [],
       baseFlavourEntries: [],
       icecreamFlavourEntries: [],
-      staffData: [],
+      staffEntries: [],
+      dateCreated: false,
+      saveLoading: false,
+      dayID: null,
+      test: 3,
     };
   },
   mounted() {
     const currentDate = new Date();
-    const DD = currentDate.getDate();
-    const MM = currentDate.getMonth() < 10 ? `0${currentDate.getMonth()}` : currentDate.getMonth();
+    const DD = currentDate.getDate() < 10 ? `0${currentDate.getDate()}` : currentDate.getDate();
+    const M = currentDate.getMonth() + 1; // account for dates starting at 0
+    const MM = M < 10 ? `0${M}` : M;
     const YYYY = currentDate.getFullYear();
     this.date = `${DD}-${MM}-${YYYY}`;
 
     const self = this;
     setInterval(() => {
-      self.onUpdate();
+      console.log('Auto saving!');
+      if (self.$router.path === '/data') {
+        self.onUpdate();
+      }
     }, AUTOUPDATEINTERVAL * 1000);
   },
   methods: {
     getData() {
+      console.log('trying to get data on', this.date, 'for', this.productionType);
       this.startLoading();
+
+      this.cuttingFlavourEntries = [];
+      this.packingFlavourEntries = [];
+      this.baseFlavourEntries = [];
+      this.icecreamFlavourEntries = [];
+      this.staffEntries = [];
+
       const self = this;
-      axios
-        .post(`${PATHTOAPI}/flavours/get`, {
+      if (self.productionType !== 'Select Production Type') {
+        this.$api
+          .post('/flavours/get', {
+            date: String(self.date),
+            productionType: String(self.productionType),
+          }, {
+            headers: {
+              Authorization: `Bearer ${self.$store.state.token}`,
+            },
+          })
+          .then((flavoursRes) => {
+            console.log('received flavours response', flavoursRes);
+            const flavourData = flavoursRes.data;
+            if (self.productionType === 'Packing Day') {
+              self.packingFlavourEntries = flavourData;
+            } else if (self.productionType === 'Cutting Day') {
+              self.cuttingFlavourEntries = flavourData;
+            } else if (self.productionType === 'Ice Cream Day') {
+              self.icecreamFlavourEntries = flavourData;
+            } else if (self.productionType === 'Base Day') {
+              self.baseFlavourEntries = flavourData;
+            } else {
+              console.log(self.productionType);
+              throw new Error('Cannot get flavour with no local production date!');
+            }
+          })
+          .catch((err) => {
+            if (err.response) {
+              if (err.response.status === 401) {
+                self.$router.push('/');
+                throw err;
+              } else {
+                self.$q.notify({
+                  message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
+                  icon: 'warning',
+                  color: 'red',
+                });
+                throw err;
+              }
+            } else {
+              self.$q.notify({
+                message: 'Unexpected Error! Server May be Down!',
+                icon: 'warning',
+                color: 'red',
+              });
+              throw err;
+            }
+          });
+      }
+
+      this.$api
+        .post('/staff/get', {
           date: String(self.date),
-          productionType: String(self.productionType),
+        }, {
+          headers: {
+            Authorization: `Bearer ${self.$store.state.token}`,
+          },
         })
-        .then((res) => {
-          if (this.productionType === 'Packing Day') {
-            this.packingFlavourEntries = res;
-          } if (this.productionType === 'Cutting Day') {
-            this.cuttingFlavourEntries = res;
-          } if (this.productionType === 'Icecream Day') {
-            this.icecreamFlavourEntries = res;
-          } if (this.productionType === 'Base Day') {
-            this.baseFlavourEntries = res;
-          }
+        .then((staffRes) => {
+          console.log('received staff response', staffRes);
+          const staffData = staffRes.data;
+          self.staffEntries = staffData;
           self.endLoading();
         })
         .catch((err) => {
-          // TODO: use $q.prompt to create alert that there was an error
-          throw err;
+          if (err.response) {
+            if (err.response.status === 401) {
+              self.$router.push('/');
+              throw err;
+            } else {
+              self.$q.notify({
+                message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
+                icon: 'warning',
+                color: 'red',
+              });
+              throw err;
+            }
+          } else {
+            self.$q.notify({
+              message: 'Unexpected Error! Server May be Down!',
+              icon: 'warning',
+              color: 'red',
+            });
+            throw err;
+          }
         });
     },
     onUpdate() {
-      console.log('Auto Update'); // eslint-ignore-line
+      this.saveLoading = true;
+      console.log('Attempting to save');
       let flavourEntryData = null;
       if (this.productionType === 'Packing Day') {
-        console.log(this.packingFlavourEntries); // eslint-ignore-line
+        console.log(this.packingFlavourEntries);
         flavourEntryData = this.packingFlavourEntries;
-      } if (this.productionType === 'Cutting Day') {
-        console.log(this.cuttingFlavourEntries); // eslint-ignore-line
+      } else if (this.productionType === 'Cutting Day') {
+        console.log(this.cuttingFlavourEntries);
         flavourEntryData = this.cuttingFlavourEntries;
-      } if (this.productionType === 'Icecream Day') {
-        console.log(this.icecreamFlavourEntries); // eslint-ignore-line
+      } else if (this.productionType === 'Ice Cream Day') {
+        console.log(this.icecreamFlavourEntries);
         flavourEntryData = this.icecreamFlavourEntries;
-      } if (this.productionType === 'Base Day') {
-        console.log(this.baseFlavourEntries); // eslint-ignore-line
+      } else if (this.productionType === 'Base Day') {
+        console.log(this.baseFlavourEntries);
         flavourEntryData = this.baseFlavourEntries;
+      } else {
+        return;
       }
 
+      console.log('Posting update REQ');
+      // will not execute if there are no entries
       const self = this;
       for (let i = 0; i < flavourEntryData.length; i += 1) {
-        axios
-          .post(`${PATHTOAPI}/flavours/update`, {
+        this.$api
+          .post('/flavours/update', {
             id: String(flavourEntryData[i].id),
             productionType: String(self.productionType),
             flavourEntryData: flavourEntryData[i], // TODO: send data through JSON maybe
+          }, {
+            headers: {
+              Authorization: `Bearer ${self.$store.state.token}`,
+            },
           })
           .then((res) => {
-            console.log('saved flavour data', res); // eslint-ignore-line
-            // TODO: handle this somehow
+            console.log('saved flavour data', res);
           })
           .catch((err) => {
-            // TODO: use $q.prompt to create alert that there was an error
-            throw err;
+            if (err.response) {
+              if (err.response.status === 401) {
+                self.$router.push('/');
+                throw err;
+              } else {
+                self.$q.notify({
+                  message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
+                  icon: 'warning',
+                  color: 'red',
+                });
+                throw err;
+              }
+            } else {
+              self.$q.notify({
+                message: 'Unexpected Error! Server May be Down!',
+                icon: 'warning',
+                color: 'red',
+              });
+              throw err;
+            }
           });
       }
 
-      for (let i = 0; i < self.staffData.length; i += 1) {
-        axios
-          .post(`${PATHTOAPI}/staff/update`, {
-            id: String(self.staffData[i].id),
-            staffEntryData: Object(self.staffData[i]), // TODO: send data through JSON maybe
+      for (let i = 0; i < self.staffEntries.length; i += 1) {
+        this.$api
+          .post('/staff/update', {
+            id: String(self.staffEntries[i].id),
+            staffEntryData: Object(self.staffEntries[i]), // TODO: send data through JSON maybe
+          }, {
+            headers: {
+              Authorization: `Bearer ${self.$store.state.token}`,
+            },
           })
           .then((res) => {
-            console.log('saved staff data', res); // eslint-ignore-line
-            // TODO: handle this somehow
+            console.log('saved staff data', res);
           })
           .catch((err) => {
-            // TODO: use $q.prompt to create alert that there was an error
-            throw err;
+            if (err.response) {
+              if (err.response.status === 401) {
+                self.$router.push('/');
+                throw err;
+              } else {
+                self.$q.notify({
+                  message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
+                  icon: 'warning',
+                  color: 'red',
+                });
+                throw err;
+              }
+            } else {
+              self.$q.notify({
+                message: 'Unexpected Error! Server May be Down!',
+                icon: 'warning',
+                color: 'red',
+              });
+              throw err;
+            }
           });
       }
+
+      setTimeout(() => {
+        self.saveLoading = false;
+      }, 1 * 1000);
     },
     startLoading() {
       console.log('Begin Loading...');
@@ -875,156 +988,408 @@ export default defineComponent({
     },
     endLoading() {
       console.log('End Loading!');
-      this.loading = false;
+      const self = this;
+      setTimeout(() => {
+        self.loading = false;
+      }, 300);
     },
-    // TODO: for adding flavours and all requests, create loading feedback
     addFlavourEntry() {
       let flavourEntryData = null;
       if (this.productionType === 'Packing Day') {
         flavourEntryData = {
           flavour: '',
-          batchNumber: 0,
-          slabAmount: 0,
-          boxAmount: 0,
-          useByDate: '',
-          sampleAmount: 0,
+          batchnumber: 0,
+          slabamount: 0,
+          boxamount: 0,
+          usebydate: '',
+          sampleamount: 0,
           notes: '',
         };
-      } if (this.productionType === 'Cutting Day') {
+      } else if (this.productionType === 'Cutting Day') {
         flavourEntryData = {
           flavour: '',
-          slabBatch: 0,
-          baseBatch: 0,
-          slabAmount: 0,
-          boxAmount: 0,
-        };
-      } if (this.productionType === 'Icecream Day') {
-        flavourEntryData = {
-          flavour: '',
-          blenderAmount: 0,
-          batchNumber: 0,
-          smallAmount: 0,
-          largeAmount: 0,
-          smallCakeAmount: 0,
-          mediumCakeAmount: 0,
-          largeCakeAmount: 0,
+          slabbatch: 0,
+          basebatch: 0,
+          slabamount: 0,
+          boxamount: 0,
           notes: '',
         };
-      } if (this.productionType === 'Base Day') {
+      } else if (this.productionType === 'Ice Cream Day') {
         flavourEntryData = {
           flavour: '',
-          blenderAmount: 0,
-          batchNumber: 0,
-          smallAmount: 0,
-          largeAmount: 0,
-          smallCakeAmount: 0,
-          mediumCakeAmount: 0,
-          largeCakeAmount: 0,
+          batchnumber: 0,
+          jugsamount: 0,
+          traysamount: 0,
+          unsaleabletraysamount: 0,
           notes: '',
         };
+      } else if (this.productionType === 'Base Day') {
+        flavourEntryData = {
+          flavour: '',
+          blenderamount: 0,
+          batchnumber: 0,
+          smallamount: 0,
+          largeamount: 0,
+          smallcakeamount: 0,
+          mediumcakeamount: 0,
+          largecakeamount: 0,
+          notes: '',
+        };
+      } else {
+        throw new Error('Cannot add flavour with no local production date!');
       }
 
       const self = this;
-      axios
-        .post(`${PATHTOAPI}/flavours/add`, {
+      this.$api
+        .post('/flavours/add', {
           date: String(self.date),
           productionType: String(self.productionType),
           flavourEntryData,
+        }, {
+          headers: {
+            Authorization: `Bearer ${self.$store.state.token}`,
+          },
         })
         .then((res) => {
-          if (this.productionType === 'Packing Day') {
-            this.packingFlavourEntries.push(res);
-          } if (this.productionType === 'Cutting Day') {
-            this.cuttingFlavourEntries.push(res);
-          } if (this.productionType === 'Icecream Day') {
-            this.icecreamFlavourEntries.push(res);
-          } if (this.productionType === 'Base Day') {
-            this.baseFlavourEntries.push(res);
+          const { data } = res;
+          if (self.productionType === 'Packing Day') {
+            self.packingFlavourEntries.push(data);
+          } else if (self.productionType === 'Cutting Day') {
+            self.cuttingFlavourEntries.push(data);
+          } else if (self.productionType === 'Ice Cream Day') {
+            self.icecreamFlavourEntries.push(data);
+          } else if (self.productionType === 'Base Day') {
+            self.baseFlavourEntries.push(data);
+          } else {
+            throw new Error('Cannot add flavour with no local production date!');
           }
         })
         .catch((err) => {
-          // TODO: use $q.prompt to create alert that there was an error
-          throw err;
+          if (err.response) {
+            if (err.response.status === 401) {
+              self.$router.push('/');
+              throw err;
+            } else {
+              self.$q.notify({
+                message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
+                icon: 'warning',
+                color: 'red',
+              });
+              throw err;
+            }
+          } else {
+            self.$q.notify({
+              message: 'Unexpected Error! Server May be Down!',
+              icon: 'warning',
+              color: 'red',
+            });
+            throw err;
+          }
         });
     },
     deleteFlavourEntry(index) {
+      console.log('Deleting flavour entry');
       let flavourEntries = null;
       if (this.productionType === 'Packing Day') {
         flavourEntries = this.packingFlavourEntries;
-      } if (this.productionType === 'Cutting Day') {
+      } else if (this.productionType === 'Cutting Day') {
         flavourEntries = this.cuttingFlavourEntries;
-      } if (this.productionType === 'Icecream Day') {
+      } else if (this.productionType === 'Ice Cream Day') {
         flavourEntries = this.icecreamFlavourEntries;
-      } if (this.productionType === 'Base Day') {
+      } else if (this.productionType === 'Base Day') {
         flavourEntries = this.baseFlavourEntries;
+      } else {
+        throw new Error('Cannot delete flavour with no local production date!');
       }
 
+      console.log('Posting delete REQ! with flavour entry:', flavourEntries[index]);
       const self = this;
-      axios
-        .post(`${PATHTOAPI}/flavours/delete`, {
+      this.$api
+        .post('/flavours/delete', {
           id: String(flavourEntries[index].id),
+          productionType: String(self.productionType),
+        }, {
+          headers: {
+            Authorization: `Bearer ${self.$store.state.token}`,
+          },
         })
         .then((res) => {
-          console.log('deleted cutting', res);
+          console.log('deleted flavour entry', res);
           if (self.productionType === 'Packing Day') {
             self.packingFlavourEntries.splice(index, 1);
-          } if (self.productionType === 'Cutting Day') {
+          } else if (self.productionType === 'Cutting Day') {
             self.cuttingFlavourEntries.splice(index, 1);
-          } if (self.productionType === 'Icecream Day') {
+          } else if (self.productionType === 'Ice Cream Day') {
             self.icecreamFlavourEntries.splice(index, 1);
-          } if (self.productionType === 'Base Day') {
+          } else if (self.productionType === 'Base Day') {
             self.baseFlavourEntries.splice(index, 1);
+          } else {
+            throw new Error('Cannot delete flavour with no local production date!');
           }
         })
         .catch((err) => {
-          // TODO: use $q.prompt to create alert that there was an error
-          throw err;
+          if (err.response) {
+            if (err.response.status === 401) {
+              self.$router.push('/');
+              throw err;
+            } else {
+              self.$q.notify({
+                message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
+                icon: 'warning',
+                color: 'red',
+              });
+              throw err;
+            }
+          } else {
+            self.$q.notify({
+              message: 'Unexpected Error! Server May be Down!',
+              icon: 'warning',
+              color: 'red',
+            });
+            throw err;
+          }
         });
     },
     addStaffMember() {
       const self = this;
-      axios
-        .post(`${PATHTOAPI}/staff/add`, {
+      this.$api
+        .post('/staff/add', {
           date: String(self.date),
-          flavourEntryData: {
+          staffEntryData: {
             name: '',
-            startTime: '',
-            endTime: '',
-            breakLength: 0,
+            starttime: '',
+            endtime: '',
+            breaklength: 0,
+          },
+        }, {
+          headers: {
+            Authorization: `Bearer ${self.$store.state.token}`,
           },
         })
         .then((res) => {
-          this.staffFlavour.push(res);
+          const { data } = res;
+          self.staffEntries.push(data);
         })
         .catch((err) => {
-          // TODO: use $q.prompt to create alert that there was an error
-          throw err;
+          if (err.response) {
+            if (err.response.status === 401) {
+              self.$router.push('/');
+              throw err;
+            } else {
+              self.$q.notify({
+                message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
+                icon: 'warning',
+                color: 'red',
+              });
+              throw err;
+            }
+          } else {
+            self.$q.notify({
+              message: 'Unexpected Error! Server May be Down!',
+              icon: 'warning',
+              color: 'red',
+            });
+            throw err;
+          }
         });
     },
     deleteStaffMember(index) {
       const self = this;
-      axios
-        .post(`${PATHTOAPI}/staff/delete`, {
-          id: String(self.staffFlavour[index].id),
+      this.$api
+        .post('/staff/delete', {
+          id: String(self.staffEntries[index].id),
+        }, {
+          headers: {
+            Authorization: `Bearer ${self.$store.state.token}`,
+          },
         })
         .then((res) => {
           console.log('deleted cutting', res);
-          this.staffFlavour.splice(index, 1);
+          self.staffEntries.splice(index, 1);
         })
         .catch((err) => {
-          // TODO: use $q.prompt to create alert that there was an error
-          throw err;
+          if (err.response) {
+            if (err.response.status === 401) {
+              self.$router.push('/');
+              throw err;
+            } else {
+              self.$q.notify({
+                message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
+                icon: 'warning',
+                color: 'red',
+              });
+              throw err;
+            }
+          } else {
+            self.$q.notify({
+              message: 'Unexpected Error! Server May be Down!',
+              icon: 'warning',
+              color: 'red',
+            });
+            throw err;
+          }
         });
+    },
+    updateLocalProductionType(newProductionType, oldProductionType, updateFromUser) {
+      console.log('update local production type to', newProductionType, 'from', oldProductionType);
+      console.log('from user', updateFromUser, 'date created?', this.dateCreated);
+
+      if (!updateFromUser) {
+        this.productionType = newProductionType;
+        this.oldProductionType = newProductionType;
+      }
+
+      if (!this.dateCreated && newProductionType !== 'Select Production Type') {
+        const self = this;
+        this.$api
+          .post('/days/add', {
+            date: String(self.date),
+            productionType: String(newProductionType),
+          }, {
+            headers: {
+              Authorization: `Bearer ${self.$store.state.token}`,
+            },
+          })
+          .then((res) => {
+            const { data } = res;
+            self.endLoading();
+            self.dateCreated = true;
+            console.log('add day data', data);
+          })
+          .catch((err) => {
+            if (err.response) {
+              if (err.response.status === 401) {
+                self.$router.push('/');
+                throw err;
+              } else {
+                self.$q.notify({
+                  message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
+                  icon: 'warning',
+                  color: 'red',
+                });
+                throw err;
+              }
+            } else {
+              self.$q.notify({
+                message: 'Unexpected Error! Server May be Down!',
+                icon: 'warning',
+                color: 'red',
+              });
+              throw err;
+            }
+          });
+      } else if (this.dateCreated && newProductionType !== 'Select Production Type'
+              && oldProductionType !== 'Select Production Type'
+              && updateFromUser) {
+        const self = this;
+        this.$q.dialog({
+          title: 'Confirm',
+          message: `Would you like to change the production type on the ${this.date} to a ${newProductionType}? This will delete all previously created data entries on this date.`,
+          cancel: true,
+          persistent: true,
+        }).onOk(() => {
+          console.log('updating day production type');
+          self.$api
+            .post('/days/update', {
+              id: String(self.dayID),
+              productionType: String(newProductionType),
+            }, {
+              headers: {
+                Authorization: `Bearer ${self.$store.state.token}`,
+              },
+            })
+            .then((res) => {
+              const { data } = res;
+              console.log('update day data', data);
+              self.getData();
+            })
+            .catch((err) => {
+              if (err.response) {
+                if (err.response.status === 401) {
+                  self.$router.push('/');
+                  throw err;
+                } else {
+                  self.$q.notify({
+                    message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
+                    icon: 'warning',
+                    color: 'red',
+                  });
+                  throw err;
+                }
+              } else {
+                self.$q.notify({
+                  message: 'Unexpected Error! Server May be Down!',
+                  icon: 'warning',
+                  color: 'red',
+                });
+                throw err;
+              }
+            });
+        }).onCancel(() => {
+          console.log('cancelling to', oldProductionType);
+          self.productionType = oldProductionType;
+          self.endLoading();
+        });
+      } else {
+        this.getData();
+      }
+    },
+    productionTypeSelecterUpdate(newValue) {
+      console.log('User changed production type!');
+      this.startLoading();
+      this.updateLocalProductionType(newValue, String(this.oldProductionType), true);
+      this.oldProductionType = newValue;
     },
   },
   watch: {
     date(newDate) {
-      console.log('changed Date', newDate);
-      this.productionType = 'Select Production Type';
-    },
-    productionType(newProductionType) {
-      console.log('changed production type', newProductionType); // eslint-ignore-line
-      this.getData();
+      this.startLoading();
+      console.log('User changed date to', newDate);
+      const self = this;
+      this.$api
+        .post('/days/get', {
+          date: String(self.date),
+        }, {
+          headers: {
+            Authorization: `Bearer ${self.$store.state.token}`,
+          },
+        })
+        .then((res) => {
+          const { data } = res;
+          console.log('get day', data);
+          if (data.id) {
+            self.dayID = data.id;
+            self.dateCreated = true;
+            self.updateLocalProductionType(data.productiontype, String(self.productionType), false);
+          } else {
+            self.dateCreated = false;
+            self.updateLocalProductionType('Select Production Type', String(self.productionType), false);
+          }
+        })
+        .catch((err) => {
+          if (err.response) {
+            if (err.response.status === 401) {
+              self.$router.push('/');
+              throw err;
+            } else {
+              self.$q.notify({
+                message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
+                icon: 'warning',
+                color: 'red',
+              });
+              self.updateLocalProductionType('Select Production Type', String(self.productionType), false);
+              throw err;
+            }
+          } else {
+            self.$q.notify({
+              message: 'Unexpected Error! Server May be Down!',
+              icon: 'warning',
+              color: 'red',
+            });
+            self.updateLocalProductionType('Select Production Type', String(self.productionType), false);
+            throw err;
+          }
+        });
     },
   },
 });

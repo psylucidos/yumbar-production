@@ -4,79 +4,74 @@ const staffEntriesController = require('../controllers/staffEntries');
 const router = new Router();
 router.prefix('/staff');
 
-router.post('/add', (ctx) => {
-  const { date, staffEntryData } = ctx.body;
+// TODO: Make controller promise return system much better
 
-  staffEntriesController
-    .addStaffEntry(date, staffEntryData)
-    .then((res, newEntry) => {
-      if (res === 200) {
-        ctx.status = 201;
-        ctx.body = newEntry;
-      } else {
-        ctx.status = 500;
-      }
-    })
-    .catch((err) => {
-      ctx.status = 500;
-      console.error(err);
-    });
+router.post('/add', async (ctx) => {
+  const { date, staffEntryData } = ctx.request.body;
+
+  const result = await staffEntriesController
+    .addStaffEntry(date, staffEntryData);
+
+  if (result.id) {
+    ctx.status = 200;
+    ctx.body = result;
+  } else {
+    ctx.status = 500;
+    console.error(result);
+  }
 });
 
-router.post('/update', (ctx) => {
-  const { id, staffEntryData } = ctx.body;
+router.post('/update', async (ctx) => {
+  const { id, staffEntryData } = ctx.request.body;
 
-  staffEntriesController
-    .updateStaffEntry(id, staffEntryData)
-    .then((res, newEntry) => {
-      if (res === 200) {
-        ctx.status = 201;
-        ctx.body = newEntry;
-      } else {
-        ctx.status = 500;
-      }
-    })
-    .catch((err) => {
-      ctx.status = 500;
-      console.error(err);
-    });
+  const result = await staffEntriesController
+    .updateStaffEntry(id, staffEntryData);
+
+  console.log('update result', result);
+
+  if (typeof result === 'number') {
+    if (result === 200) {
+      ctx.status = 200;
+    } else if (result === 404) {
+      ctx.status = 404;
+    }
+  } else {
+    ctx.status = 500;
+    console.error(result);
+  }
 });
 
-router.post('/delete', (ctx) => {
-  const { id } = ctx.body;
+router.post('/delete', async (ctx) => {
+  const { id } = ctx.request.body;
 
-  staffEntriesController
-    .deleteStaffEntry(id)
-    .then((res) => {
-      if (res === 200) {
-        ctx.status = 200;
-      } else {
-        ctx.status = 500;
-      }
-    })
-    .catch((err) => {
-      ctx.status = 500;
-      console.error(err);
-    });
+  const result = await staffEntriesController
+    .deleteStaffEntry(id);
+
+  if (typeof result === 'number') {
+    if (result === 404) {
+      ctx.status = 404;
+    } else if (result === 200) {
+      ctx.status = 200;
+    }
+  } else {
+    ctx.status = 500;
+    console.error(result);
+  }
 });
 
-router.post('/get', (ctx) => {
-  const { date } = ctx.body;
+router.post('/get', async (ctx) => {
+  const { date } = ctx.request.body;
 
-  staffEntriesController
-    .getStaffEntries(date)
-    .then((res, entries) => {
-      if (res === 200) {
-        ctx.status = 200;
-        ctx.body = entries;
-      } else {
-        ctx.status = 500;
-      }
-    })
-    .catch((err) => {
-      ctx.status = 500;
-      console.error(err);
-    });
+  const result = await staffEntriesController
+    .getStaffEntries(date);
+
+  if (Array.isArray(result)) {
+    ctx.status = 200;
+    ctx.body = result;
+  } else {
+    ctx.status = 500;
+    console.error(result);
+  }
 });
 
 module.exports = router;

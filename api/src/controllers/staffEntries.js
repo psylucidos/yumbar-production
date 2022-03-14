@@ -7,17 +7,17 @@ module.exports = {
       [
         date,
         staffEntryData.name,
-        staffEntryData.startTime,
-        staffEntryData.endTime,
-        staffEntryData.breakLength,
+        staffEntryData.starttime,
+        staffEntryData.endtime,
+        staffEntryData.breaklength,
       ],
       (err, res) => {
         if (err) {
           reject(err);
         } else if (res.rows[0]) {
-          resolve(200, res.rows[0]);
+          resolve(res.rows[0]);
         } else {
-          resolve(new Error('Staff entry not added!'));
+          reject(new Error('Staff entry not added!'));
         }
       },
     );
@@ -29,17 +29,18 @@ module.exports = {
       [
         id,
         staffEntryData.name,
-        staffEntryData.startTime,
-        staffEntryData.endTime,
-        staffEntryData.breakLength,
+        staffEntryData.starttime,
+        staffEntryData.endtime,
+        staffEntryData.breaklength,
       ],
       (err, res) => {
+        console.log('updated staff', err, res);
         if (err) {
           reject(err);
-        } else if (res.rows[0]) {
-          resolve(200, res.rows[0]);
+        } else if (res.rowCount === 1) {
+          resolve(200);
         } else {
-          resolve(new Error('Staff entry not updated!'));
+          resolve(404);
         }
       },
     );
@@ -52,23 +53,23 @@ module.exports = {
       (err, res) => {
         if (err) {
           reject(err);
-        } else if (res.rows[0]) {
+        } else if (res.rows) {
           resolve(200);
         } else {
-          resolve(new Error('Staff entry not deleted!'));
+          resolve(404);
         }
       },
     );
   }),
 
   getStaffEntries: (date) => new Promise((resolve, reject) => {
-    db.query('SELECT * FROM staffentries WHERE date=$1;', [date], (err, res) => {
+    db.query('SELECT * FROM staffentries WHERE productiondate=$1;', [date], (err, res) => {
       if (err) {
         reject(err);
       } else if (res.rows) {
-        resolve(200, res.rows);
+        resolve(res.rows);
       } else {
-        resolve(200, undefined);
+        reject(new Error('Unable to get staff entries!'));
       }
     });
   }),

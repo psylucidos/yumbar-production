@@ -14,8 +14,15 @@ import { createStore } from 'vuex';
 
 export default store((/* { ssrContext } */) => {
   const Store = createStore({
-    modules: {
-      // example
+    state() {
+      return {
+        token: '',
+      };
+    },
+    mutations: {
+      setToken(state, newToken) {
+        state.token = newToken;
+      },
     },
 
     // enable strict mode (adds overhead!)
