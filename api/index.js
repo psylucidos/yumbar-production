@@ -18,9 +18,6 @@ router.get('/ping', async (ctx) => {
 app
   .use(cors())
   .use(bodyParser())
-  .use(jwt({
-    secret: process.env.SECRET,
-  }).unless({ path: [/^\/api\/auth/] }))
   .use(async (ctx, next) => {
     console.log(` --- [${ctx.method}] ${ctx.path} ---`);
     if (process.env.VERBOSE) {
@@ -50,6 +47,9 @@ app
       }
     }
   })
+  .use(jwt({
+    secret: process.env.SECRET,
+  }).unless({ path: [/^\/api\/auth*/] }))
   .use(apiRouter.routes())
   .use(apiRouter.allowedMethods())
   .use(router.routes())

@@ -1,5 +1,7 @@
 ## Yumbar Production API
 Super simple CRUD API for stored production data.
+### Setup
+Run `node setup.js USERNAME PASSWORD`, to reset then create the database tables and create the admin user.
 ### Routes
 #### /auth/login
 Method: `POST`

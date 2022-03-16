@@ -74,14 +74,14 @@ module.exports = {
       );
     } else if (productionType === 'Ice Cream Day') {
       db.query(
-        'INSERT INTO icecreamflavourentries(productiondate, flavour, batchnumber, jugsamount, traysamount, unsaleabletraysamount, notes) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *;',
+        'INSERT INTO icecreamflavourentries(productiondate, flavour, batchnumber, jugsamount, traysamount, unsaleableweight, notes) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *;',
         [
           date,
           flavourEntryData.flavour,
           flavourEntryData.batchnumber,
           flavourEntryData.jugsamount,
           flavourEntryData.traysamount,
-          flavourEntryData.unsaleabletraysamount,
+          flavourEntryData.unsaleableweight,
           flavourEntryData.notes,
         ],
         (err, res) => {
@@ -172,14 +172,14 @@ module.exports = {
       );
     } else if (productionType === 'Ice Cream Day') {
       db.query(
-        'UPDATE icecreamflavourentries SET flavour=$2, batchnumber=$3, jugsamount=$4, traysamount=$5, unsaleabletraysamount=$6, notes=$7 WHERE id=$1',
+        'UPDATE icecreamflavourentries SET flavour=$2, batchnumber=$3, jugsamount=$4, traysamount=$5, unsaleableweight=$6, notes=$7 WHERE id=$1',
         [
           id,
           flavourEntryData.flavour,
           flavourEntryData.batchnumber,
           flavourEntryData.jugsamount,
           flavourEntryData.traysamount,
-          flavourEntryData.unsaleabletraysamount,
+          flavourEntryData.unsaleableweight,
           flavourEntryData.notes,
         ],
         (err, res) => {

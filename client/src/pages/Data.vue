@@ -65,8 +65,9 @@ Flavour<template>
                       label="Batch Flavour"
                       required
                       v-model="packingFlavourEntries[index].flavour"
-                      :rules="[ val => flavourOptions.includes(val) || 'Please select flavour!' ]"
-                      :options="flavourOptions"
+                      :rules="[ val =>flavourOptions.concat(packingDayFlavourOptions).includes(val)
+                        || 'Please select flavour!' ]"
+                      :options="flavourOptions.concat(packingDayFlavourOptions)"
                       :color="flavourColors[packingFlavourEntries[index].flavour]"
                     />
                   </div>
@@ -450,9 +451,9 @@ Flavour<template>
                 </div>
                 <div class="col-3">
                   <q-input
-                    label="Number of Unsaleable Trays"
+                    label="Weight of Unsaleable Icecream"
                     required
-                    v-model.number="icecreamFlavourEntries[index].unsaleabletraysamount"
+                    v-model.number="icecreamFlavourEntries[index].unsaleableweight"
                     :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
                     type="number"
                     :color="flavourColors[icecreamFlavourEntries[index].flavour]"
@@ -734,7 +735,7 @@ export default defineComponent({
       productionType: 'Select Production Type',
       oldProductionType: '',
       productionTypeOptions: ['Cutting Day', 'Packing Day', 'Base Day', 'Ice Cream Day'],
-      staffOptions: ['Bob', 'Jane', 'Januel'],
+      staffOptions: ['Andoah', 'Alysse', 'Cat', 'Beau', 'Iris', 'Lily', 'Isabelle', 'Nicole', 'Yindi'],
       flavourOptions: [
         'Vanilla',
         'Chocolate',
@@ -746,6 +747,9 @@ export default defineComponent({
         'Blueberry',
         'Raspberry',
         'Coffee',
+      ],
+      packingDayFlavourOptions: [
+        'Combo 1', 'Combo 2', 'Combo 3', 'Combo 4', 'Combo 5',
       ],
       baseFlavourOptions: ['Vanilla', 'Chocolate'],
       flavourColors: {
@@ -1020,7 +1024,7 @@ export default defineComponent({
           batchnumber: 0,
           jugsamount: 0,
           traysamount: 0,
-          unsaleabletraysamount: 0,
+          unsaleableweight: 0,
           notes: '',
         };
       } else if (this.productionType === 'Base Day') {

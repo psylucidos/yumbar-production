@@ -63,6 +63,6 @@ CREATE TABLE icecreamflavourentries (
   batchnumber integer NOT NULL,
   jugsamount integer NOT NULL,
   traysamount integer NOT NULL,
-  unsaleabletraysamount integer NOT NULL,
+  unsaleableweight integer NOT NULL,
   notes text
 );

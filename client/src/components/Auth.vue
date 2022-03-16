@@ -72,6 +72,15 @@ export default defineComponent({
           }
         })
         .catch((err) => {
+          if (err.response) {
+            if (err.response.status === 401) {
+              self.$q.notify({
+                message: 'Incorrect Credentials!',
+                icon: 'warning',
+                color: 'red',
+              });
+            }
+          }
           console.error(err);
         });
     },
