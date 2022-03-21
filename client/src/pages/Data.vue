@@ -1,8 +1,10 @@
-Flavour<template>
+<template>
   <q-page class="flex flex-center">
     <q-card class="data-card">
       <q-form
         @submit="onUpdate"
+        @validation-success="formIsValid = true"
+        @validation-error="formIsValid = false"
         class="q-pa-md"
       >
         <q-card-section>
@@ -16,6 +18,7 @@ Flavour<template>
                 dense
                 v-model="date"
                 mask="##-##-####"
+                :rules="[ val => isValidDate(val) || 'Please enter a valid date!']"
               >
                 <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer">
@@ -40,6 +43,7 @@ Flavour<template>
               <q-select
                 dense
                 v-model="productionType"
+                :rules="[ val => !!val || 'Please enter a production type!']"
                 @update:model-value="productionTypeSelecterUpdate"
                 :options="productionTypeOptions"
                 :disable="loading"
@@ -74,10 +78,11 @@ Flavour<template>
 
                   <div class="col-auto pad-right">
                     <q-input
-                      label="Use by Date"
+                      label="Use by Date (DD-MM-YYYY)"
                       required
                       v-model="packingFlavourEntries[index].usebydate"
                       mask="##-##-####"
+                      :rules="[ val => isValidDate(val) || 'Please enter a valid date!']"
                       class="q-field--with-bottom"
                     >
                       <template v-slot:append>
@@ -117,17 +122,8 @@ Flavour<template>
                     label="Slab Batch #"
                     required
                     v-model.number="packingFlavourEntries[index].batchnumber"
-                    :rules="[ val => val >= 1 || 'Batch must be positive!' ]"
-                    type="number"
-                    :color="flavourColors[packingFlavourEntries[index].flavour]"
-                  />
-                </div>
-                <div class="col-3 pad-right">
-                  <q-input
-                    label="Number of Slabs"
-                    required
-                    v-model.number="packingFlavourEntries[index].slabamount"
-                    :rules="[ val => val >= 1 || 'amount must be positive!' ]"
+                    @focus="$event.target.select()"
+                    :rules="[ val => val >= 0 || 'Batch must be positive!' ]"
                     type="number"
                     :color="flavourColors[packingFlavourEntries[index].flavour]"
                   />
@@ -137,7 +133,20 @@ Flavour<template>
                     label="Number of Boxes"
                     required
                     v-model.number="packingFlavourEntries[index].boxamount"
-                    :rules="[ val => val >= 1 || 'amount must be positive!' ]"
+                    @focus="$event.target.select()"
+                    @update:model-value="val => packingFlavourEntries[index].slabamount = val * 2"
+                    :rules="[ val => val >= 0 || 'Amount must be positive!' ]"
+                    type="number"
+                    :color="flavourColors[packingFlavourEntries[index].flavour]"
+                  />
+                </div>
+                <div class="col-3 pad-right">
+                  <q-input
+                    label="Number of Slabs"
+                    required
+                    v-model.number="packingFlavourEntries[index].slabamount"
+                    @focus="$event.target.select()"
+                    :rules="[ val => val >= 0 || 'Amount must be positive!' ]"
                     type="number"
                     :color="flavourColors[packingFlavourEntries[index].flavour]"
                   />
@@ -147,7 +156,8 @@ Flavour<template>
                     label="Number of Samples"
                     required
                     v-model.number="packingFlavourEntries[index].sampleamount"
-                    :rules="[ val => val >= 1 || 'amount must be positive!' ]"
+                    @focus="$event.target.select()"
+                    :rules="[ val => val >= 0 || 'amount must be positive!' ]"
                     type="number"
                     :color="flavourColors[packingFlavourEntries[index].flavour]"
                   />
@@ -207,31 +217,34 @@ Flavour<template>
                 <div class="col-3 pad-right">
                   <q-input
 
-                    label="Slab Batch"
+                    label="Slab Batch #"
                     required
                     v-model.number="cuttingFlavourEntries[index].slabbatch"
-                    :rules="[ val => val >= 1 || 'Batch must be positive!' ]"
+                    @focus="$event.target.select()"
+                    :rules="[ val => val >= 0 || 'Batch must be positive!' ]"
                     type="number"
                     :color="flavourColors[cuttingFlavourEntries[index].flavour]"
                   />
                 </div>
                 <div class="col-3 pad-right">
                   <q-input
-                    label="Base Batch"
+                    label="Base Batch #"
                     required
                     v-model.number="cuttingFlavourEntries[index].basebatch"
-                    :rules="[ val => val >= 1 || 'Batch must be positive!' ]"
+                    @focus="$event.target.select()"
+                    :rules="[ val => val >= 0 || 'Batch must be positive!' ]"
                     type="number"
                     :color="flavourColors[cuttingFlavourEntries[index].flavour]"
                   />
                 </div>
                 <div class="col-3 pad-right">
                   <q-input
-
                     label="Slab amount"
                     required
                     v-model.number="cuttingFlavourEntries[index].slabamount"
-                    :rules="[ val => val >= 1 || 'amount must be positive!' ]"
+                    @update:model-value="val => cuttingFlavourEntries[index].boxamount = Math.floor(val / 2)"
+                    @focus="$event.target.select()"
+                    :rules="[ val => val >= 0 || 'amount must be positive!' ]"
                     type="number"
                     :color="flavourColors[cuttingFlavourEntries[index].flavour]"
                   />
@@ -241,7 +254,8 @@ Flavour<template>
                     label="Box amount"
                     required
                     v-model.number="cuttingFlavourEntries[index].boxamount"
-                    :rules="[ val => val >= 1 || 'amount must be positive!' ]"
+                    @focus="$event.target.select()"
+                    :rules="[ val => val >= 0 || 'amount must be positive!' ]"
                     type="number"
                     :color="flavourColors[cuttingFlavourEntries[index].flavour]"
                   />
@@ -301,10 +315,11 @@ Flavour<template>
                 <div class="col-3 pad-right">
                   <q-input
 
-                    label="Base Batch"
+                    label="Base Batch #"
                     required
                     v-model.number="baseFlavourEntries[index].batchnumber"
-                    :rules="[ val => val >= 1 || 'Batch must be positive!' ]"
+                    @focus="$event.target.select()"
+                    :rules="[ val => val >= 0 || 'Batch must be positive!' ]"
                     type="number"
                     :color="flavourColors[baseFlavourEntries[index].flavour]"
                   />
@@ -314,7 +329,8 @@ Flavour<template>
                     label="Number of Blender Batches"
                     required
                     v-model.number="baseFlavourEntries[index].blenderamount"
-                    :rules="[ val => val >= 1 || 'amount must be positive!' ]"
+                    @focus="$event.target.select()"
+                    :rules="[ val => val >= 0 || 'amount must be positive!' ]"
                     type="number"
                     :color="flavourColors[baseFlavourEntries[index].flavour]"
                   />
@@ -324,6 +340,7 @@ Flavour<template>
                     label="Number of Large Bases"
                     required
                     v-model.number="baseFlavourEntries[index].largeamount"
+                    @focus="$event.target.select()"
                     :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
                     type="number"
                     :color="flavourColors[baseFlavourEntries[index].flavour]"
@@ -334,6 +351,7 @@ Flavour<template>
                     label="Number of Small Bases"
                     required
                     v-model.number="baseFlavourEntries[index].smallamount"
+                    @focus="$event.target.select()"
                     :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
                     type="number"
                     :color="flavourColors[baseFlavourEntries[index].flavour]"
@@ -344,6 +362,7 @@ Flavour<template>
                     label="Number of Small Cake Bases"
                     required
                     v-model.number="baseFlavourEntries[index].smallcakeamount"
+                    @focus="$event.target.select()"
                     :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
                     type="number"
                     :color="flavourColors[baseFlavourEntries[index].flavour]"
@@ -354,6 +373,7 @@ Flavour<template>
                     label="Number of Medium Cake Bases"
                     required
                     v-model.number="baseFlavourEntries[index].mediumcakeamount"
+                    @focus="$event.target.select()"
                     :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
                     type="number"
                     :color="flavourColors[baseFlavourEntries[index].flavour]"
@@ -364,6 +384,7 @@ Flavour<template>
                     label="Number of Large Cake Bases"
                     required
                     v-model.number="baseFlavourEntries[index].largecakeamount"
+                    @focus="$event.target.select()"
                     :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
                     type="number"
                     :color="flavourColors[baseFlavourEntries[index].flavour]"
@@ -421,10 +442,11 @@ Flavour<template>
 
                 <div class="col-3 pad-right">
                   <q-input
-                    label="Batch Number"
+                    label="Batch #"
                     required
                     v-model.number="icecreamFlavourEntries[index].batchnumber"
-                    :rules="[ val => val >= 1 || 'Batch must be positive!' ]"
+                    @focus="$event.target.select()"
+                    :rules="[ val => val >= 0 || 'Batch must be positive!' ]"
                     type="number"
                     :color="flavourColors[icecreamFlavourEntries[index].flavour]"
                   />
@@ -434,6 +456,7 @@ Flavour<template>
                     label="Number of Jugs"
                     required
                     v-model.number="icecreamFlavourEntries[index].jugsamount"
+                    @focus="$event.target.select()"
                     :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
                     type="number"
                     :color="flavourColors[icecreamFlavourEntries[index].flavour]"
@@ -444,6 +467,7 @@ Flavour<template>
                     label="Number of Trays"
                     required
                     v-model.number="icecreamFlavourEntries[index].traysamount"
+                    @focus="$event.target.select()"
                     :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
                     type="number"
                     :color="flavourColors[icecreamFlavourEntries[index].flavour]"
@@ -454,6 +478,7 @@ Flavour<template>
                     label="Weight of Unsaleable Icecream"
                     required
                     v-model.number="icecreamFlavourEntries[index].unsaleableweight"
+                    @focus="$event.target.select()"
                     :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
                     type="number"
                     :color="flavourColors[icecreamFlavourEntries[index].flavour]"
@@ -554,10 +579,11 @@ Flavour<template>
 
               <div class="col-3 pad-right">
                 <q-input
-                  label="Start Time"
+                  label="Start Time (24h)"
                   v-model="staffEntries[index].starttime"
+                  :rules="[ val => val.match(/[0-9][0-9]:[0-9][0-9]$/)
+                        || 'Please enter a valid time (HH:MM)!']"
                   required
-                  mask="##:##"
                   class="q-field--with-bottom"
                 >
                   <template v-slot:append>
@@ -576,10 +602,11 @@ Flavour<template>
 
               <div class="col-3 pad-right">
                 <q-input
-                  label="End Time"
+                  label="End Time (24h)"
                   v-model="staffEntries[index].endtime"
                   required
-                  mask="##:##"
+                  :rules="[ val => val.match(/[0-9][0-9]:[0-9][0-9]$/)
+                        || 'Please enter a valid time (HH:MM)!']"
                   class="q-field--with-bottom"
                 >
                   <template v-slot:append>
@@ -600,6 +627,8 @@ Flavour<template>
                 <q-input
                   label="Break Length (Minutes)"
                   v-model="staffEntries[index].breaklength"
+                  @focus="$event.target.select()"
+                  :rules="[ val => val >= 0 || 'Please enter a number!']"
                   required
                   type="number"
                   class="q-field--with-bottom"
@@ -696,10 +725,14 @@ Flavour<template>
 
   .flavour-item, .staff-item {
     padding: 1vw;
+    padding-bottom: 3vh;
     margin-bottom: 16px;
   }
 
   .staff-item {
+    padding-top: 1vh;
+    padding-bottom: 3vh;
+
     .q-field {
       padding-bottom: 0;
     }
@@ -726,6 +759,25 @@ import { defineComponent } from 'vue';
 
 const AUTOUPDATEINTERVAL = 30;
 
+function checkObjectNotNull(obj) {
+  const keys = Object.keys(obj);
+  for (let i = 0; i < keys.length; i += 1) {
+    if (obj[keys[i]] !== null || obj[keys[i]] !== undefined) {
+      if (typeof obj[keys[i]] === 'object'
+        && !Array.isArray(obj[keys[i]])
+        && obj[keys[i]] !== null) {
+        const subObject = checkObjectNotNull(obj[keys[i]]);
+        if (!subObject) {
+          return false;
+        }
+      }
+    } else {
+      return false;
+    }
+  }
+  return true;
+}
+
 export default defineComponent({
   name: 'PageData',
   data() {
@@ -735,7 +787,7 @@ export default defineComponent({
       productionType: 'Select Production Type',
       oldProductionType: '',
       productionTypeOptions: ['Cutting Day', 'Packing Day', 'Base Day', 'Ice Cream Day'],
-      staffOptions: ['Andoah', 'Alysse', 'Cat', 'Beau', 'Iris', 'Lily', 'Isabelle', 'Nicole', 'Yindi'],
+      staffOptions: ['Andoah', 'Alysse', 'Cat', 'Beau', 'Iris', 'Lily', 'Isabelle', 'Nicole', 'Yindi', 'Azalea', 'Kira', 'Satima', 'Lucy'],
       flavourOptions: [
         'Vanilla',
         'Chocolate',
@@ -747,9 +799,14 @@ export default defineComponent({
         'Blueberry',
         'Raspberry',
         'Coffee',
+        'Caramel',
       ],
       packingDayFlavourOptions: [
-        'Combo 1', 'Combo 2', 'Combo 3', 'Combo 4', 'Combo 5',
+        'Combo 1',
+        'Combo 2',
+        'Combo 3',
+        'Combo 4',
+        'Combo 5',
       ],
       baseFlavourOptions: ['Vanilla', 'Chocolate'],
       flavourColors: {
@@ -767,6 +824,7 @@ export default defineComponent({
       saveLoading: false,
       dayID: null,
       test: 3,
+      formIsValid: false,
     };
   },
   mounted() {
@@ -779,10 +837,7 @@ export default defineComponent({
 
     const self = this;
     setInterval(() => {
-      console.log('Auto saving!');
-      if (self.$router.path === '/data') {
-        self.onUpdate();
-      }
+      self.onUpdate();
     }, AUTOUPDATEINTERVAL * 1000);
   },
   methods: {
@@ -885,8 +940,7 @@ export default defineComponent({
         });
     },
     onUpdate() {
-      this.saveLoading = true;
-      console.log('Attempting to save');
+      console.log('Attempting to save with form validity', this.formIsValid);
       let flavourEntryData = null;
       if (this.productionType === 'Packing Day') {
         console.log(this.packingFlavourEntries);
@@ -904,6 +958,15 @@ export default defineComponent({
         return;
       }
 
+      // check on data entry page and object data is complete
+      if ((window.location.hash !== '#/data' || !checkObjectNotNull(flavourEntryData))
+        || !this.formIsValid) {
+        console.log('passing over auto save');
+        return;
+      }
+
+      this.saveLoading = true;
+
       console.log('Posting update REQ');
       // will not execute if there are no entries
       const self = this;
@@ -920,6 +983,7 @@ export default defineComponent({
           })
           .then((res) => {
             console.log('saved flavour data', res);
+            self.saveLoading = false;
           })
           .catch((err) => {
             if (err.response) {
@@ -981,10 +1045,6 @@ export default defineComponent({
             }
           });
       }
-
-      setTimeout(() => {
-        self.saveLoading = false;
-      }, 1 * 1000);
     },
     startLoading() {
       console.log('Begin Loading...');
@@ -1000,20 +1060,34 @@ export default defineComponent({
     addFlavourEntry() {
       let flavourEntryData = null;
       if (this.productionType === 'Packing Day') {
+        let previousBatchNumber = 0;
+        let previousUseBy = 0;
+        if (this.packingFlavourEntries.length > 0) {
+          const previousEntry = this.packingFlavourEntries[this.packingFlavourEntries.length - 1];
+          previousBatchNumber = previousEntry.batchnumber;
+          previousUseBy = previousEntry.usebydate;
+        }
         flavourEntryData = {
           flavour: '',
-          batchnumber: 0,
+          batchnumber: previousBatchNumber,
           slabamount: 0,
           boxamount: 0,
-          usebydate: '',
+          usebydate: previousUseBy,
           sampleamount: 0,
           notes: '',
         };
       } else if (this.productionType === 'Cutting Day') {
+        let previousSlabBatch = 0;
+        let previousBaseBatch = 0;
+        if (this.cuttingFlavourEntries.length > 0) {
+          const previousEntry = this.cuttingFlavourEntries[this.cuttingFlavourEntries.length - 1];
+          previousSlabBatch = previousEntry.slabbatch;
+          previousBaseBatch = previousEntry.basebatch;
+        }
         flavourEntryData = {
           flavour: '',
-          slabbatch: 0,
-          basebatch: 0,
+          slabbatch: previousSlabBatch,
+          basebatch: previousBaseBatch,
           slabamount: 0,
           boxamount: 0,
           notes: '',
@@ -1343,6 +1417,20 @@ export default defineComponent({
       this.startLoading();
       this.updateLocalProductionType(newValue, String(this.oldProductionType), true);
       this.oldProductionType = newValue;
+    },
+    isValidDate(date) {
+      const [dd, mm, yyyy] = date.split('-');
+      if (dd.length !== 2
+      || mm.length !== 2
+      || yyyy.length !== 4) {
+        return false;
+      }
+      const parsedDate = new Date(`${yyyy}/${mm}/${dd}`);
+      console.log(parsedDate);
+      if (parsedDate.getTime() > 0) {
+        return true;
+      }
+      return false;
     },
   },
   watch: {

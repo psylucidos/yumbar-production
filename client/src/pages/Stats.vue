@@ -4,15 +4,15 @@
       <div class="col-6">
         <q-card>
           <q-card-section class="title-section">
-            <div v-if="!loading" class="text-h6">Ice Cream Flavor Distribution</div>
-            <q-skeleton v-if="loading" width="300px" type="text" class="text-h6" />
+            <div v-if="!icecreamLoading" class="text-h6">Ice Cream Flavor Distribution</div>
+            <q-skeleton v-if="icecreamLoading" width="300px" type="text" class="text-h6" />
           </q-card-section>
 
           <q-separator inset />
 
           <q-card-section>
-            <IcecreamFlavourChart v-if="!loading" :data="icecreamData" />
-            <q-skeleton v-if="loading" height="400px" square />
+            <IcecreamFlavourChart v-if="!icecreamLoading" :data="icecreamData" />
+            <q-skeleton v-if="icecreamLoading" height="400px" square />
           </q-card-section>
         </q-card>
       </div>
@@ -20,8 +20,8 @@
       <div class="col-6">
         <q-card class="text-h6">
           <q-card-section class="title-section">
-            <div v-if="!loading" class="text-h6">Ice Cream Production</div>
-            <q-skeleton v-if="loading" width="300px" type="text" class="text-h6" />
+            <div v-if="!productionLoading" class="text-h6">Ice Cream Production</div>
+            <q-skeleton v-if="productionLoading" width="300px" type="text" class="text-h6" />
           </q-card-section>
 
           <q-separator inset />
@@ -30,14 +30,14 @@
             <TotalProductionChart
               :data="totalProductionData"
               :labels="totalProductionLabels"
-              v-if="!loading"
+              v-if="!productionLoading"
             />
-            <q-skeleton v-if="loading" height="400px" square />
+            <q-skeleton v-if="productionLoading" height="400px" square />
           </q-card-section>
         </q-card>
       </div>
 
-      <div class="col-5">
+      <div class="col-8">
         <q-card class="text-h6">
           <q-card-section class="title-section">
             <div v-if="!loading" class="text-h6">Production Data</div>
@@ -130,6 +130,8 @@ export default defineComponent({
       icecreamData: [],
       totalProductionData: [],
       totalProductionLabels: [],
+      icecreamLoading: true,
+      productionLoading: true,
     };
   },
   mounted() {
@@ -166,7 +168,8 @@ export default defineComponent({
         }
         console.log('created data', newData);
         self.icecreamData = newData;
-        // self.loading = false;
+        self.icecreamLoading = false;
+        self.loading = false;
       })
       .catch((err) => {
         if (err.response) {
@@ -228,7 +231,7 @@ export default defineComponent({
         console.log(totalProductionData, labels);
         self.totalProductionData = totalProductionData.reverse();
         self.totalProductionLabels = labels.reverse();
-        self.loading = false;
+        self.productionLoading = false;
       })
       .catch((err) => {
         if (err.response) {
