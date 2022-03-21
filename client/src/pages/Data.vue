@@ -1061,7 +1061,7 @@ export default defineComponent({
       let flavourEntryData = null;
       if (this.productionType === 'Packing Day') {
         let previousBatchNumber = 0;
-        let previousUseBy = 0;
+        let previousUseBy = '';
         if (this.packingFlavourEntries.length > 0) {
           const previousEntry = this.packingFlavourEntries[this.packingFlavourEntries.length - 1];
           previousBatchNumber = previousEntry.batchnumber;
@@ -1093,19 +1093,29 @@ export default defineComponent({
           notes: '',
         };
       } else if (this.productionType === 'Ice Cream Day') {
+        let previousBatch = 0;
+        if (this.icecreamFlavourEntries.length > 0) {
+          const previousEntry = this.icecreamFlavourEntries[this.icecreamFlavourEntries.length - 1];
+          previousBatch = previousEntry.batchnumber;
+        }
         flavourEntryData = {
           flavour: '',
-          batchnumber: 0,
+          batchnumber: previousBatch,
           jugsamount: 0,
           traysamount: 0,
           unsaleableweight: 0,
           notes: '',
         };
       } else if (this.productionType === 'Base Day') {
+        let previousBatch = 0;
+        if (this.baseFlavourEntries.length > 0) {
+          const previousEntry = this.baseFlavourEntries[this.baseFlavourEntries.length - 1];
+          previousBatch = previousEntry.batchnumber;
+        }
         flavourEntryData = {
           flavour: '',
           blenderamount: 0,
-          batchnumber: 0,
+          batchnumber: previousBatch,
           smallamount: 0,
           largeamount: 0,
           smallcakeamount: 0,
