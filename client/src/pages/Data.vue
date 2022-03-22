@@ -787,7 +787,8 @@ export default defineComponent({
       productionType: 'Select Production Type',
       oldProductionType: '',
       productionTypeOptions: ['Cutting Day', 'Packing Day', 'Base Day', 'Ice Cream Day'],
-      staffOptions: ['Andoah', 'Alysse', 'Cat', 'Beau', 'Iris', 'Lily', 'Isabelle', 'Nicole', 'Yindi', 'Azalea', 'Kira', 'Satima', 'Lucy'],
+      staffOptions: ['Andoah', 'Alysse', 'Cat', 'Beau', 'Iris', 'Lily', 'Isabelle', 'Nicole', 'Yindi', 'Azalea', 'Kira', 'Satima', 'Lucy',
+        'Sutara', 'Sophie'],
       flavourOptions: [
         'Vanilla',
         'Chocolate',
