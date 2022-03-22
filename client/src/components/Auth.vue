@@ -3,7 +3,7 @@
     <div class="text-h5 text-center">
       Login
     </div>
-    <div class="">
+    <div>
       <q-form
         @submit="onSubmit"
         class="q-pa-md"
@@ -11,17 +11,35 @@
         <q-input
           v-model="username"
           label="Username"
+          :disable="underMaintenance"
           :rules="[ val => val && val.length > 0 || 'Please type something']"
         />
         <q-input
           v-model="password"
           type="password"
           label="Password"
+          :disable="underMaintenance"
           :rules="[ val => val && val.length > 0 || 'Please type something']"
         />
-        <q-btn label="Submit" class="full-width" type="submit" color="primary"/>
+        <q-btn
+          label="Submit"
+          :disable="underMaintenance"
+          class="full-width"
+          type="submit"
+          color="primary"
+        />
       </q-form>
     </div>
+    <q-item
+      v-if="underMaintenance"
+      class="bg-orange rounded-borders text-white"
+    >
+      <q-item-section avatar>
+        <q-icon color="primary" name="warning" />
+      </q-item-section>
+
+      <q-item-section>Application currently under maintenance, please try again later.</q-item-section>
+    </q-item>
   </q-card>
 </template>
 
@@ -47,6 +65,7 @@ export default defineComponent({
     return {
       username: '',
       password: '',
+      underMaintenance: false,
     };
   },
   methods: {

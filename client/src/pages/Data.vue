@@ -2,7 +2,7 @@
   <q-page class="flex flex-center">
     <q-card class="data-card">
       <q-form
-        @submit="onUpdate"
+        @submit="saveData"
         @validation-success="formIsValid = true"
         @validation-error="formIsValid = false"
         class="q-pa-md"
@@ -75,7 +75,6 @@
                       :color="flavourColors[packingFlavourEntries[index].flavour]"
                     />
                   </div>
-
                   <div class="col-auto pad-right">
                     <q-input
                       label="Use by Date (DD-MM-YYYY)"
@@ -778,6 +777,15 @@ function checkObjectNotNull(obj) {
   return true;
 }
 
+function formatDateString(date) {
+  const currentDate = new Date(date);
+  const DD = currentDate.getDate() < 10 ? `0${currentDate.getDate()}` : currentDate.getDate();
+  const M = currentDate.getMonth() + 1; // account for dates starting at 0
+  const MM = M < 10 ? `0${M}` : M;
+  const YYYY = currentDate.getFullYear();
+  return `${DD}-${MM}-${YYYY}`;
+}
+
 export default defineComponent({
   name: 'PageData',
   data() {
@@ -788,7 +796,7 @@ export default defineComponent({
       oldProductionType: '',
       productionTypeOptions: ['Cutting Day', 'Packing Day', 'Base Day', 'Ice Cream Day'],
       staffOptions: ['Andoah', 'Alysse', 'Cat', 'Beau', 'Iris', 'Lily', 'Isabelle', 'Nicole', 'Yindi', 'Azalea', 'Kira', 'Satima', 'Lucy',
-        'Sutara', 'Sophie', 'Dale'],
+        'Sutara', 'Sophie', 'Dale', 'Nara'],
       flavourOptions: [
         'Vanilla',
         'Chocolate',
@@ -838,12 +846,12 @@ export default defineComponent({
 
     const self = this;
     setInterval(() => {
-      self.onUpdate();
+      self.saveData(true);
     }, AUTOUPDATEINTERVAL * 1000);
   },
   methods: {
     getData() {
-      console.log('trying to get data on', this.date, 'for', this.productionType);
+      console.log('Trying to get data on:', this.date, 'for:', this.productionType);
       this.startLoading();
 
       this.cuttingFlavourEntries = [];
@@ -864,9 +872,12 @@ export default defineComponent({
             },
           })
           .then((flavoursRes) => {
-            console.log('received flavours response', flavoursRes);
+            console.log('Received get flavours response:', flavoursRes);
             const flavourData = flavoursRes.data;
             if (self.productionType === 'Packing Day') {
+              for (let i = 0; i < flavourData.length; i += 1) {
+                flavourData[i].usebydate = formatDateString(flavourData[i].usebydate);
+              }
               self.packingFlavourEntries = flavourData;
             } else if (self.productionType === 'Cutting Day') {
               self.cuttingFlavourEntries = flavourData;
@@ -875,32 +886,10 @@ export default defineComponent({
             } else if (self.productionType === 'Base Day') {
               self.baseFlavourEntries = flavourData;
             } else {
-              console.log(self.productionType);
               throw new Error('Cannot get flavour with no local production date!');
             }
           })
-          .catch((err) => {
-            if (err.response) {
-              if (err.response.status === 401) {
-                self.$router.push('/');
-                throw err;
-              } else {
-                self.$q.notify({
-                  message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
-                  icon: 'warning',
-                  color: 'red',
-                });
-                throw err;
-              }
-            } else {
-              self.$q.notify({
-                message: 'Unexpected Error! Server May be Down!',
-                icon: 'warning',
-                color: 'red',
-              });
-              throw err;
-            }
-          });
+          .catch(self.handlePostErr);
       }
 
       this.$api
@@ -912,48 +901,23 @@ export default defineComponent({
           },
         })
         .then((staffRes) => {
-          console.log('received staff response', staffRes);
+          console.log('Received get staff response', staffRes);
           const staffData = staffRes.data;
           self.staffEntries = staffData;
           self.endLoading();
         })
-        .catch((err) => {
-          if (err.response) {
-            if (err.response.status === 401) {
-              self.$router.push('/');
-              throw err;
-            } else {
-              self.$q.notify({
-                message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
-                icon: 'warning',
-                color: 'red',
-              });
-              throw err;
-            }
-          } else {
-            self.$q.notify({
-              message: 'Unexpected Error! Server May be Down!',
-              icon: 'warning',
-              color: 'red',
-            });
-            throw err;
-          }
-        });
+        .catch(self.handlePostErr);
     },
-    onUpdate() {
-      console.log('Attempting to save with form validity', this.formIsValid);
+    saveData(autosave = false) {
+      console.log('Attempting to save data');
       let flavourEntryData = null;
       if (this.productionType === 'Packing Day') {
-        console.log(this.packingFlavourEntries);
         flavourEntryData = this.packingFlavourEntries;
       } else if (this.productionType === 'Cutting Day') {
-        console.log(this.cuttingFlavourEntries);
         flavourEntryData = this.cuttingFlavourEntries;
       } else if (this.productionType === 'Ice Cream Day') {
-        console.log(this.icecreamFlavourEntries);
         flavourEntryData = this.icecreamFlavourEntries;
       } else if (this.productionType === 'Base Day') {
-        console.log(this.baseFlavourEntries);
         flavourEntryData = this.baseFlavourEntries;
       } else {
         return;
@@ -962,16 +926,15 @@ export default defineComponent({
       // check on data entry page and object data is complete
       if ((window.location.hash !== '#/data' || !checkObjectNotNull(flavourEntryData))
         || !this.formIsValid) {
-        console.log('passing over auto save');
         return;
       }
 
       this.saveLoading = true;
 
-      console.log('Posting update REQ');
       // will not execute if there are no entries
       const self = this;
       for (let i = 0; i < flavourEntryData.length; i += 1) {
+        console.log('Saving flavour entry:', Object(flavourEntryData[i]));
         this.$api
           .post('/flavours/update', {
             id: String(flavourEntryData[i].id),
@@ -982,35 +945,35 @@ export default defineComponent({
               Authorization: `Bearer ${self.$store.state.token}`,
             },
           })
-          .then((res) => {
-            console.log('saved flavour data', res);
+          .then(() => {
+            console.log('Saved flavour entry successfully!');
             self.saveLoading = false;
           })
           .catch((err) => {
             if (err.response) {
               if (err.response.status === 401) {
                 self.$router.push('/');
-                throw err;
-              } else {
+              } else if (!autosave) {
                 self.$q.notify({
                   message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
                   icon: 'warning',
                   color: 'red',
                 });
-                throw err;
               }
-            } else {
+            } else if (!autosave) {
               self.$q.notify({
                 message: 'Unexpected Error! Server May be Down!',
                 icon: 'warning',
                 color: 'red',
               });
-              throw err;
             }
+
+            console.error(err);
           });
       }
 
       for (let i = 0; i < self.staffEntries.length; i += 1) {
+        console.log('Saving staff entry:', Object(self.staffEntries[i]));
         this.$api
           .post('/staff/update', {
             id: String(self.staffEntries[i].id),
@@ -1020,30 +983,26 @@ export default defineComponent({
               Authorization: `Bearer ${self.$store.state.token}`,
             },
           })
-          .then((res) => {
-            console.log('saved staff data', res);
-          })
           .catch((err) => {
             if (err.response) {
               if (err.response.status === 401) {
                 self.$router.push('/');
-                throw err;
-              } else {
+              } else if (!autosave) {
                 self.$q.notify({
                   message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
                   icon: 'warning',
                   color: 'red',
                 });
-                throw err;
               }
-            } else {
+            } else if (!autosave) {
               self.$q.notify({
                 message: 'Unexpected Error! Server May be Down!',
                 icon: 'warning',
                 color: 'red',
               });
-              throw err;
             }
+
+            console.error(err);
           });
       }
     },
@@ -1142,6 +1101,7 @@ export default defineComponent({
         .then((res) => {
           const { data } = res;
           if (self.productionType === 'Packing Day') {
+            data.usebydate = formatDateString(data.usebydate);
             self.packingFlavourEntries.push(data);
           } else if (self.productionType === 'Cutting Day') {
             self.cuttingFlavourEntries.push(data);
@@ -1153,31 +1113,9 @@ export default defineComponent({
             throw new Error('Cannot add flavour with no local production date!');
           }
         })
-        .catch((err) => {
-          if (err.response) {
-            if (err.response.status === 401) {
-              self.$router.push('/');
-              throw err;
-            } else {
-              self.$q.notify({
-                message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
-                icon: 'warning',
-                color: 'red',
-              });
-              throw err;
-            }
-          } else {
-            self.$q.notify({
-              message: 'Unexpected Error! Server May be Down!',
-              icon: 'warning',
-              color: 'red',
-            });
-            throw err;
-          }
-        });
+        .catch(self.handlePostErr);
     },
     deleteFlavourEntry(index) {
-      console.log('Deleting flavour entry');
       let flavourEntries = null;
       if (this.productionType === 'Packing Day') {
         flavourEntries = this.packingFlavourEntries;
@@ -1191,7 +1129,7 @@ export default defineComponent({
         throw new Error('Cannot delete flavour with no local production date!');
       }
 
-      console.log('Posting delete REQ! with flavour entry:', flavourEntries[index]);
+      console.log('Deleting flavour entry:', Object(flavourEntries));
       const self = this;
       this.$api
         .post('/flavours/delete', {
@@ -1202,8 +1140,7 @@ export default defineComponent({
             Authorization: `Bearer ${self.$store.state.token}`,
           },
         })
-        .then((res) => {
-          console.log('deleted flavour entry', res);
+        .then(() => {
           if (self.productionType === 'Packing Day') {
             self.packingFlavourEntries.splice(index, 1);
           } else if (self.productionType === 'Cutting Day') {
@@ -1216,28 +1153,7 @@ export default defineComponent({
             throw new Error('Cannot delete flavour with no local production date!');
           }
         })
-        .catch((err) => {
-          if (err.response) {
-            if (err.response.status === 401) {
-              self.$router.push('/');
-              throw err;
-            } else {
-              self.$q.notify({
-                message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
-                icon: 'warning',
-                color: 'red',
-              });
-              throw err;
-            }
-          } else {
-            self.$q.notify({
-              message: 'Unexpected Error! Server May be Down!',
-              icon: 'warning',
-              color: 'red',
-            });
-            throw err;
-          }
-        });
+        .catch(self.handlePostErr);
     },
     addStaffMember() {
       const self = this;
@@ -1259,28 +1175,7 @@ export default defineComponent({
           const { data } = res;
           self.staffEntries.push(data);
         })
-        .catch((err) => {
-          if (err.response) {
-            if (err.response.status === 401) {
-              self.$router.push('/');
-              throw err;
-            } else {
-              self.$q.notify({
-                message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
-                icon: 'warning',
-                color: 'red',
-              });
-              throw err;
-            }
-          } else {
-            self.$q.notify({
-              message: 'Unexpected Error! Server May be Down!',
-              icon: 'warning',
-              color: 'red',
-            });
-            throw err;
-          }
-        });
+        .catch(self.handlePostErr);
     },
     deleteStaffMember(index) {
       const self = this;
@@ -1292,37 +1187,12 @@ export default defineComponent({
             Authorization: `Bearer ${self.$store.state.token}`,
           },
         })
-        .then((res) => {
-          console.log('deleted cutting', res);
+        .then(() => {
           self.staffEntries.splice(index, 1);
         })
-        .catch((err) => {
-          if (err.response) {
-            if (err.response.status === 401) {
-              self.$router.push('/');
-              throw err;
-            } else {
-              self.$q.notify({
-                message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
-                icon: 'warning',
-                color: 'red',
-              });
-              throw err;
-            }
-          } else {
-            self.$q.notify({
-              message: 'Unexpected Error! Server May be Down!',
-              icon: 'warning',
-              color: 'red',
-            });
-            throw err;
-          }
-        });
+        .catch(self.handlePostErr);
     },
     updateLocalProductionType(newProductionType, oldProductionType, updateFromUser) {
-      console.log('update local production type to', newProductionType, 'from', oldProductionType);
-      console.log('from user', updateFromUser, 'date created?', this.dateCreated);
-
       if (!updateFromUser) {
         this.productionType = newProductionType;
         this.oldProductionType = newProductionType;
@@ -1330,6 +1200,7 @@ export default defineComponent({
 
       if (!this.dateCreated && newProductionType !== 'Select Production Type') {
         const self = this;
+        console.log('Posting new day to api:', String(self.date), newProductionType);
         this.$api
           .post('/days/add', {
             date: String(self.date),
@@ -1339,34 +1210,11 @@ export default defineComponent({
               Authorization: `Bearer ${self.$store.state.token}`,
             },
           })
-          .then((res) => {
-            const { data } = res;
+          .then(() => {
             self.endLoading();
             self.dateCreated = true;
-            console.log('add day data', data);
           })
-          .catch((err) => {
-            if (err.response) {
-              if (err.response.status === 401) {
-                self.$router.push('/');
-                throw err;
-              } else {
-                self.$q.notify({
-                  message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
-                  icon: 'warning',
-                  color: 'red',
-                });
-                throw err;
-              }
-            } else {
-              self.$q.notify({
-                message: 'Unexpected Error! Server May be Down!',
-                icon: 'warning',
-                color: 'red',
-              });
-              throw err;
-            }
-          });
+          .catch(self.handlePostErr);
       } else if (this.dateCreated && newProductionType !== 'Select Production Type'
               && oldProductionType !== 'Select Production Type'
               && updateFromUser) {
@@ -1377,7 +1225,7 @@ export default defineComponent({
           cancel: true,
           persistent: true,
         }).onOk(() => {
-          console.log('updating day production type');
+          console.log('Updating day', self.date, 'production type from', oldProductionType, 'to', newProductionType);
           self.$api
             .post('/days/update', {
               id: String(self.dayID),
@@ -1387,35 +1235,12 @@ export default defineComponent({
                 Authorization: `Bearer ${self.$store.state.token}`,
               },
             })
-            .then((res) => {
-              const { data } = res;
-              console.log('update day data', data);
+            .then(() => {
               self.getData();
             })
-            .catch((err) => {
-              if (err.response) {
-                if (err.response.status === 401) {
-                  self.$router.push('/');
-                  throw err;
-                } else {
-                  self.$q.notify({
-                    message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
-                    icon: 'warning',
-                    color: 'red',
-                  });
-                  throw err;
-                }
-              } else {
-                self.$q.notify({
-                  message: 'Unexpected Error! Server May be Down!',
-                  icon: 'warning',
-                  color: 'red',
-                });
-                throw err;
-              }
-            });
+            .catch(self.handlePostErr);
         }).onCancel(() => {
-          console.log('cancelling to', oldProductionType);
+          console.log('Cancelling to', oldProductionType);
           self.productionType = oldProductionType;
           self.endLoading();
         });
@@ -1437,17 +1262,37 @@ export default defineComponent({
         return false;
       }
       const parsedDate = new Date(`${yyyy}/${mm}/${dd}`);
-      console.log(parsedDate);
       if (parsedDate.getTime() > 0) {
         return true;
       }
       return false;
     },
+    handlePostErr(err) {
+      if (err.response) {
+        if (err.response.status === 401) {
+          this.$router.push('/');
+        } else {
+          this.$q.notify({
+            message: `Unexpected Error (${err.response.status})! Please Reload Page!`,
+            icon: 'warning',
+            color: 'red',
+          });
+        }
+      } else {
+        this.$q.notify({
+          message: 'Unexpected Error! Server May be Down!',
+          icon: 'warning',
+          color: 'red',
+        });
+      }
+
+      throw err;
+    },
   },
   watch: {
     date(newDate) {
       this.startLoading();
-      console.log('User changed date to', newDate);
+      console.log('User changed date to', newDate, 'getting date data');
       const self = this;
       this.$api
         .post('/days/get', {
@@ -1459,7 +1304,7 @@ export default defineComponent({
         })
         .then((res) => {
           const { data } = res;
-          console.log('get day', data);
+          console.log('Received api response with date data', data);
           if (data.id) {
             self.dayID = data.id;
             self.dateCreated = true;
