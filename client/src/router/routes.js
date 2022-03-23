@@ -7,6 +7,7 @@ const routes = [
       { path: 'data', component: () => import('pages/Data.vue') },
       { path: 'stats', component: () => import('pages/Stats.vue') },
       { path: 'timesheet', component: () => import('pages/Timesheet.vue') },
+      { path: 'settings', component: () => import('pages/Settings.vue') },
     ],
   },
 

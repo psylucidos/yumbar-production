@@ -11,6 +11,7 @@
             <q-route-tab to="/data" label="Data Entry" />
             <q-route-tab to="/stats" label="Stats" />
             <q-route-tab to="/timesheet" label="Timesheet" />
+            <q-route-tab to="/settings" icon="settings" />
           </q-tabs>
         </div>
       </q-toolbar>
