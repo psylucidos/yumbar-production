@@ -5,14 +5,21 @@ const Router = require('@koa/router');
 const bodyParser = require('koa-bodyparser');
 const cors = require('@koa/cors');
 const jwt = require('koa-jwt');
+const hook = require('server-hook');
 
 const app = new Koa();
 const router = new Router();
 
 const apiRouter = require('./src');
 
-router.get('/ping', async (ctx) => {
-  ctx.body = 'pong!';
+hook.init({ // initialise status hook
+  target: process.env.STATUSAPIURL,
+  projectName: 'yumbar-production',
+  interval: 60,
+});
+
+app.on('error', (err) => {
+  hook.logErr(err);
 });
 
 app
@@ -27,7 +34,6 @@ app
     try {
       await next();
     } catch (e) {
-      console.error(e);
       if (e.status === 401) {
         ctx.status = 401;
         ctx.body = {
@@ -45,6 +51,7 @@ app
       if (process.env.VERBOSE) {
         console.log('[RES]', ctx.body);
       }
+      hook.request(end - start);
     }
   })
   .use(jwt({
