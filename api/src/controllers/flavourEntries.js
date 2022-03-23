@@ -4,14 +4,13 @@ module.exports = {
   addFlavorEntry: (date, productionType, flavourEntryData) => new Promise((resolve, reject) => {
     if (productionType === 'Cutting Day') {
       db.query(
-        'INSERT INTO cuttingflavourentries(productiondate, flavour, slabbatch, basebatch, slabamount, boxamount, notes) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *;',
+        'INSERT INTO cuttingflavourentries(productiondate, flavour, slabbatch, basebatch, slabamount, notes) VALUES($1, $2, $3, $4, $5, $6) RETURNING *;',
         [
           date,
           flavourEntryData.flavour,
           flavourEntryData.slabbatch,
           flavourEntryData.basebatch,
           flavourEntryData.slabamount,
-          flavourEntryData.boxamount,
           flavourEntryData.notes,
         ],
         (err, res) => {
@@ -26,7 +25,7 @@ module.exports = {
       );
     } else if (productionType === 'Packing Day') {
       db.query(
-        'INSERT INTO packingflavourentries(productiondate, flavour, batchnumber, slabamount, boxamount, usebydate, sampleamount, notes) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *;',
+        'INSERT INTO packingflavourentries(productiondate, flavour, batchnumber, slabamount, boxamount, usebydate, sampleamount, incompleteboxamount, notes) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *;',
         [
           date,
           flavourEntryData.flavour,
@@ -35,6 +34,7 @@ module.exports = {
           flavourEntryData.boxamount,
           flavourEntryData.usebydate === '' ? null : flavourEntryData.usebydate,
           flavourEntryData.sampleamount,
+          flavourEntryData.incompleteboxamount,
           flavourEntryData.notes,
         ],
         (err, res) => {
@@ -102,14 +102,13 @@ module.exports = {
   updateFlavorEntry: (id, productionType, flavourEntryData) => new Promise((resolve, reject) => {
     if (productionType === 'Cutting Day') {
       db.query(
-        'UPDATE cuttingflavourentries SET flavour=$2, slabbatch=$3, basebatch=$4, slabamount=$5, boxamount=$6, notes=$7 WHERE id=$1;',
+        'UPDATE cuttingflavourentries SET flavour=$2, slabbatch=$3, basebatch=$4, slabamount=$5, notes=$6 WHERE id=$1;',
         [
           id,
           flavourEntryData.flavour,
           flavourEntryData.slabbatch,
           flavourEntryData.basebatch,
           flavourEntryData.slabamount,
-          flavourEntryData.boxamount,
           flavourEntryData.notes,
         ],
         (err, res) => {
@@ -124,7 +123,7 @@ module.exports = {
       );
     } else if (productionType === 'Packing Day') {
       db.query(
-        'UPDATE packingflavourentries SET flavour=$2, batchnumber=$3, slabamount=$4, boxamount=$5, usebydate=$6, sampleamount=$7, notes=$8 WHERE id=$1;',
+        'UPDATE packingflavourentries SET flavour=$2, batchnumber=$3, slabamount=$4, boxamount=$5, usebydate=$6, incompleteboxamount=$7, sampleamount=$8, notes=$9 WHERE id=$1;',
         [
           id,
           flavourEntryData.flavour,
@@ -133,6 +132,7 @@ module.exports = {
           flavourEntryData.boxamount,
           flavourEntryData.usebydate,
           flavourEntryData.sampleamount,
+          flavourEntryData.incompleteboxamount,
           flavourEntryData.notes,
         ],
         (err, res) => {

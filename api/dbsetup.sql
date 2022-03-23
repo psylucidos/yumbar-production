@@ -26,7 +26,6 @@ CREATE TABLE cuttingflavourentries (
   slabbatch integer NOT NULL,
   basebatch integer NOT NULL,
   slabamount integer NOT NULL,
-  boxamount integer NOT NULL,
   notes text
 );
 
@@ -39,6 +38,7 @@ CREATE TABLE packingflavourentries (
   boxamount integer NOT NULL,
   usebydate date,
   sampleamount integer NOT NULL,
+  incompleteboxamount integer NOT NULL,
   notes text
 );
 

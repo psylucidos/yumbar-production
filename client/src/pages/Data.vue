@@ -75,36 +75,6 @@
                       :color="flavourColors[packingFlavourEntries[index].flavour]"
                     />
                   </div>
-                  <div class="col-auto pad-right">
-                    <q-input
-                      label="Use by Date (DD-MM-YYYY)"
-                      required
-                      v-model="packingFlavourEntries[index].usebydate"
-                      mask="##-##-####"
-                      :rules="[ val => isValidDate(val) || 'Please enter a valid date!']"
-                      class="q-field--with-bottom"
-                    >
-                      <template v-slot:append>
-                        <q-icon name="event" class="cursor-pointer">
-                          <q-popup-proxy
-                            ref="qDateProxy"
-                            cover
-                            transition-show="scale"
-                            transition-hide="scale"
-                          >
-                            <q-date
-                              v-model="packingFlavourEntries[index].usebydate"
-                              mask="DD-MM-YYYY"
-                            >
-                              <div class="row items-center justify-end">
-                                <q-btn v-close-popup label="Close" color="primary" flat />
-                              </div>
-                            </q-date>
-                          </q-popup-proxy>
-                        </q-icon>
-                      </template>
-                    </q-input>
-                  </div>
 
                   <div class="col-auto">
                     <q-btn
@@ -116,7 +86,7 @@
                   </div>
                 </div>
 
-                <div class="col-3 pad-right">
+                <div class="col-4 pad-right">
                   <q-input
                     label="Slab Batch #"
                     required
@@ -127,7 +97,39 @@
                     :color="flavourColors[packingFlavourEntries[index].flavour]"
                   />
                 </div>
-                <div class="col-3 pad-right">
+
+                <div class="col-4 pad-right">
+                  <q-input
+                    label="Use by Date (DD-MM-YYYY)"
+                    required
+                    v-model="packingFlavourEntries[index].usebydate"
+                    mask="##-##-####"
+                    :rules="[ val => isValidDate(val) || 'Please enter a valid date!']"
+                    class="q-field--with-bottom"
+                  >
+                    <template v-slot:append>
+                      <q-icon name="event" class="cursor-pointer">
+                        <q-popup-proxy
+                          ref="qDateProxy"
+                          cover
+                          transition-show="scale"
+                          transition-hide="scale"
+                        >
+                          <q-date
+                            v-model="packingFlavourEntries[index].usebydate"
+                            mask="DD-MM-YYYY"
+                          >
+                            <div class="row items-center justify-end">
+                              <q-btn v-close-popup label="Close" color="primary" flat />
+                            </div>
+                          </q-date>
+                        </q-popup-proxy>
+                      </q-icon>
+                    </template>
+                  </q-input>
+                </div>
+
+                <div class="col-4 pad-right">
                   <q-input
                     label="Number of Boxes"
                     required
@@ -139,7 +141,8 @@
                     :color="flavourColors[packingFlavourEntries[index].flavour]"
                   />
                 </div>
-                <div class="col-3 pad-right">
+
+                <div class="col-4 pad-right">
                   <q-input
                     label="Number of Slabs"
                     required
@@ -150,11 +153,24 @@
                     :color="flavourColors[packingFlavourEntries[index].flavour]"
                   />
                 </div>
-                <div class="col-3">
+
+                <div class="col-4 pad-right">
                   <q-input
                     label="Number of Samples"
                     required
                     v-model.number="packingFlavourEntries[index].sampleamount"
+                    @focus="$event.target.select()"
+                    :rules="[ val => val >= 0 || 'amount must be positive!' ]"
+                    type="number"
+                    :color="flavourColors[packingFlavourEntries[index].flavour]"
+                  />
+                </div>
+
+                <div class="col-4">
+                  <q-input
+                    label="Number of Incomplete Boxes"
+                    required
+                    v-model.number="packingFlavourEntries[index].incompleteboxamount"
                     @focus="$event.target.select()"
                     :rules="[ val => val >= 0 || 'amount must be positive!' ]"
                     type="number"
@@ -241,23 +257,14 @@
                     label="Slab amount"
                     required
                     v-model.number="cuttingFlavourEntries[index].slabamount"
-                    @update:model-value="val => cuttingFlavourEntries[index].boxamount = Math.floor(val / 2)"
                     @focus="$event.target.select()"
                     :rules="[ val => val >= 0 || 'amount must be positive!' ]"
                     type="number"
                     :color="flavourColors[cuttingFlavourEntries[index].flavour]"
                   />
                 </div>
-                <div class="col-3">
-                  <q-input
-                    label="Box amount"
-                    required
-                    v-model.number="cuttingFlavourEntries[index].boxamount"
-                    @focus="$event.target.select()"
-                    :rules="[ val => val >= 0 || 'amount must be positive!' ]"
-                    type="number"
-                    :color="flavourColors[cuttingFlavourEntries[index].flavour]"
-                  />
+                <div class="col-3 text-center">
+                  Potential Boxes: {{ Math.floor(cuttingFlavourEntries[index].slabamount / 2) }}
                 </div>
                 <div class="col-12">
                   <q-input
@@ -1034,6 +1041,7 @@ export default defineComponent({
           boxamount: 0,
           usebydate: previousUseBy,
           sampleamount: 0,
+          incompleteboxamount: 0,
           notes: '',
         };
       } else if (this.productionType === 'Cutting Day') {
@@ -1049,7 +1057,6 @@ export default defineComponent({
           slabbatch: previousSlabBatch,
           basebatch: previousBaseBatch,
           slabamount: 0,
-          boxamount: 0,
           notes: '',
         };
       } else if (this.productionType === 'Ice Cream Day') {
@@ -1088,6 +1095,7 @@ export default defineComponent({
       }
 
       const self = this;
+      console.log('Posting new flavour to api with data', flavourEntryData);
       this.$api
         .post('/flavours/add', {
           date: String(self.date),
@@ -1100,8 +1108,11 @@ export default defineComponent({
         })
         .then((res) => {
           const { data } = res;
+          console.log('Received res from api about new flavour', data);
           if (self.productionType === 'Packing Day') {
-            data.usebydate = formatDateString(data.usebydate);
+            if (data.usebydate) {
+              data.usebydate = formatDateString(data.usebydate);
+            }
             self.packingFlavourEntries.push(data);
           } else if (self.productionType === 'Cutting Day') {
             self.cuttingFlavourEntries.push(data);
