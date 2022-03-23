@@ -8,7 +8,7 @@ import axios from 'axios';
 // "export default () => {}" function below (which runs individually
 // for each client)
 const api = axios.create({
-  baseURL: 'http://127.0.0.1:8888/api',
+  baseURL: process.env.DEV ? 'https://yumbar.psylucidos.xyz/api' : 'http://127.0.0.1:8888/api',
   headers: {
     'Access-Control-Allow-Origin': '*',
   },
