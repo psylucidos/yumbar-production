@@ -255,6 +255,17 @@
                   </div>
                   <div class="col-3 pad-right">
                     <q-input
+                      label="Second Base Batch # (Optional)"
+                      required
+                      v-model.number="cuttingFlavourEntries[index].secondbasebatch"
+                      @focus="$event.target.select()"
+                      :rules="[ val => val >= 0 || 'Batch must be positive!' ]"
+                      type="number"
+                      :color="flavourColors[cuttingFlavourEntries[index].flavour]"
+                    />
+                  </div>
+                  <div class="col-3 pad-right">
+                    <q-input
                       label="Slab amount"
                       required
                       v-model.number="cuttingFlavourEntries[index].slabamount"
@@ -264,7 +275,7 @@
                       :color="flavourColors[cuttingFlavourEntries[index].flavour]"
                     />
                   </div>
-                  <div class="col-3 text-center">
+                  <div class="col-12 text-center">
                     Potential Boxes: {{ Math.floor(cuttingFlavourEntries[index].slabamount / 2) }}
                   </div>
                   <div class="col-12">
@@ -1098,6 +1109,7 @@ export default defineComponent({
           flavour: '',
           slabbatch: previousSlabBatch,
           basebatch: previousBaseBatch,
+          secondbasebatch: null,
           slabamount: 0,
           notes: '',
         };

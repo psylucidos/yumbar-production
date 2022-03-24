@@ -4,12 +4,13 @@ module.exports = {
   addFlavorEntry: (date, productionType, flavourEntryData) => new Promise((resolve, reject) => {
     if (productionType === 'Cutting Day') {
       db.query(
-        'INSERT INTO cuttingflavourentries(productiondate, flavour, slabbatch, basebatch, slabamount, notes) VALUES($1, $2, $3, $4, $5, $6) RETURNING *;',
+        'INSERT INTO cuttingflavourentries(productiondate, flavour, slabbatch, basebatch, secondbasebatch, slabamount, notes) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *;',
         [
           date,
           flavourEntryData.flavour,
           flavourEntryData.slabbatch,
           flavourEntryData.basebatch,
+          flavourEntryData.secondbasebatch,
           flavourEntryData.slabamount,
           flavourEntryData.notes,
         ],
@@ -102,12 +103,13 @@ module.exports = {
   updateFlavorEntry: (id, productionType, flavourEntryData) => new Promise((resolve, reject) => {
     if (productionType === 'Cutting Day') {
       db.query(
-        'UPDATE cuttingflavourentries SET flavour=$2, slabbatch=$3, basebatch=$4, slabamount=$5, notes=$6 WHERE id=$1;',
+        'UPDATE cuttingflavourentries SET flavour=$2, slabbatch=$3, basebatch=$4, secondbasebatch=$5, slabamount=$6, notes=$7 WHERE id=$1;',
         [
           id,
           flavourEntryData.flavour,
           flavourEntryData.slabbatch,
           flavourEntryData.basebatch,
+          flavourEntryData.secondbasebatch,
           flavourEntryData.slabamount,
           flavourEntryData.notes,
         ],

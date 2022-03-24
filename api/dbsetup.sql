@@ -25,6 +25,7 @@ CREATE TABLE cuttingflavourentries (
   flavour text NOT NULL,
   slabbatch integer NOT NULL,
   basebatch integer NOT NULL,
+  secondbasebatch integer,
   slabamount integer NOT NULL,
   notes text
 );
