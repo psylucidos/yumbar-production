@@ -1,720 +1,722 @@
 <template>
-  <q-page class="flex flex-center">
-    <q-card class="data-card">
-      <q-form
-        @submit="saveData"
-        @validation-success="formIsValid = true"
-        @validation-error="formIsValid = false"
-        class="q-pa-md"
-      >
-        <q-card-section>
-          <div class="row items-center no-wrap">
-            <div class="col-6">
-              <div class="text-h4">Data Entry</div>
+  <q-page class="q-pa-md">
+    <div class="row justify-center full-width">
+      <q-card class="data-card col-8">
+        <q-form
+          @submit="saveData"
+          @validation-success="formIsValid = true"
+          @validation-error="formIsValid = false"
+          class="q-pa-md"
+        >
+          <q-card-section>
+            <div class="row items-center no-wrap">
+              <div class="col-6">
+                <div class="text-h4">Data Entry</div>
+              </div>
+
+              <div class="col-3" id="date-input">
+                <q-input
+                  dense
+                  v-model="date"
+                  mask="##-##-####"
+                  :rules="[ val => isValidDate(val) || 'Please enter a valid date!']"
+                >
+                  <template v-slot:append>
+                    <q-icon name="event" class="cursor-pointer">
+                      <q-popup-proxy
+                        ref="qDateProxy"
+                        cover
+                        transition-show="scale"
+                        transition-hide="scale"
+                      >
+                        <q-date v-model="date" mask="DD-MM-YYYY">
+                          <div class="row items-center justify-end">
+                            <q-btn v-close-popup label="Close" color="primary" flat />
+                          </div>
+                        </q-date>
+                      </q-popup-proxy>
+                    </q-icon>
+                  </template>
+                </q-input>
+              </div>
+
+              <div class="col-3">
+                <q-select
+                  dense
+                  v-model="productionType"
+                  :rules="[ val => !!val || 'Please enter a production type!']"
+                  @update:model-value="productionTypeSelecterUpdate"
+                  :options="productionTypeOptions"
+                  :disable="loading"
+                />
+              </div>
             </div>
 
-            <div class="col-3" id="date-input">
-              <q-input
-                dense
-                v-model="date"
-                mask="##-##-####"
-                :rules="[ val => isValidDate(val) || 'Please enter a valid date!']"
-              >
-                <template v-slot:append>
-                  <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy
-                      ref="qDateProxy"
-                      cover
-                      transition-show="scale"
-                      transition-hide="scale"
+          </q-card-section>
+
+          <q-separator />
+
+          <q-card-section class="bg-grey-2">
+            <q-tab-panels v-model="productionType" class="bg-grey-2">
+              <q-tab-panel name="Packing Day">
+                <q-card
+                  v-for="(item, index) in packingFlavourEntries"
+                  v-bind:key="index"
+                  class="row items-center full-width flavour-item"
+                >
+                  <div class="row full-width items-center no-wrap">
+                    <div class="col pad-right">
+                      <q-select
+                        label="Batch Flavour"
+                        required
+                        v-model="packingFlavourEntries[index].flavour"
+                        :rules="[ val =>flavourOptions.concat(packingDayFlavourOptions).includes(val)
+                          || 'Please select flavour!' ]"
+                        :options="flavourOptions.concat(packingDayFlavourOptions)"
+                        :color="flavourColors[packingFlavourEntries[index].flavour]"
+                      />
+                    </div>
+
+                    <div class="col-auto">
+                      <q-btn
+                        flat
+                        round
+                        icon="delete"
+                        @click="deleteFlavourEntry(index)"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="col-4 pad-right">
+                    <q-input
+                      label="Slab Batch #"
+                      required
+                      v-model.number="packingFlavourEntries[index].batchnumber"
+                      @focus="$event.target.select()"
+                      :rules="[ val => val >= 0 || 'Batch must be positive!' ]"
+                      type="number"
+                      :color="flavourColors[packingFlavourEntries[index].flavour]"
+                    />
+                  </div>
+
+                  <div class="col-4 pad-right">
+                    <q-input
+                      label="Use by Date (DD-MM-YYYY)"
+                      required
+                      v-model="packingFlavourEntries[index].usebydate"
+                      mask="##-##-####"
+                      :rules="[ val => isValidDate(val) || 'Please enter a valid date!']"
+                      class="q-field--with-bottom"
                     >
-                      <q-date v-model="date" mask="DD-MM-YYYY">
-                        <div class="row items-center justify-end">
-                          <q-btn v-close-popup label="Close" color="primary" flat />
-                        </div>
-                      </q-date>
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-              </q-input>
-            </div>
+                      <template v-slot:append>
+                        <q-icon name="event" class="cursor-pointer">
+                          <q-popup-proxy
+                            ref="qDateProxy"
+                            cover
+                            transition-show="scale"
+                            transition-hide="scale"
+                          >
+                            <q-date
+                              v-model="packingFlavourEntries[index].usebydate"
+                              mask="DD-MM-YYYY"
+                            >
+                              <div class="row items-center justify-end">
+                                <q-btn v-close-popup label="Close" color="primary" flat />
+                              </div>
+                            </q-date>
+                          </q-popup-proxy>
+                        </q-icon>
+                      </template>
+                    </q-input>
+                  </div>
 
-            <div class="col-3">
-              <q-select
-                dense
-                v-model="productionType"
-                :rules="[ val => !!val || 'Please enter a production type!']"
-                @update:model-value="productionTypeSelecterUpdate"
-                :options="productionTypeOptions"
-                :disable="loading"
-              />
-            </div>
-          </div>
+                  <div class="col-4 pad-right">
+                    <q-input
+                      label="Number of Boxes"
+                      required
+                      v-model.number="packingFlavourEntries[index].boxamount"
+                      @focus="$event.target.select()"
+                      @update:model-value="val => packingFlavourEntries[index].slabamount = val * 2"
+                      :rules="[ val => val >= 0 || 'Amount must be positive!' ]"
+                      type="number"
+                      :color="flavourColors[packingFlavourEntries[index].flavour]"
+                    />
+                  </div>
 
-        </q-card-section>
+                  <div class="col-4 pad-right">
+                    <q-input
+                      label="Number of Slabs"
+                      required
+                      v-model.number="packingFlavourEntries[index].slabamount"
+                      @focus="$event.target.select()"
+                      :rules="[ val => val >= 0 || 'Amount must be positive!' ]"
+                      type="number"
+                      :color="flavourColors[packingFlavourEntries[index].flavour]"
+                    />
+                  </div>
 
-        <q-separator />
+                  <div class="col-4 pad-right">
+                    <q-input
+                      label="Number of Samples"
+                      required
+                      v-model.number="packingFlavourEntries[index].sampleamount"
+                      @focus="$event.target.select()"
+                      :rules="[ val => val >= 0 || 'amount must be positive!' ]"
+                      type="number"
+                      :color="flavourColors[packingFlavourEntries[index].flavour]"
+                    />
+                  </div>
 
-        <q-card-section class="bg-grey-2">
-          <q-tab-panels v-model="productionType" class="bg-grey-2">
-            <q-tab-panel name="Packing Day">
+                  <div class="col-4">
+                    <q-input
+                      label="Number of Incomplete Boxes"
+                      required
+                      v-model.number="packingFlavourEntries[index].incompleteboxamount"
+                      @focus="$event.target.select()"
+                      :rules="[ val => val >= 0 || 'amount must be positive!' ]"
+                      type="number"
+                      :color="flavourColors[packingFlavourEntries[index].flavour]"
+                    />
+                  </div>
+
+                  <div class="col-12">
+                    <q-input
+                      label="Notes"
+                      v-model="packingFlavourEntries[index].notes"
+                      type="text"
+                      autogrow
+                      :color="flavourColors[packingFlavourEntries[index].flavour]"
+                    />
+                  </div>
+                </q-card>
+
+                <q-btn
+                  v-if="!loading"
+                  icon="add"
+                  id="add-flavour-btn"
+                  label="Add Flavour"
+                  class="full-width"
+                  color="primary"
+                  @click="addFlavourEntry"
+                />
+              </q-tab-panel>
+
+              <q-tab-panel name="Cutting Day">
+                <q-card
+                  v-for="(item, index) in cuttingFlavourEntries"
+                  v-bind:key="index"
+                  class="row items-center full-width flavour-item"
+                >
+                  <div class="row full-width items-center no-wrap">
+                    <div class="col pad-right">
+                      <q-select
+
+                        label="Batch Flavour"
+                        required
+                        v-model="cuttingFlavourEntries[index].flavour"
+                        :rules="[ val => flavourOptions.includes(val) || 'Please select flavour!' ]"
+                        :options="flavourOptions"
+                        :color="flavourColors[cuttingFlavourEntries[index].flavour]"
+                      />
+                    </div>
+
+                    <div class="col-auto">
+                      <q-btn
+                        flat
+                        round
+                        icon="delete"
+                        @click="deleteFlavourEntry(index)"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="col-3 pad-right">
+                    <q-input
+
+                      label="Slab Batch #"
+                      required
+                      v-model.number="cuttingFlavourEntries[index].slabbatch"
+                      @focus="$event.target.select()"
+                      :rules="[ val => val >= 0 || 'Batch must be positive!' ]"
+                      type="number"
+                      :color="flavourColors[cuttingFlavourEntries[index].flavour]"
+                    />
+                  </div>
+                  <div class="col-3 pad-right">
+                    <q-input
+                      label="Base Batch #"
+                      required
+                      v-model.number="cuttingFlavourEntries[index].basebatch"
+                      @focus="$event.target.select()"
+                      :rules="[ val => val >= 0 || 'Batch must be positive!' ]"
+                      type="number"
+                      :color="flavourColors[cuttingFlavourEntries[index].flavour]"
+                    />
+                  </div>
+                  <div class="col-3 pad-right">
+                    <q-input
+                      label="Slab amount"
+                      required
+                      v-model.number="cuttingFlavourEntries[index].slabamount"
+                      @focus="$event.target.select()"
+                      :rules="[ val => val >= 0 || 'amount must be positive!' ]"
+                      type="number"
+                      :color="flavourColors[cuttingFlavourEntries[index].flavour]"
+                    />
+                  </div>
+                  <div class="col-3 text-center">
+                    Potential Boxes: {{ Math.floor(cuttingFlavourEntries[index].slabamount / 2) }}
+                  </div>
+                  <div class="col-12">
+                    <q-input
+
+                      label="Notes"
+                      v-model="cuttingFlavourEntries[index].notes"
+                      type="text"
+                      autogrow
+                      :color="flavourColors[cuttingFlavourEntries[index].flavour]"
+                    />
+                  </div>
+                </q-card>
+
+                <q-btn
+                  v-if="!loading"
+                  icon="add"
+                  id="add-flavour-btn"
+                  label="Add Flavour"
+                  class="full-width"
+                  color="primary"
+                  @click="addFlavourEntry"
+                />
+              </q-tab-panel>
+
+              <q-tab-panel name="Base Day">
+                <q-card
+                  v-for="(item, index) in baseFlavourEntries"
+                  v-bind:key="index"
+                  class="row items-center full-width flavour-item"
+                >
+                  <div class="row full-width items-center no-wrap">
+                    <div class="col pad-right">
+                      <q-select
+
+                        label="Batch Flavour"
+                        required
+                        v-model="baseFlavourEntries[index].flavour"
+                        :rules="[ val => flavourOptions.includes(val) || 'Please select flavour!' ]"
+                        :options="baseFlavourOptions"
+                        :color="flavourColors[baseFlavourEntries[index].flavour]"
+                      />
+                    </div>
+
+                    <div class="col-auto">
+                      <q-btn
+                        flat
+                        round
+                        icon="delete"
+                        @click="deleteFlavourEntry(index)"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="col-3 pad-right">
+                    <q-input
+
+                      label="Base Batch #"
+                      required
+                      v-model.number="baseFlavourEntries[index].batchnumber"
+                      @focus="$event.target.select()"
+                      :rules="[ val => val >= 0 || 'Batch must be positive!' ]"
+                      type="number"
+                      :color="flavourColors[baseFlavourEntries[index].flavour]"
+                    />
+                  </div>
+                  <div class="col-3 pad-right">
+                    <q-input
+                      label="Number of Blender Batches"
+                      required
+                      v-model.number="baseFlavourEntries[index].blenderamount"
+                      @focus="$event.target.select()"
+                      :rules="[ val => val >= 0 || 'amount must be positive!' ]"
+                      type="number"
+                      :color="flavourColors[baseFlavourEntries[index].flavour]"
+                    />
+                  </div>
+                  <div class="col-3 pad-right">
+                    <q-input
+                      label="Number of Large Bases"
+                      required
+                      v-model.number="baseFlavourEntries[index].largeamount"
+                      @focus="$event.target.select()"
+                      :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
+                      type="number"
+                      :color="flavourColors[baseFlavourEntries[index].flavour]"
+                    />
+                  </div>
+                  <div class="col-3">
+                    <q-input
+                      label="Number of Small Bases"
+                      required
+                      v-model.number="baseFlavourEntries[index].smallamount"
+                      @focus="$event.target.select()"
+                      :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
+                      type="number"
+                      :color="flavourColors[baseFlavourEntries[index].flavour]"
+                    />
+                  </div>
+                  <div class="col-4 pad-right">
+                    <q-input
+                      label="Number of Small Cake Bases"
+                      required
+                      v-model.number="baseFlavourEntries[index].smallcakeamount"
+                      @focus="$event.target.select()"
+                      :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
+                      type="number"
+                      :color="flavourColors[baseFlavourEntries[index].flavour]"
+                    />
+                  </div>
+                  <div class="col-4 pad-right">
+                    <q-input
+                      label="Number of Medium Cake Bases"
+                      required
+                      v-model.number="baseFlavourEntries[index].mediumcakeamount"
+                      @focus="$event.target.select()"
+                      :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
+                      type="number"
+                      :color="flavourColors[baseFlavourEntries[index].flavour]"
+                    />
+                  </div>
+                  <div class="col-4">
+                    <q-input
+                      label="Number of Large Cake Bases"
+                      required
+                      v-model.number="baseFlavourEntries[index].largecakeamount"
+                      @focus="$event.target.select()"
+                      :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
+                      type="number"
+                      :color="flavourColors[baseFlavourEntries[index].flavour]"
+                    />
+                  </div>
+                  <div class="col-12">
+                    <q-input
+                      label="Notes"
+                      v-model="baseFlavourEntries[index].notes"
+                      type="text"
+                      autogrow
+                      :color="flavourColors[baseFlavourEntries[index].flavour]"
+                    />
+                  </div>
+                </q-card>
+
+                <q-btn
+                  v-if="!loading"
+                  icon="add"
+                  id="add-flavour-btn"
+                  label="Add Flavour"
+                  class="full-width"
+                  color="primary"
+                  @click="addFlavourEntry"
+                />
+              </q-tab-panel>
+
+              <q-tab-panel name="Ice Cream Day">
+                <q-card
+                  v-for="(item, index) in icecreamFlavourEntries"
+                  v-bind:key="index"
+                  class="row items-center full-width flavour-item"
+                >
+                  <div class="row full-width items-center no-wrap">
+                    <div class="col pad-right">
+                      <q-select
+                        label="Batch Flavour"
+                        required
+                        v-model="icecreamFlavourEntries[index].flavour"
+                        :rules="[ val => flavourOptions.includes(val) || 'Please select flavour!' ]"
+                        :options="flavourOptions"
+                        :color="flavourColors[icecreamFlavourEntries[index].flavour]"
+                      />
+                    </div>
+
+                    <div class="col-auto">
+                      <q-btn
+                        flat
+                        round
+                        icon="delete"
+                        @click="deleteFlavourEntry(index)"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="col-3 pad-right">
+                    <q-input
+                      label="Batch #"
+                      required
+                      v-model.number="icecreamFlavourEntries[index].batchnumber"
+                      @focus="$event.target.select()"
+                      :rules="[ val => val >= 0 || 'Batch must be positive!' ]"
+                      type="number"
+                      :color="flavourColors[icecreamFlavourEntries[index].flavour]"
+                    />
+                  </div>
+                  <div class="col-3 pad-right">
+                    <q-input
+                      label="Number of Jugs"
+                      required
+                      v-model.number="icecreamFlavourEntries[index].jugsamount"
+                      @focus="$event.target.select()"
+                      :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
+                      type="number"
+                      :color="flavourColors[icecreamFlavourEntries[index].flavour]"
+                    />
+                  </div>
+                  <div class="col-3 pad-right">
+                    <q-input
+                      label="Number of Trays"
+                      required
+                      v-model.number="icecreamFlavourEntries[index].traysamount"
+                      @focus="$event.target.select()"
+                      :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
+                      type="number"
+                      :color="flavourColors[icecreamFlavourEntries[index].flavour]"
+                    />
+                  </div>
+                  <div class="col-3">
+                    <q-input
+                      label="Weight of Unsaleable Icecream"
+                      required
+                      v-model.number="icecreamFlavourEntries[index].unsaleableweight"
+                      @focus="$event.target.select()"
+                      :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
+                      type="number"
+                      :color="flavourColors[icecreamFlavourEntries[index].flavour]"
+                    />
+                  </div>
+                  <div class="col-12">
+                    <q-input
+                      label="Notes"
+                      v-model="icecreamFlavourEntries[index].notes"
+                      type="text"
+                      autogrow
+                      :color="flavourColors[icecreamFlavourEntries[index].flavour]"
+                    />
+                  </div>
+                </q-card>
+
+                <q-btn
+                  v-if="!loading"
+                  icon="add"
+                  id="add-flavour-btn"
+                  label="Add Flavour"
+                  class="full-width"
+                  color="primary"
+                  @click="addFlavourEntry"
+                />
+              </q-tab-panel>
+
+              <q-tab-panel name="Select Production Type">
+                <div
+                  v-if="!loading"
+                  class="full-width text-center text-h6 text-grey"
+                >
+                  Please Select Production Type
+                </div>
+              </q-tab-panel>
+            </q-tab-panels>
+
+            <div v-if="loading">
               <q-card
-                v-for="(item, index) in packingFlavourEntries"
+                v-for="index in 3"
                 v-bind:key="index"
                 class="row items-center full-width flavour-item"
               >
                 <div class="row full-width items-center no-wrap">
                   <div class="col pad-right">
-                    <q-select
-                      label="Batch Flavour"
-                      required
-                      v-model="packingFlavourEntries[index].flavour"
-                      :rules="[ val =>flavourOptions.concat(packingDayFlavourOptions).includes(val)
-                        || 'Please select flavour!' ]"
-                      :options="flavourOptions.concat(packingDayFlavourOptions)"
-                      :color="flavourColors[packingFlavourEntries[index].flavour]"
-                    />
+                    <q-skeleton type="QInput" />
                   </div>
 
                   <div class="col-auto">
-                    <q-btn
-                      flat
-                      round
-                      icon="delete"
-                      @click="deleteFlavourEntry(index)"
-                    />
+                    <q-skeleton type="QAvatar" />
                   </div>
                 </div>
 
-                <div class="col-4 pad-right">
-                  <q-input
-                    label="Slab Batch #"
+                <div class="col-3 pad-right">
+                  <q-skeleton type="QInput" />
+                </div>
+                <div class="col-3 pad-right">
+                  <q-skeleton type="QInput" />
+                </div>
+                <div class="col-3 pad-right">
+                  <q-skeleton type="QInput" />
+                </div>
+                <div class="col-3">
+                  <q-skeleton type="QInput" />
+                </div>
+
+                <div class="col-12">
+                  <q-skeleton type="QInput" />
+                </div>
+              </q-card>
+
+              <q-skeleton v-if="loading" type="QBtn" class="full-width" />
+            </div>
+
+          </q-card-section>
+
+          <q-separator />
+
+          <q-card-section
+            class="bg-grey-2"
+            v-if="!loading"
+          >
+            <q-card
+              v-for="(item, index) in staffEntries"
+              v-bind:key="index"
+              class="row items-center full-width staff-item"
+            >
+              <div class="row full-width items-center no-wrap">
+                <div class="col pad-right">
+                  <q-select
+                    label="Staff Member"
                     required
-                    v-model.number="packingFlavourEntries[index].batchnumber"
-                    @focus="$event.target.select()"
-                    :rules="[ val => val >= 0 || 'Batch must be positive!' ]"
-                    type="number"
-                    :color="flavourColors[packingFlavourEntries[index].flavour]"
+                    v-model="staffEntries[index].name"
+                    :rules="[ val => staffOptions.includes(val) || 'Please select staff member!' ]"
+                    :options="staffOptions"
                   />
                 </div>
 
-                <div class="col-4 pad-right">
+                <div class="col-3 pad-right">
                   <q-input
-                    label="Use by Date (DD-MM-YYYY)"
+                    label="Start Time (24h)"
+                    v-model="staffEntries[index].starttime"
+                    :rules="[ val => val.match(/[0-9][0-9]:[0-9][0-9]$/)
+                          || 'Please enter a valid time (HH:MM)!']"
                     required
-                    v-model="packingFlavourEntries[index].usebydate"
-                    mask="##-##-####"
-                    :rules="[ val => isValidDate(val) || 'Please enter a valid date!']"
                     class="q-field--with-bottom"
                   >
                     <template v-slot:append>
-                      <q-icon name="event" class="cursor-pointer">
-                        <q-popup-proxy
-                          ref="qDateProxy"
-                          cover
-                          transition-show="scale"
-                          transition-hide="scale"
-                        >
-                          <q-date
-                            v-model="packingFlavourEntries[index].usebydate"
-                            mask="DD-MM-YYYY"
-                          >
+                      <q-icon name="access_time" class="cursor-pointer">
+                        <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                          <q-time v-model="staffEntries[index].starttime">
                             <div class="row items-center justify-end">
                               <q-btn v-close-popup label="Close" color="primary" flat />
                             </div>
-                          </q-date>
+                          </q-time>
                         </q-popup-proxy>
                       </q-icon>
                     </template>
                   </q-input>
                 </div>
 
-                <div class="col-4 pad-right">
+                <div class="col-3 pad-right">
                   <q-input
-                    label="Number of Boxes"
+                    label="End Time (24h)"
+                    v-model="staffEntries[index].endtime"
                     required
-                    v-model.number="packingFlavourEntries[index].boxamount"
-                    @focus="$event.target.select()"
-                    @update:model-value="val => packingFlavourEntries[index].slabamount = val * 2"
-                    :rules="[ val => val >= 0 || 'Amount must be positive!' ]"
-                    type="number"
-                    :color="flavourColors[packingFlavourEntries[index].flavour]"
-                  />
-                </div>
-
-                <div class="col-4 pad-right">
-                  <q-input
-                    label="Number of Slabs"
-                    required
-                    v-model.number="packingFlavourEntries[index].slabamount"
-                    @focus="$event.target.select()"
-                    :rules="[ val => val >= 0 || 'Amount must be positive!' ]"
-                    type="number"
-                    :color="flavourColors[packingFlavourEntries[index].flavour]"
-                  />
-                </div>
-
-                <div class="col-4 pad-right">
-                  <q-input
-                    label="Number of Samples"
-                    required
-                    v-model.number="packingFlavourEntries[index].sampleamount"
-                    @focus="$event.target.select()"
-                    :rules="[ val => val >= 0 || 'amount must be positive!' ]"
-                    type="number"
-                    :color="flavourColors[packingFlavourEntries[index].flavour]"
-                  />
-                </div>
-
-                <div class="col-4">
-                  <q-input
-                    label="Number of Incomplete Boxes"
-                    required
-                    v-model.number="packingFlavourEntries[index].incompleteboxamount"
-                    @focus="$event.target.select()"
-                    :rules="[ val => val >= 0 || 'amount must be positive!' ]"
-                    type="number"
-                    :color="flavourColors[packingFlavourEntries[index].flavour]"
-                  />
-                </div>
-
-                <div class="col-12">
-                  <q-input
-                    label="Notes"
-                    v-model="packingFlavourEntries[index].notes"
-                    type="text"
-                    autogrow
-                    :color="flavourColors[packingFlavourEntries[index].flavour]"
-                  />
-                </div>
-              </q-card>
-
-              <q-btn
-                v-if="!loading"
-                icon="add"
-                id="add-flavour-btn"
-                label="Add Flavour"
-                class="full-width"
-                color="primary"
-                @click="addFlavourEntry"
-              />
-            </q-tab-panel>
-
-            <q-tab-panel name="Cutting Day">
-              <q-card
-                v-for="(item, index) in cuttingFlavourEntries"
-                v-bind:key="index"
-                class="row items-center full-width flavour-item"
-              >
-                <div class="row full-width items-center no-wrap">
-                  <div class="col pad-right">
-                    <q-select
-
-                      label="Batch Flavour"
-                      required
-                      v-model="cuttingFlavourEntries[index].flavour"
-                      :rules="[ val => flavourOptions.includes(val) || 'Please select flavour!' ]"
-                      :options="flavourOptions"
-                      :color="flavourColors[cuttingFlavourEntries[index].flavour]"
-                    />
-                  </div>
-
-                  <div class="col-auto">
-                    <q-btn
-                      flat
-                      round
-                      icon="delete"
-                      @click="deleteFlavourEntry(index)"
-                    />
-                  </div>
+                    :rules="[ val => val.match(/[0-9][0-9]:[0-9][0-9]$/)
+                          || 'Please enter a valid time (HH:MM)!']"
+                    class="q-field--with-bottom"
+                  >
+                    <template v-slot:append>
+                      <q-icon name="access_time" class="cursor-pointer">
+                        <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                          <q-time v-model="staffEntries[index].endtime">
+                            <div class="row items-center justify-end">
+                              <q-btn v-close-popup label="Close" color="primary" flat />
+                            </div>
+                          </q-time>
+                        </q-popup-proxy>
+                      </q-icon>
+                    </template>
+                  </q-input>
                 </div>
 
                 <div class="col-3 pad-right">
                   <q-input
-
-                    label="Slab Batch #"
-                    required
-                    v-model.number="cuttingFlavourEntries[index].slabbatch"
+                    label="Break Length (Minutes)"
+                    v-model="staffEntries[index].breaklength"
                     @focus="$event.target.select()"
-                    :rules="[ val => val >= 0 || 'Batch must be positive!' ]"
-                    type="number"
-                    :color="flavourColors[cuttingFlavourEntries[index].flavour]"
-                  />
-                </div>
-                <div class="col-3 pad-right">
-                  <q-input
-                    label="Base Batch #"
+                    :rules="[ val => val >= 0 || 'Please enter a number!']"
                     required
-                    v-model.number="cuttingFlavourEntries[index].basebatch"
-                    @focus="$event.target.select()"
-                    :rules="[ val => val >= 0 || 'Batch must be positive!' ]"
                     type="number"
-                    :color="flavourColors[cuttingFlavourEntries[index].flavour]"
-                  />
-                </div>
-                <div class="col-3 pad-right">
-                  <q-input
-                    label="Slab amount"
-                    required
-                    v-model.number="cuttingFlavourEntries[index].slabamount"
-                    @focus="$event.target.select()"
-                    :rules="[ val => val >= 0 || 'amount must be positive!' ]"
-                    type="number"
-                    :color="flavourColors[cuttingFlavourEntries[index].flavour]"
-                  />
-                </div>
-                <div class="col-3 text-center">
-                  Potential Boxes: {{ Math.floor(cuttingFlavourEntries[index].slabamount / 2) }}
-                </div>
-                <div class="col-12">
-                  <q-input
-
-                    label="Notes"
-                    v-model="cuttingFlavourEntries[index].notes"
-                    type="text"
-                    autogrow
-                    :color="flavourColors[cuttingFlavourEntries[index].flavour]"
-                  />
-                </div>
-              </q-card>
-
-              <q-btn
-                v-if="!loading"
-                icon="add"
-                id="add-flavour-btn"
-                label="Add Flavour"
-                class="full-width"
-                color="primary"
-                @click="addFlavourEntry"
-              />
-            </q-tab-panel>
-
-            <q-tab-panel name="Base Day">
-              <q-card
-                v-for="(item, index) in baseFlavourEntries"
-                v-bind:key="index"
-                class="row items-center full-width flavour-item"
-              >
-                <div class="row full-width items-center no-wrap">
-                  <div class="col pad-right">
-                    <q-select
-
-                      label="Batch Flavour"
-                      required
-                      v-model="baseFlavourEntries[index].flavour"
-                      :rules="[ val => flavourOptions.includes(val) || 'Please select flavour!' ]"
-                      :options="baseFlavourOptions"
-                      :color="flavourColors[baseFlavourEntries[index].flavour]"
-                    />
-                  </div>
-
-                  <div class="col-auto">
-                    <q-btn
-                      flat
-                      round
-                      icon="delete"
-                      @click="deleteFlavourEntry(index)"
-                    />
-                  </div>
+                    class="q-field--with-bottom"
+                  >
+                  </q-input>
                 </div>
 
-                <div class="col-3 pad-right">
-                  <q-input
-
-                    label="Base Batch #"
-                    required
-                    v-model.number="baseFlavourEntries[index].batchnumber"
-                    @focus="$event.target.select()"
-                    :rules="[ val => val >= 0 || 'Batch must be positive!' ]"
-                    type="number"
-                    :color="flavourColors[baseFlavourEntries[index].flavour]"
+                <div class="col-auto">
+                  <q-btn
+                    flat
+                    round
+                    icon="delete"
+                    @click="deleteStaffMember(index)"
                   />
                 </div>
-                <div class="col-3 pad-right">
-                  <q-input
-                    label="Number of Blender Batches"
-                    required
-                    v-model.number="baseFlavourEntries[index].blenderamount"
-                    @focus="$event.target.select()"
-                    :rules="[ val => val >= 0 || 'amount must be positive!' ]"
-                    type="number"
-                    :color="flavourColors[baseFlavourEntries[index].flavour]"
-                  />
-                </div>
-                <div class="col-3 pad-right">
-                  <q-input
-                    label="Number of Large Bases"
-                    required
-                    v-model.number="baseFlavourEntries[index].largeamount"
-                    @focus="$event.target.select()"
-                    :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
-                    type="number"
-                    :color="flavourColors[baseFlavourEntries[index].flavour]"
-                  />
-                </div>
-                <div class="col-3">
-                  <q-input
-                    label="Number of Small Bases"
-                    required
-                    v-model.number="baseFlavourEntries[index].smallamount"
-                    @focus="$event.target.select()"
-                    :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
-                    type="number"
-                    :color="flavourColors[baseFlavourEntries[index].flavour]"
-                  />
-                </div>
-                <div class="col-4 pad-right">
-                  <q-input
-                    label="Number of Small Cake Bases"
-                    required
-                    v-model.number="baseFlavourEntries[index].smallcakeamount"
-                    @focus="$event.target.select()"
-                    :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
-                    type="number"
-                    :color="flavourColors[baseFlavourEntries[index].flavour]"
-                  />
-                </div>
-                <div class="col-4 pad-right">
-                  <q-input
-                    label="Number of Medium Cake Bases"
-                    required
-                    v-model.number="baseFlavourEntries[index].mediumcakeamount"
-                    @focus="$event.target.select()"
-                    :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
-                    type="number"
-                    :color="flavourColors[baseFlavourEntries[index].flavour]"
-                  />
-                </div>
-                <div class="col-4">
-                  <q-input
-                    label="Number of Large Cake Bases"
-                    required
-                    v-model.number="baseFlavourEntries[index].largecakeamount"
-                    @focus="$event.target.select()"
-                    :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
-                    type="number"
-                    :color="flavourColors[baseFlavourEntries[index].flavour]"
-                  />
-                </div>
-                <div class="col-12">
-                  <q-input
-                    label="Notes"
-                    v-model="baseFlavourEntries[index].notes"
-                    type="text"
-                    autogrow
-                    :color="flavourColors[baseFlavourEntries[index].flavour]"
-                  />
-                </div>
-              </q-card>
-
-              <q-btn
-                v-if="!loading"
-                icon="add"
-                id="add-flavour-btn"
-                label="Add Flavour"
-                class="full-width"
-                color="primary"
-                @click="addFlavourEntry"
-              />
-            </q-tab-panel>
-
-            <q-tab-panel name="Ice Cream Day">
-              <q-card
-                v-for="(item, index) in icecreamFlavourEntries"
-                v-bind:key="index"
-                class="row items-center full-width flavour-item"
-              >
-                <div class="row full-width items-center no-wrap">
-                  <div class="col pad-right">
-                    <q-select
-                      label="Batch Flavour"
-                      required
-                      v-model="icecreamFlavourEntries[index].flavour"
-                      :rules="[ val => flavourOptions.includes(val) || 'Please select flavour!' ]"
-                      :options="flavourOptions"
-                      :color="flavourColors[icecreamFlavourEntries[index].flavour]"
-                    />
-                  </div>
-
-                  <div class="col-auto">
-                    <q-btn
-                      flat
-                      round
-                      icon="delete"
-                      @click="deleteFlavourEntry(index)"
-                    />
-                  </div>
-                </div>
-
-                <div class="col-3 pad-right">
-                  <q-input
-                    label="Batch #"
-                    required
-                    v-model.number="icecreamFlavourEntries[index].batchnumber"
-                    @focus="$event.target.select()"
-                    :rules="[ val => val >= 0 || 'Batch must be positive!' ]"
-                    type="number"
-                    :color="flavourColors[icecreamFlavourEntries[index].flavour]"
-                  />
-                </div>
-                <div class="col-3 pad-right">
-                  <q-input
-                    label="Number of Jugs"
-                    required
-                    v-model.number="icecreamFlavourEntries[index].jugsamount"
-                    @focus="$event.target.select()"
-                    :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
-                    type="number"
-                    :color="flavourColors[icecreamFlavourEntries[index].flavour]"
-                  />
-                </div>
-                <div class="col-3 pad-right">
-                  <q-input
-                    label="Number of Trays"
-                    required
-                    v-model.number="icecreamFlavourEntries[index].traysamount"
-                    @focus="$event.target.select()"
-                    :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
-                    type="number"
-                    :color="flavourColors[icecreamFlavourEntries[index].flavour]"
-                  />
-                </div>
-                <div class="col-3">
-                  <q-input
-                    label="Weight of Unsaleable Icecream"
-                    required
-                    v-model.number="icecreamFlavourEntries[index].unsaleableweight"
-                    @focus="$event.target.select()"
-                    :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
-                    type="number"
-                    :color="flavourColors[icecreamFlavourEntries[index].flavour]"
-                  />
-                </div>
-                <div class="col-12">
-                  <q-input
-                    label="Notes"
-                    v-model="icecreamFlavourEntries[index].notes"
-                    type="text"
-                    autogrow
-                    :color="flavourColors[icecreamFlavourEntries[index].flavour]"
-                  />
-                </div>
-              </q-card>
-
-              <q-btn
-                v-if="!loading"
-                icon="add"
-                id="add-flavour-btn"
-                label="Add Flavour"
-                class="full-width"
-                color="primary"
-                @click="addFlavourEntry"
-              />
-            </q-tab-panel>
-
-            <q-tab-panel name="Select Production Type">
-              <div
-                v-if="!loading"
-                class="full-width text-center text-h6 text-grey"
-              >
-                Please Select Production Type
               </div>
-            </q-tab-panel>
-          </q-tab-panels>
+            </q-card>
 
-          <div v-if="loading">
+            <q-btn
+              icon="add"
+              id="add-staff-btn"
+              label="Add Staff Member"
+              class="full-width"
+              color="primary"
+              @click="addStaffMember"
+            />
+          </q-card-section>
+
+          <q-card-section
+            class="bg-grey-2"
+            v-if="loading"
+          >
             <q-card
-              v-for="index in 3"
-              v-bind:key="index"
-              class="row items-center full-width flavour-item"
+              class="row items-center full-width staff-item"
             >
               <div class="row full-width items-center no-wrap">
                 <div class="col pad-right">
                   <q-skeleton type="QInput" />
                 </div>
 
+                <div class="col-3 pad-right">
+                  <q-skeleton type="QInput" />
+                </div>
+
+                <div class="col-3 pad-right">
+                  <q-skeleton type="QInput" />
+                </div>
+
+                <div class="col-auto">
+                  <q-skeleton type="QAvatar" />
+                </div>
+
                 <div class="col-auto">
                   <q-skeleton type="QAvatar" />
                 </div>
               </div>
-
-              <div class="col-3 pad-right">
-                <q-skeleton type="QInput" />
-              </div>
-              <div class="col-3 pad-right">
-                <q-skeleton type="QInput" />
-              </div>
-              <div class="col-3 pad-right">
-                <q-skeleton type="QInput" />
-              </div>
-              <div class="col-3">
-                <q-skeleton type="QInput" />
-              </div>
-
-              <div class="col-12">
-                <q-skeleton type="QInput" />
-              </div>
             </q-card>
 
             <q-skeleton v-if="loading" type="QBtn" class="full-width" />
-          </div>
+          </q-card-section>
 
-        </q-card-section>
-
-        <q-separator />
-
-        <q-card-section
-          class="bg-grey-2"
-          v-if="!loading"
-        >
-          <q-card
-            v-for="(item, index) in staffEntries"
-            v-bind:key="index"
-            class="row items-center full-width staff-item"
-          >
-            <div class="row full-width items-center no-wrap">
-              <div class="col pad-right">
-                <q-select
-                  label="Staff Member"
-                  required
-                  v-model="staffEntries[index].name"
-                  :rules="[ val => staffOptions.includes(val) || 'Please select staff member!' ]"
-                  :options="staffOptions"
-                />
-              </div>
-
-              <div class="col-3 pad-right">
-                <q-input
-                  label="Start Time (24h)"
-                  v-model="staffEntries[index].starttime"
-                  :rules="[ val => val.match(/[0-9][0-9]:[0-9][0-9]$/)
-                        || 'Please enter a valid time (HH:MM)!']"
-                  required
-                  class="q-field--with-bottom"
-                >
-                  <template v-slot:append>
-                    <q-icon name="access_time" class="cursor-pointer">
-                      <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                        <q-time v-model="staffEntries[index].starttime">
-                          <div class="row items-center justify-end">
-                            <q-btn v-close-popup label="Close" color="primary" flat />
-                          </div>
-                        </q-time>
-                      </q-popup-proxy>
-                    </q-icon>
-                  </template>
-                </q-input>
-              </div>
-
-              <div class="col-3 pad-right">
-                <q-input
-                  label="End Time (24h)"
-                  v-model="staffEntries[index].endtime"
-                  required
-                  :rules="[ val => val.match(/[0-9][0-9]:[0-9][0-9]$/)
-                        || 'Please enter a valid time (HH:MM)!']"
-                  class="q-field--with-bottom"
-                >
-                  <template v-slot:append>
-                    <q-icon name="access_time" class="cursor-pointer">
-                      <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                        <q-time v-model="staffEntries[index].endtime">
-                          <div class="row items-center justify-end">
-                            <q-btn v-close-popup label="Close" color="primary" flat />
-                          </div>
-                        </q-time>
-                      </q-popup-proxy>
-                    </q-icon>
-                  </template>
-                </q-input>
-              </div>
-
-              <div class="col-3 pad-right">
-                <q-input
-                  label="Break Length (Minutes)"
-                  v-model="staffEntries[index].breaklength"
-                  @focus="$event.target.select()"
-                  :rules="[ val => val >= 0 || 'Please enter a number!']"
-                  required
-                  type="number"
-                  class="q-field--with-bottom"
-                >
-                </q-input>
-              </div>
-
-              <div class="col-auto">
-                <q-btn
-                  flat
-                  round
-                  icon="delete"
-                  @click="deleteStaffMember(index)"
-                />
-              </div>
-            </div>
-          </q-card>
-
-          <q-btn
-            icon="add"
-            id="add-staff-btn"
-            label="Add Staff Member"
-            class="full-width"
-            color="primary"
-            @click="addStaffMember"
-          />
-        </q-card-section>
-
-        <q-card-section
-          class="bg-grey-2"
-          v-if="loading"
-        >
-          <q-card
-            class="row items-center full-width staff-item"
-          >
-            <div class="row full-width items-center no-wrap">
-              <div class="col pad-right">
-                <q-skeleton type="QInput" />
-              </div>
-
-              <div class="col-3 pad-right">
-                <q-skeleton type="QInput" />
-              </div>
-
-              <div class="col-3 pad-right">
-                <q-skeleton type="QInput" />
-              </div>
-
-              <div class="col-auto">
-                <q-skeleton type="QAvatar" />
-              </div>
-
-              <div class="col-auto">
-                <q-skeleton type="QAvatar" />
-              </div>
-            </div>
-          </q-card>
-
-          <q-skeleton v-if="loading" type="QBtn" class="full-width" />
-        </q-card-section>
-
-        <q-card-section id="save-btn-container">
-          <q-btn
-            label="Save"
-            class="full-width"
-            :loading="saveLoading"
-            :disable="loading"
-            type="submit"
-            color="primary"
-          />
-        </q-card-section>
-      </q-form>
-    </q-card>
+          <q-card-section id="save-btn-container">
+            <q-btn
+              label="Save"
+              class="full-width"
+              :loading="saveLoading"
+              :disable="loading"
+              type="submit"
+              color="primary"
+            />
+          </q-card-section>
+        </q-form>
+      </q-card>
+    </div>
   </q-page>
 </template>
 
 <style media="screen" lang="scss" scoped>
   .data-card {
     width: 80vw;
-    min-height: calc(100vh - 50px);
+    // min-height: calc(100vh - 50px);
   }
 
   #date-input {
@@ -931,8 +933,11 @@ export default defineComponent({
       }
 
       // check on data entry page and object data is complete
-      if ((window.location.hash !== '#/data' || !checkObjectNotNull(flavourEntryData))
-        || !this.formIsValid) {
+      if ((window.location.hash !== '#/data'
+        || !checkObjectNotNull(flavourEntryData))
+        || !this.formIsValid
+        || (flavourEntryData.length === 0 && this.staffEntries.length === 0)) {
+        this.saveLoading = false;
         return;
       }
 

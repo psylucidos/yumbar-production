@@ -66,3 +66,13 @@ CREATE TABLE icecreamflavourentries (
   unsaleableweight integer NOT NULL,
   notes text
 );
+
+CREATE TABLE staffnames (
+  id SERIAL PRIMARY KEY,
+  name text NOT NULL
+);
+
+CREATE TABLE flavournames (
+  id SERIAL PRIMARY KEY,
+  name text NOT NULL
+);

@@ -8,6 +8,7 @@ const authRouter = require('./routes/auth');
 const daysRouter = require('./routes/days');
 const flavoursRouter = require('./routes/flavours');
 const staffRouter = require('./routes/staff');
+const settingsRouter = require('./routes/settings');
 
 router
   .use(authRouter.routes())
@@ -17,6 +18,8 @@ router
   .use(flavoursRouter.routes())
   .use(flavoursRouter.allowedMethods())
   .use(staffRouter.routes())
-  .use(staffRouter.allowedMethods());
+  .use(staffRouter.allowedMethods())
+  .use(settingsRouter.routes())
+  .use(settingsRouter.allowedMethods());
 
 module.exports = router;
