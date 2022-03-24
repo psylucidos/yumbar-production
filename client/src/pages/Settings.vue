@@ -100,6 +100,10 @@
   .col {
     margin-top: 0;
   }
+
+  .text-h6 {
+    font-weight: normal;
+  }
 }
 </style>
 
@@ -144,7 +148,6 @@ export default defineComponent({
       })
       .then((res) => {
         const { data } = res;
-        console.log('received settings res', data);
         this.staffNames = data;
       })
       .catch(this.handlePostErr);
@@ -164,7 +167,6 @@ export default defineComponent({
       });
     },
     addStaffName(name) {
-      console.log('adding', name);
       this.$api
         .post('/settings/add/staff', {
           name,
@@ -193,7 +195,6 @@ export default defineComponent({
       });
     },
     addFlavourName(name) {
-      console.log('adding', name);
       this.$api
         .post('/settings/add/flavour', {
           name,
@@ -209,7 +210,6 @@ export default defineComponent({
         .catch(this.handlePostErr);
     },
     deleteStaffName(index) {
-      console.log('delete', index);
       this.$api
         .post('/settings/delete/staff', {
           id: String(this.staffNames[index].id),
@@ -224,7 +224,6 @@ export default defineComponent({
         .catch(this.handlePostErr);
     },
     deleteFlavourName(index) {
-      console.log('delete', index);
       this.$api
         .post('/settings/delete/flavour', {
           id: String(this.flavourNames[index].id),
@@ -251,7 +250,7 @@ export default defineComponent({
         }
       } else {
         this.$q.notify({
-          message: 'Unexpected Error! Server May be Down!',
+          message: 'Unexpected Error! Server May be Down! Check your internet connection!',
           icon: 'warning',
           color: 'red',
         });

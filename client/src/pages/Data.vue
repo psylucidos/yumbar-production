@@ -831,7 +831,7 @@ export default defineComponent({
         Vanilla: 'yellow-3',
         Chocolate: 'brown',
         Jaffa: 'orange',
-        Hazelnut: 'orange-3',
+        Hazelnut: 'orange-3', // TODO: add more colours
       },
       cuttingFlavourEntries: [],
       packingFlavourEntries: [],
@@ -843,6 +843,7 @@ export default defineComponent({
       dayID: null,
       test: 3,
       formIsValid: false,
+      autoSaveTimer: null,
     };
   },
   mounted() {
@@ -854,7 +855,7 @@ export default defineComponent({
     this.date = `${DD}-${MM}-${YYYY}`;
 
     const self = this;
-    setInterval(() => {
+    this.autoSaveTimer = setInterval(() => {
       self.saveData(true);
     }, AUTOUPDATEINTERVAL * 1000);
   },
@@ -909,11 +910,45 @@ export default defineComponent({
             Authorization: `Bearer ${self.$store.state.token}`,
           },
         })
-        .then((staffRes) => {
-          console.log('Received get staff response', staffRes);
-          const staffData = staffRes.data;
+        .then((res) => {
+          console.log('Received get staff response', res);
+          const staffData = res.data;
           self.staffEntries = staffData;
           self.endLoading();
+        })
+        .catch(self.handlePostErr);
+
+      this.$api
+        .get('/settings/get/staff', {
+          headers: {
+            Authorization: `Bearer ${self.$store.state.token}`,
+          },
+        })
+        .then((res) => {
+          console.log('Received get staff names response', res);
+          const { data } = res;
+          const newOptions = [];
+          for (let i = 0; i < data.length; i += 1) {
+            newOptions.push(data[i].name);
+          }
+          this.staffOptions = newOptions;
+        })
+        .catch(self.handlePostErr);
+
+      this.$api
+        .get('/settings/get/flavours', {
+          headers: {
+            Authorization: `Bearer ${self.$store.state.token}`,
+          },
+        })
+        .then((res) => {
+          console.log('Received get flavour names response', res);
+          const { data } = res;
+          const newOptions = [];
+          for (let i = 0; i < data.length; i += 1) {
+            newOptions.push(data[i].name);
+          }
+          this.flavourOptions = newOptions;
         })
         .catch(self.handlePostErr);
     },
@@ -1296,7 +1331,7 @@ export default defineComponent({
         }
       } else {
         this.$q.notify({
-          message: 'Unexpected Error! Server May be Down!',
+          message: 'Unexpected Error! Server May be Down! Check your internet connection!',
           icon: 'warning',
           color: 'red',
         });
@@ -1355,6 +1390,9 @@ export default defineComponent({
           }
         });
     },
+  },
+  beforeRouteLeave() {
+    clearInterval(this.autoSaveTimer);
   },
 });
 </script>
