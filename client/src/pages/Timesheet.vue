@@ -117,20 +117,22 @@
 import { defineComponent } from 'vue';
 
 function getMonday(d = new Date()) {
+  d.setHours(0, 0, 0);
   const day = d.getDay();
   const diff = d.getDate() - day + (day === 0 ? -6 : 1);
   return new Date(d.setDate(diff));
 }
 
-function getFriday(d = new Date()) {
+function getSaturday(d = new Date()) {
+  d.setHours(0, 0, 0);
   const day = d.getDay();
   let diff = 0;
   if (day > 5) { // its the weekend!
     const daysPastFriday = day - 5;
-    diff = d.getDate() - daysPastFriday;
+    diff = d.getDate() - daysPastFriday + 1;
   } else { // its a weekday ):
     const daysUntilFriday = 5 - day;
-    diff = d.getDate() + daysUntilFriday;
+    diff = d.getDate() + daysUntilFriday + 1;
   }
   return new Date(d.setDate(diff));
 }
@@ -150,7 +152,7 @@ export default defineComponent({
     this.$api
       .post('/staff/getrange', {
         startDate: getMonday(),
-        endDate: getFriday(),
+        endDate: getSaturday(),
       }, {
         headers: {
           Authorization: `Bearer ${this.$store.state.token}`,
