@@ -73,4 +73,16 @@ module.exports = {
       }
     });
   }),
+
+  getStaffEntriesInRange: (startDate, endDate) => new Promise((resolve, reject) => {
+    db.query('SELECT * FROM staffentries WHERE productiondate BETWEEN $1 AND $2;', [startDate, endDate], (err, res) => {
+      if (err) {
+        reject(err);
+      } else if (res.rows) {
+        resolve(res.rows);
+      } else {
+        reject(new Error('Unable to find staff entries!'));
+      }
+    });
+  }),
 };

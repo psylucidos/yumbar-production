@@ -1,5 +1,5 @@
 <template>
-  <q-page class="q-pa-sm">
+  <q-page class="q-pa-md">
     <div class="row q-col-gutter-md">
       <div class="col-6">
         <q-card>

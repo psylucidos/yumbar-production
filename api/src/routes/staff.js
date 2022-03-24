@@ -74,4 +74,19 @@ router.post('/get', async (ctx) => {
   }
 });
 
+router.post('/getrange', async (ctx) => {
+  const { startDate, endDate } = ctx.request.body;
+
+  const result = await staffEntriesController
+    .getStaffEntriesInRange(startDate, endDate);
+
+  if (Array.isArray(result)) {
+    ctx.status = 200;
+    ctx.body = result;
+  } else {
+    ctx.status = 500;
+    console.error(result);
+  }
+});
+
 module.exports = router;

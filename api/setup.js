@@ -7,7 +7,6 @@ const { register } = require('./src/controllers/auth');
 const setupQuery = fs.readFileSync('./dbsetup.sql', { encoding: 'utf8', flag: 'r' });
 const clearQuery = fs.readFileSync('./cleardb.sql', { encoding: 'utf8', flag: 'r' });
 
-console.log(' -- REMEMBER TO SET DATESTYLE TO DMY IN CONFIG! --');
 console.log('Clearing database tables...');
 db.query(clearQuery, [], (clearErr) => {
   if (clearErr) {
@@ -28,6 +27,7 @@ db.query(clearQuery, [], (clearErr) => {
         const authRes = register(process.argv[2], String(process.argv[3]).trim());
         console.log(authRes);
         console.log('DONE!');
+        console.log(' -- REMEMBER TO SET DATESTYLE TO DMY IN CONFIG! --');
       } else {
         console.log('!! Incorrect amount of args supplied, please use: > node setup.js USERNAME PASSWORD');
       }
