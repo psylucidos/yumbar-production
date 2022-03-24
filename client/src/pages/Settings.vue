@@ -17,7 +17,7 @@
           <q-card
             v-for="(staffMember, index) in staffNames"
             v-bind:key="staffMember.id"
-            class="row full-width q-gutter-md items-center no-wrap staff-name-card"
+            class="row full-width q-gutter-md q-pa-md items-center no-wrap staff-name-card"
           >
             <div class="col">
               <div class="text-h6">{{ staffMember.name }}</div>
@@ -43,6 +43,27 @@
           />
         </q-card-section>
 
+        <q-card-section
+          v-if="loading"
+          class="bg-grey-2 row staff-names-container"
+        >
+          <q-card
+            class="row full-width q-gutter-md q-pa-md items-center no-wrap staff-name-card"
+            v-for="n of 5"
+            v-bind:key="n"
+          >
+            <div class="col">
+              <q-skeleton animation="blink" type="text" width="160px" />
+            </div>
+
+            <div class="col col-auto">
+              <q-skeleton type="QAvatar" />
+            </div>
+          </q-card>
+
+          <q-skeleton type="QBtn" class="full-width" />
+        </q-card-section>
+
         <q-card-section class="row">
           <div class="text-h4">
             Flavour Names
@@ -58,7 +79,7 @@
           <q-card
             v-for="(flavour, index) in flavourNames"
             v-bind:key="flavour.id"
-            class="row full-width items-center no-wrap q-gutter-md flavour-name-card"
+            class="row full-width items-center no-wrap q-gutter-md q-pa-md flavour-name-card"
           >
             <div class="col pad-right">
               <div class="text-h6">{{ flavour.name }}</div>
@@ -82,6 +103,27 @@
             color="primary"
             @click="showAddFlavourPrompt"
           />
+        </q-card-section>
+
+        <q-card-section
+          v-if="loading"
+          class="bg-grey-2 row staff-names-container"
+        >
+          <q-card
+            class="row full-width q-gutter-md q-pa-md items-center no-wrap staff-name-card"
+            v-for="n of 5"
+            v-bind:key="n"
+          >
+            <div class="col">
+              <q-skeleton animation="blink" type="text" width="160px" />
+            </div>
+
+            <div class="col col-auto">
+              <q-skeleton type="QAvatar" />
+            </div>
+          </q-card>
+
+          <q-skeleton type="QBtn" class="full-width" />
         </q-card-section>
       </q-card>
     </div>
