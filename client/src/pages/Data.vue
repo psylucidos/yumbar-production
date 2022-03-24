@@ -169,9 +169,9 @@
 
                   <div class="col-4">
                     <q-input
-                      label="Number of Incomplete Boxes"
+                      label="Number of Left Over Bars"
                       required
-                      v-model.number="packingFlavourEntries[index].incompleteboxamount"
+                      v-model.number="packingFlavourEntries[index].leftoverbaramount"
                       @focus="$event.target.select()"
                       :rules="[ val => val >= 0 || 'amount must be positive!' ]"
                       type="number"
@@ -886,7 +886,9 @@ export default defineComponent({
             const flavourData = flavoursRes.data;
             if (self.productionType === 'Packing Day') {
               for (let i = 0; i < flavourData.length; i += 1) {
-                flavourData[i].usebydate = formatDateString(flavourData[i].usebydate);
+                if (flavourData[i].usebydate !== null) {
+                  flavourData[i].usebydate = formatDateString(flavourData[i].usebydate);
+                }
               }
               self.packingFlavourEntries = flavourData;
             } else if (self.productionType === 'Cutting Day') {
@@ -1081,7 +1083,7 @@ export default defineComponent({
           boxamount: 0,
           usebydate: previousUseBy,
           sampleamount: 0,
-          incompleteboxamount: 0,
+          leftoverbaramount: 0,
           notes: '',
         };
       } else if (this.productionType === 'Cutting Day') {
