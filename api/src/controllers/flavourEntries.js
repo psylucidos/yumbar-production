@@ -243,90 +243,60 @@ module.exports = {
     }
   }),
 
-  getAllFlavourEntries: () => new Promise((resolve, reject) => {
-    db.query('SELECT * FROM cuttingflavourentries;', [], (cuttingErr, cuttingRes) => {
-      if (cuttingErr) {
-        reject(cuttingErr);
-      } else if (cuttingRes.rows) {
-        const cuttingData = cuttingRes.rows;
-        db.query('SELECT * FROM packingflavourentries;', [], (packingErr, packingRes) => {
-          if (packingErr) {
-            reject(packingErr);
-          } else if (packingRes.rows) {
-            const packingData = packingRes.rows;
-            db.query('SELECT * FROM baseflavourentries;', [], (baseErr, baseRes) => {
-              if (baseErr) {
-                reject(baseErr);
-              } else if (baseRes.rows) {
-                const baseData = baseRes.rows;
-                db.query('SELECT * FROM icecreamflavourentries;', [], (icecreamErr, icecreamRes) => {
-                  if (icecreamErr) {
-                    reject(icecreamErr);
-                  } else if (icecreamRes.rows) {
-                    const icecreamData = icecreamRes.rows;
-                    resolve({
-                      cuttingData,
-                      packingData,
-                      baseData,
-                      icecreamData,
-                    });
-                  } else {
-                    reject(new Error('Unable to find flavour entries!'));
-                  }
-                });
-              } else {
-                reject(new Error('Unable to find flavour entries!'));
-              }
-            });
-          } else {
-            reject(new Error('Unable to find flavour entries!'));
-          }
-        });
+  getFlavoursAndBoxesFromPackingDays: () => new Promise((resolve, reject) => {
+    db.query('SELECT flavour, SUM(boxamount) FROM packingflavourentries GROUP BY flavour;', [], (err, res) => {
+      if (err) {
+        reject(err);
+      } else if (res.rows) {
+        resolve(res.rows);
       } else {
         reject(new Error('Unable to find flavour entries!'));
       }
     });
   }),
 
-  getAllFlavoursFromFlavourEntries: () => new Promise((resolve, reject) => {
-    db.query('SELECT flavour FROM cuttingflavourentries;', [], (cuttingErr, cuttingRes) => {
-      if (cuttingErr) {
-        reject(cuttingErr);
-      } else if (cuttingRes.rows) {
-        const cuttingData = cuttingRes.rows;
-        db.query('SELECT flavour FROM packingflavourentries;', [], (packingErr, packingRes) => {
-          if (packingErr) {
-            reject(packingErr);
-          } else if (packingRes.rows) {
-            const packingData = packingRes.rows;
-            db.query('SELECT flavour FROM baseflavourentries;', [], (baseErr, baseRes) => {
-              if (baseErr) {
-                reject(baseErr);
-              } else if (baseRes.rows) {
-                const baseData = baseRes.rows;
-                db.query('SELECT flavour FROM icecreamflavourentries;', [], (icecreamErr, icecreamRes) => {
-                  if (icecreamErr) {
-                    reject(icecreamErr);
-                  } else if (icecreamRes.rows) {
-                    const icecreamData = icecreamRes.rows;
-                    resolve({
-                      cuttingData,
-                      packingData,
-                      baseData,
-                      icecreamData,
-                    });
-                  } else {
-                    reject(new Error('Unable to find flavour entries!'));
-                  }
-                });
-              } else {
-                reject(new Error('Unable to find flavour entries!'));
-              }
-            });
-          } else {
-            reject(new Error('Unable to find flavour entries!'));
-          }
-        });
+  getFlavoursAndBoxesFromPackingDays: () => new Promise((resolve, reject) => {
+    db.query('SELECT flavour, SUM(boxamount) FROM packingflavourentries GROUP BY flavour;', [], (err, res) => {
+      if (err) {
+        reject(err);
+      } else if (res.rows) {
+        resolve(res.rows);
+      } else {
+        reject(new Error('Unable to find flavour entries!'));
+      }
+    });
+  }),
+
+  getFlavoursAndSlabsFromCuttingDays: () => new Promise((resolve, reject) => {
+    db.query('SELECT flavour, SUM(slabamount) FROM cuttingflavourentries GROUP BY flavour;', [], (err, res) => {
+      if (err) {
+        reject(err);
+      } else if (res.rows) {
+        resolve(res.rows);
+      } else {
+        reject(new Error('Unable to find flavour entries!'));
+      }
+    });
+  }),
+
+  getFlavoursAndTraysFromIcecreamDays: () => new Promise((resolve, reject) => {
+    db.query('SELECT flavour, SUM(traysamount) FROM icecreamflavourentries GROUP BY flavour;', [], (err, res) => {
+      if (err) {
+        reject(err);
+      } else if (res.rows) {
+        resolve(res.rows);
+      } else {
+        reject(new Error('Unable to find flavour entries!'));
+      }
+    });
+  }),
+
+  getFlavoursAndBasesFromBaseDays: () => new Promise((resolve, reject) => {
+    db.query('SELECT flavour, SUM(blenderamount) FROM baseflavourentries GROUP BY flavour;', [], (err, res) => {
+      if (err) {
+        reject(err);
+      } else if (res.rows) {
+        resolve(res.rows);
       } else {
         reject(new Error('Unable to find flavour entries!'));
       }

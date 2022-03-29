@@ -7,6 +7,10 @@ const { register } = require('./src/controllers/auth');
 const setupQuery = fs.readFileSync('./dbsetup.sql', { encoding: 'utf8', flag: 'r' });
 const clearQuery = fs.readFileSync('./cleardb.sql', { encoding: 'utf8', flag: 'r' });
 
+if (process.argv.length !== 4) {
+  console.log('!! Incorrect amount of args supplied, please use: > node setup.js USERNAME PASSWORD');
+}
+
 console.log('Clearing database tables...');
 db.query(clearQuery, [], (clearErr) => {
   if (clearErr) {
@@ -22,15 +26,11 @@ db.query(clearQuery, [], (clearErr) => {
     } else {
       console.log('Created tables!');
       console.log('Creating user..');
-      if (process.argv.length === 4) {
-        console.log('Registering user', process.argv[2], String(process.argv[3]).trim());
-        const authRes = register(process.argv[2], String(process.argv[3]).trim());
-        console.log(authRes);
-        console.log('DONE!');
-        console.log(' -- REMEMBER TO SET DATESTYLE TO DMY IN CONFIG! --');
-      } else {
-        console.log('!! Incorrect amount of args supplied, please use: > node setup.js USERNAME PASSWORD');
-      }
+      console.log('Registering user', process.argv[2], String(process.argv[3]).trim());
+      const authRes = register(process.argv[2], String(process.argv[3]).trim());
+      console.log(authRes);
+      console.log('DONE!');
+      console.log(' -- REMEMBER TO SET DATESTYLE TO DMY IN CONFIG! --');
     }
   });
 });

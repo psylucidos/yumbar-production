@@ -74,11 +74,11 @@ router.post('/get', async (ctx) => {
   }
 });
 
-router.post('/getall', async (ctx) => {
+router.post('/getpackingboxes', async (ctx) => {
   const result = await flavourEntriesController
-    .getAllFlavourEntries();
+    .getFlavoursAndBoxesFromPackingDays();
 
-  if (Array.isArray(result.cuttingData)) {
+  if (Array.isArray(result)) {
     ctx.status = 200;
     ctx.body = result;
   } else {
@@ -87,11 +87,37 @@ router.post('/getall', async (ctx) => {
   }
 });
 
-router.post('/getallflavours', async (ctx) => {
+router.post('/getcuttingslabs', async (ctx) => {
   const result = await flavourEntriesController
-    .getAllFlavoursFromFlavourEntries();
+    .getFlavoursAndSlabsFromCuttingDays();
 
-  if (Array.isArray(result.cuttingData)) {
+  if (Array.isArray(result)) {
+    ctx.status = 200;
+    ctx.body = result;
+  } else {
+    ctx.status = 500;
+    console.error(result);
+  }
+});
+
+router.post('/geticecreamtrays', async (ctx) => {
+  const result = await flavourEntriesController
+    .getFlavoursAndTraysFromIcecreamDays();
+
+  if (Array.isArray(result)) {
+    ctx.status = 200;
+    ctx.body = result;
+  } else {
+    ctx.status = 500;
+    console.error(result);
+  }
+});
+
+router.post('/getbaseblenders', async (ctx) => {
+  const result = await flavourEntriesController
+    .getFlavoursAndBasesFromBaseDays();
+
+  if (Array.isArray(result)) {
     ctx.status = 200;
     ctx.body = result;
   } else {

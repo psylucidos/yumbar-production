@@ -255,7 +255,7 @@
                   </div>
                   <div class="col-3 pad-right">
                     <q-input
-                      label="Second Base Batch # (Optional)"
+                      label="Second Base Batch # (Default is 0)"
                       required
                       v-model.number="cuttingFlavourEntries[index].secondbasebatch"
                       @focus="$event.target.select()"
@@ -314,8 +314,8 @@
                         label="Batch Flavour"
                         required
                         v-model="baseFlavourEntries[index].flavour"
-                        :rules="[ val => flavourOptions.includes(val) || 'Please select flavour!' ]"
-                        :options="baseFlavourOptions"
+                        :rules="[ val => val !== '' || 'Please select flavour!' ]"
+                        :options="['Vanilla', 'Chocolate']"
                         :color="flavourColors[baseFlavourEntries[index].flavour]"
                       />
                     </div>
@@ -1109,7 +1109,7 @@ export default defineComponent({
           flavour: '',
           slabbatch: previousSlabBatch,
           basebatch: previousBaseBatch,
-          secondbasebatch: null,
+          secondbasebatch: 0,
           slabamount: 0,
           notes: '',
         };
