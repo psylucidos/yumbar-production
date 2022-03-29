@@ -50,6 +50,24 @@ export default defineComponent({
       loading: true,
       options: ['Packing Day (Boxes)', 'Cutting Day (Slabs)', 'Base Day (Bases)', 'Icecream Day (Trays)'],
       productionType: 'Packing Day (Boxes)',
+      flavourColorDictionary: {
+        Vanilla: 'rgb(243, 229, 171)',
+        Chocolate: 'rgb(123, 63, 0)',
+        Jaffa: 'rgb(245, 135, 53)',
+        Hazelnut: 'beige',
+        Mint: 'rgb(152, 255, 152)',
+        Mango: 'rgb(255, 200, 0)',
+        Strawberry: 'pink',
+        Blueberry: 'blue',
+        Raspberry: 'red',
+        Coffee: 'rgb(138, 98, 74)',
+        Caramel: 'rgb(255,213,154)',
+        'Combo 1': 'grey',
+        'Combo 2': 'grey',
+        'Combo 3': 'grey',
+        'Combo 4': 'grey',
+        'Combo 5': 'grey',
+      },
     };
   },
   created() {
@@ -70,10 +88,13 @@ export default defineComponent({
             const { data } = res;
 
             const labels = [];
+            const labelColours = [];
             const pieData = [];
+            data.sort((a, b) => b.sum - a.sum);
             data.forEach((x) => {
               labels.push(x.flavour);
               pieData.push(x.sum);
+              labelColours.push(this.flavourColorDictionary[x.flavour]);
             });
 
             this.chartData = {
@@ -81,7 +102,7 @@ export default defineComponent({
               datasets: [
                 {
                   data: pieData,
-                  backgroundColor: ['yellow', 'brown', 'maroon', 'beige', 'green', 'orange', 'pink', 'blue', 'red', 'grey'],
+                  backgroundColor: labelColours,
                 },
               ],
             };
@@ -101,10 +122,13 @@ export default defineComponent({
             const { data } = res;
 
             const labels = [];
+            const labelColours = [];
             const pieData = [];
+            data.sort((a, b) => b.sum - a.sum);
             data.forEach((x) => {
               labels.push(x.flavour);
               pieData.push(x.sum);
+              labelColours.push(this.flavourColorDictionary[x.flavour]);
             });
 
             this.chartData = {
@@ -112,7 +136,7 @@ export default defineComponent({
               datasets: [
                 {
                   data: pieData,
-                  backgroundColor: ['yellow', 'brown', 'maroon', 'beige', 'green', 'orange', 'pink', 'blue', 'red', 'grey'],
+                  backgroundColor: labelColours,
                 },
               ],
             };
@@ -132,10 +156,13 @@ export default defineComponent({
             const { data } = res;
 
             const labels = [];
+            const labelColours = [];
             const pieData = [];
+            data.sort((a, b) => b.sum - a.sum);
             data.forEach((x) => {
               labels.push(x.flavour);
               pieData.push(x.sum);
+              labelColours.push(this.flavourColorDictionary[x.flavour]);
             });
 
             this.chartData = {
@@ -143,7 +170,7 @@ export default defineComponent({
               datasets: [
                 {
                   data: pieData,
-                  backgroundColor: ['yellow', 'brown', 'maroon', 'beige', 'green', 'orange', 'pink', 'blue', 'red', 'grey'],
+                  backgroundColor: labelColours,
                 },
               ],
             };
@@ -163,10 +190,13 @@ export default defineComponent({
             const { data } = res;
 
             const labels = [];
+            const labelColours = [];
             const pieData = [];
+            data.sort((a, b) => b.sum - a.sum);
             data.forEach((x) => {
               labels.push(x.flavour);
               pieData.push(x.sum);
+              labelColours.push(this.flavourColorDictionary[x.flavour]);
             });
 
             this.chartData = {
@@ -174,7 +204,7 @@ export default defineComponent({
               datasets: [
                 {
                   data: pieData,
-                  backgroundColor: ['yellow', 'brown', 'maroon', 'beige', 'green', 'orange', 'pink', 'blue', 'red', 'grey'],
+                  backgroundColor: labelColours,
                 },
               ],
             };
