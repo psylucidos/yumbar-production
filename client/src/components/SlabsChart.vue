@@ -1,7 +1,7 @@
 <template>
   <q-card>
     <q-card-section class="title-section">
-      <div v-if="!loading" class="text-h6">Boxes Packed</div>
+      <div v-if="!loading" class="text-h6">Slabs Made</div>
       <q-skeleton v-if="loading" width="300px" type="text" class="text-h6" />
     </q-card-section>
 
@@ -36,7 +36,7 @@ function prettifyDate(targetDate) {
 }
 
 export default defineComponent({
-  name: 'PackingChart',
+  name: 'SlabsChart',
   components: { LineChart },
   data() {
     return {
@@ -61,32 +61,32 @@ export default defineComponent({
     console.log('created date ranges', dateRanges);
 
     this.$api
-      .post('/flavours/getboxesinrange', dateRanges, {
+      .post('/flavours/getslabsinrange', dateRanges, {
         headers: {
           Authorization: `Bearer ${this.$store.state.token}`,
         },
       })
       .then((res) => {
-        console.log('received boxes response', res);
+        console.log('received slabs response', res);
         const { data } = res;
 
         const labels = [];
-        const boxesByMonth = [];
+        const slabsByMonth = [];
         for (let i = 0; i < data.length; i += 1) {
           const [d, m, y] = data[i].start.split('-');
           const monthString = new Date(`${y}/${m}/${d}`).toLocaleString('default', { month: 'long' });
           labels.push(monthString);
-          boxesByMonth.push(data[i].boxes);
+          slabsByMonth.push(data[i].slabs);
         }
 
         this.chartData = {
           labels: labels.reverse(),
           datasets: [{
-            label: 'Number of Boxes',
-            data: boxesByMonth.reverse(),
+            label: 'Number of Slabs',
+            data: slabsByMonth.reverse(),
             fill: true,
             borderColor: 'rgb(231,86,127)',
-            backgroundColor: 'rgb(231,86,127, 0.4)',
+            backgroundColor: 'rgb(231,86,127, 0.1)',
             tension: 0.3,
           }],
         };

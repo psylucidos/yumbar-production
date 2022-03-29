@@ -8,7 +8,7 @@
         Ice Cream Flavor Distribution
       </div>
       <q-skeleton v-if="loading" width="300px" type="text" class="text-h6 col" />
-      <div class="col-3">
+      <div class="col-4">
         <q-select
           dense
           v-if="!loading"
@@ -48,8 +48,8 @@ export default defineComponent({
     return {
       chartData: null,
       loading: true,
-      options: ['Packing Day', 'Cutting Day', 'Base Day', 'Icecream Day'],
-      productionType: 'Packing Day',
+      options: ['Packing Day (Boxes)', 'Cutting Day (Slabs)', 'Base Day (Bases)', 'Icecream Day (Trays)'],
+      productionType: 'Packing Day (Boxes)',
     };
   },
   created() {
@@ -57,8 +57,8 @@ export default defineComponent({
   },
   methods: {
     renderData() {
-      console.log('rendering with alldata', this.allData);
-      if (this.productionType === 'Packing Day') {
+      this.loading = true;
+      if (this.productionType === 'Packing Day (Boxes)') {
         this.$api
           .post('/flavours/getpackingboxes', {}, {
             headers: {
@@ -89,7 +89,7 @@ export default defineComponent({
             this.loading = false;
           })
           .catch(this.handlePostErr);
-      } else if (this.productionType === 'Cutting Day') {
+      } else if (this.productionType === 'Cutting Day (Slabs)') {
         this.$api
           .post('/flavours/getcuttingslabs', {}, {
             headers: {
@@ -120,7 +120,7 @@ export default defineComponent({
             this.loading = false;
           })
           .catch(this.handlePostErr);
-      } else if (this.productionType === 'Base Day') {
+      } else if (this.productionType === 'Base Day (Bases)') {
         this.$api
           .post('/flavours/getbaseblenders', {}, {
             headers: {
@@ -151,7 +151,7 @@ export default defineComponent({
             this.loading = false;
           })
           .catch(this.handlePostErr);
-      } else if (this.productionType === 'Icecream Day') {
+      } else if (this.productionType === 'Icecream Day (Trays)') {
         this.$api
           .post('/flavours/geticecreamtrays', {}, {
             headers: {

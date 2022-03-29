@@ -1406,6 +1406,7 @@ export default defineComponent({
     },
   },
   beforeRouteLeave() {
+    console.log('CLEARING AUTOSAVE!');
     clearInterval(this.autoSaveTimer);
   },
 });

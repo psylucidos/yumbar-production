@@ -153,4 +153,85 @@ router.post('/getboxesinrange', async (ctx) => {
   ctx.body = body;
 });
 
+router.post('/gettraysinrange', async (ctx) => {
+  const { body } = ctx.request;
+  console.log('get trays body', body);
+
+  if (Array.isArray(body)) {
+    for (let i = 0; i < body.length; i += 1) {
+      console.log('for dates', body[i].start, body[i].end);
+      const result = await flavourEntriesController // eslint-disable-line
+        .getTraysInRange(body[i].start, body[i].end);
+
+      if (Array.isArray(result)) {
+        let total = 0;
+        for (let n = 0; n < result.length; n += 1) {
+          total += result[n].traysamount;
+        }
+        body[i].trays = total;
+      } else {
+        ctx.status = 500;
+        throw new Error('Unkown tray getting error!');
+      }
+    }
+  }
+
+  ctx.status = 200;
+  ctx.body = body;
+});
+
+router.post('/getbasesinrange', async (ctx) => {
+  const { body } = ctx.request;
+  console.log('get bases body', body);
+
+  if (Array.isArray(body)) {
+    for (let i = 0; i < body.length; i += 1) {
+      console.log('for dates', body[i].start, body[i].end);
+      const result = await flavourEntriesController // eslint-disable-line
+        .getBasesInRange(body[i].start, body[i].end);
+
+      if (Array.isArray(result)) {
+        let total = 0;
+        for (let n = 0; n < result.length; n += 1) {
+          total += result[n].blenderamount;
+        }
+        body[i].blenderbatches = total;
+      } else {
+        ctx.status = 500;
+        throw new Error('Unkown base getting error!');
+      }
+    }
+  }
+
+  ctx.status = 200;
+  ctx.body = body;
+});
+
+router.post('/getslabsinrange', async (ctx) => {
+  const { body } = ctx.request;
+  console.log('get slabs body', body);
+
+  if (Array.isArray(body)) {
+    for (let i = 0; i < body.length; i += 1) {
+      console.log('for dates', body[i].start, body[i].end);
+      const result = await flavourEntriesController // eslint-disable-line
+        .getSlabsInRange(body[i].start, body[i].end);
+
+      if (Array.isArray(result)) {
+        let total = 0;
+        for (let n = 0; n < result.length; n += 1) {
+          total += result[n].slabamount;
+        }
+        body[i].slabs = total;
+      } else {
+        ctx.status = 500;
+        throw new Error('Unkown base getting error!');
+      }
+    }
+  }
+
+  ctx.status = 200;
+  ctx.body = body;
+});
+
 module.exports = router;
