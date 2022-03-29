@@ -255,18 +255,6 @@ module.exports = {
     });
   }),
 
-  getFlavoursAndBoxesFromPackingDays: () => new Promise((resolve, reject) => {
-    db.query('SELECT flavour, SUM(boxamount) FROM packingflavourentries GROUP BY flavour;', [], (err, res) => {
-      if (err) {
-        reject(err);
-      } else if (res.rows) {
-        resolve(res.rows);
-      } else {
-        reject(new Error('Unable to find flavour entries!'));
-      }
-    });
-  }),
-
   getFlavoursAndSlabsFromCuttingDays: () => new Promise((resolve, reject) => {
     db.query('SELECT flavour, SUM(slabamount) FROM cuttingflavourentries GROUP BY flavour;', [], (err, res) => {
       if (err) {
