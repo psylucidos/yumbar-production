@@ -243,6 +243,50 @@ module.exports = {
     }
   }),
 
+  getFlavourEntriesInRange: (startDate, endDate, productionType) => new Promise((resolve, reject) => {
+    if (productionType === 'Cutting Day') {
+      db.query('SELECT productiondate, AVG(slabbatch) slabbatch, AVG(basebatch) basebatch, SUM(slabamount) slabamount FROM cuttingflavourentries WHERE productiondate BETWEEN $1 AND $2 GROUP BY productiondate ORDER BY productiondate;', [startDate, endDate], (err, res) => {
+        if (err) {
+          reject(err);
+        } else if (res.rows) {
+          resolve(res.rows);
+        } else {
+          reject(new Error('Unable to find flavour entries!'));
+        }
+      });
+    } else if (productionType === 'Packing Day') {
+      db.query('SELECT productiondate, AVG(batchnumber) batchnumber, SUM(slabamount) slabamount, SUM(boxamount) boxamount, SUM(leftoverbaramount) leftoverbaramount FROM packingflavourentries WHERE productiondate BETWEEN $1 AND $2 GROUP BY productiondate ORDER BY productiondate;', [startDate, endDate], (err, res) => {
+        if (err) {
+          reject(err);
+        } else if (res.rows) {
+          resolve(res.rows);
+        } else {
+          reject(new Error('Unable to find flavour entries!'));
+        }
+      });
+    } else if (productionType === 'Base Day') {
+      db.query('SELECT productiondate, AVG(batchnumber) batchnumber, SUM(blenderamount) blenderamount, SUM(smallamount) smallamount, SUM(largeamount) largeamount, SUM(smallcakeamount) smallcakeamount, SUM(mediumcakeamount) mediumcakeamount, SUM(largecakeamount) largecakeamount FROM baseflavourentries WHERE productiondate BETWEEN $1 AND $2 GROUP BY productiondate ORDER BY productiondate;', [startDate, endDate], (err, res) => {
+        if (err) {
+          reject(err);
+        } else if (res.rows) {
+          resolve(res.rows);
+        } else {
+          reject(new Error('Unable to find flavour entries!'));
+        }
+      });
+    } else if (productionType === 'Ice Cream Day') {
+      db.query('SELECT productiondate, AVG(batchnumber) batchnumber, SUM(jugsamount) jugsamount, SUM(traysamount) traysamount, SUM(unsaleableweight) unsaleableweight FROM icecreamflavourentries WHERE productiondate BETWEEN $1 AND $2 GROUP BY productiondate ORDER BY productiondate;', [startDate, endDate], (err, res) => {
+        if (err) {
+          reject(err);
+        } else if (res.rows) {
+          resolve(res.rows);
+        } else {
+          reject(new Error('Unable to find flavour entries!'));
+        }
+      });
+    }
+  }),
+
   getFlavoursAndBoxesFromPackingDays: () => new Promise((resolve, reject) => {
     db.query('SELECT flavour, SUM(boxamount) FROM packingflavourentries GROUP BY flavour;', [], (err, res) => {
       if (err) {

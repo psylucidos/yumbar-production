@@ -74,6 +74,21 @@ router.post('/get', async (ctx) => {
   }
 });
 
+router.post('/getinrange', async (ctx) => {
+  const { startDate, endDate, productionType } = ctx.request.body;
+
+  const result = await flavourEntriesController
+    .getFlavourEntriesInRange(startDate, endDate, productionType);
+
+  if (Array.isArray(result)) {
+    ctx.status = 200;
+    ctx.body = result;
+  } else {
+    ctx.status = 500;
+    console.error(result);
+  }
+});
+
 router.post('/getpackingboxes', async (ctx) => {
   const result = await flavourEntriesController
     .getFlavoursAndBoxesFromPackingDays();
