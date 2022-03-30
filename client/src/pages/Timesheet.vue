@@ -24,6 +24,7 @@
                 <th class="text-right">Date</th>
                 <th class="text-right">Start Time</th>
                 <th class="text-right">End Time</th>
+                <th class="text-right">Duration</th>
                 <th class="text-right">Break</th>
               </tr>
             </thead>
@@ -36,6 +37,7 @@
                 <td class="text-right">{{ formatDateString(staffEntry.productiondate) }}</td>
                 <td class="text-right">{{ staffEntry.starttime }}</td>
                 <td class="text-right">{{ staffEntry.endtime }}</td>
+                <td class="text-right">{{ staffEntry.duration.hours }}:{{ staffEntry.duration.minutes || '00' }}</td>
                 <td class="text-right">{{ staffEntry.breaklength }}m</td>
               </tr>
             </tbody>
