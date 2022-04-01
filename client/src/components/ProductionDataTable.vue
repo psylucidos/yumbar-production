@@ -54,7 +54,7 @@
             <th class="text-right">Batch #</th>
             <th class="text-right">Blender Amount</th>
             <th class="text-right">Small Base Amount</th>
-            <th class="text-right">Large Cake Amount</th>
+            <th class="text-right">Large Base Amount</th>
             <th class="text-right">Small Cake Amount</th>
             <th class="text-right">Medium Cake Amount</th>
             <th class="text-right">Large Cake Amount</th>
