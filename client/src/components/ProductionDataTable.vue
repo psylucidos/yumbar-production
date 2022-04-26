@@ -227,7 +227,7 @@ export default defineComponent({
             }
           }
           this.tableTotals[0] = 'Totals:';
-          this.tableData = res.data;
+          this.tableData = res.data.reverse();
           this.loading = false;
         })
         .catch(this.handlePostErr);

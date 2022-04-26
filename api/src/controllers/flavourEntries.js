@@ -1,3 +1,4 @@
+/* eslint max-len: "off" */
 const db = require('../database');
 
 module.exports = {
