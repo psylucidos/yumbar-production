@@ -69,12 +69,17 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(date, i) in tableData" v-bind:key="i">
-            <td
-              v-for="(value, i) in Object.values(date)"
-              v-bind:key="i"
-              :class="i === 0 ? 'text-left' : 'text-right'"
-            >{{ value }}</td>
+          <tr v-for="(date, i) in tableData" to="" v-bind:key="i">
+              <td
+                v-for="(value, i) in Object.values(date)"
+                v-bind:key="i"
+                :class="i === 0 ? 'text-left' : 'text-right'"
+              >
+                <router-link class="table-link" v-if="i === 0" :to="`/data/${date.productiondate}`">
+                  <span>{{ value }}</span>
+                </router-link>
+                <span v-if="i !== 0">{{ value }}</span>
+              </td>
           </tr>
           <tr class="bg-grey-1">
             <td
@@ -140,6 +145,11 @@
 <style scoped lang="scss" media="screen">
 .title-section {
   padding-bottom: 0;
+}
+
+.table-link {
+  color: $primary;
+  text-decoration: none;
 }
 </style>
 
