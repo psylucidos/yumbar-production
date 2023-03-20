@@ -37,6 +37,7 @@ CREATE TABLE packingflavourentries (
   batchnumber integer NOT NULL,
   slabamount integer NOT NULL,
   boxamount integer NOT NULL,
+  smallboxamount integer NOT NULL,
   usebydate date,
   sampleamount integer NOT NULL,
   leftoverbaramount integer NOT NULL,

@@ -132,11 +132,24 @@
 
                   <div class="col-4 pad-right">
                     <q-input
-                      label="Number of Boxes"
+                      label="Number of Large Boxes"
                       required
                       v-model.number="packingFlavourEntries[index].boxamount"
                       @focus="$event.target.select()"
                       @update:model-value="val => packingFlavourEntries[index].slabamount = val * 2"
+                      :rules="[ val => val >= 0 || 'Amount must be positive!' ]"
+                      type="number"
+                      :color="flavourColors[packingFlavourEntries[index].flavour]"
+                    />
+                  </div>
+
+                  <div class="col-4 pad-right">
+                    <q-input
+                      label="Number of Small Boxes"
+                      required
+                      v-model.number="packingFlavourEntries[index].smallboxamount"
+                      @focus="$event.target.select()"
+                      @update:model-value="val => packingFlavourEntries[index].slabamount = val"
                       :rules="[ val => val >= 0 || 'Amount must be positive!' ]"
                       type="number"
                       :color="flavourColors[packingFlavourEntries[index].flavour]"
@@ -1110,6 +1123,7 @@ export default defineComponent({
           batchnumber: previousBatchNumber,
           slabamount: 0,
           boxamount: 0,
+          smallboxamount: 0,
           usebydate: previousUseBy,
           sampleamount: 0,
           leftoverbaramount: 0,
