@@ -2,8 +2,6 @@ const Router = require('@koa/router');
 
 const router = new Router();
 
-router.prefix('/api');
-
 const authRouter = require('./routes/auth');
 const daysRouter = require('./routes/days');
 const flavoursRouter = require('./routes/flavours');
