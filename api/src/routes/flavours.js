@@ -74,11 +74,13 @@ router.post('/get', async (ctx) => {
   }
 });
 
-router.post('/getall', async (ctx) => {
-  const result = await flavourEntriesController
-    .getAllFlavourEntries();
+router.post('/getinrange', async (ctx) => {
+  const { startDate, endDate, productionType } = ctx.request.body;
 
-  if (Array.isArray(result.cuttingData)) {
+  const result = await flavourEntriesController
+    .getFlavourEntriesInRange(startDate, endDate, productionType);
+
+  if (Array.isArray(result)) {
     ctx.status = 200;
     ctx.body = result;
   } else {
@@ -87,11 +89,50 @@ router.post('/getall', async (ctx) => {
   }
 });
 
-router.post('/getallflavours', async (ctx) => {
+router.post('/getpackingboxes', async (ctx) => {
   const result = await flavourEntriesController
-    .getAllFlavoursFromFlavourEntries();
+    .getFlavoursAndBoxesFromPackingDays();
 
-  if (Array.isArray(result.cuttingData)) {
+  if (Array.isArray(result)) {
+    ctx.status = 200;
+    ctx.body = result;
+  } else {
+    ctx.status = 500;
+    console.error(result);
+  }
+});
+
+router.post('/getcuttingslabs', async (ctx) => {
+  const result = await flavourEntriesController
+    .getFlavoursAndSlabsFromCuttingDays();
+
+  if (Array.isArray(result)) {
+    ctx.status = 200;
+    ctx.body = result;
+  } else {
+    ctx.status = 500;
+    console.error(result);
+  }
+});
+
+router.post('/geticecreamtrays', async (ctx) => {
+  const result = await flavourEntriesController
+    .getFlavoursAndTraysFromIcecreamDays();
+
+  if (Array.isArray(result)) {
+    ctx.status = 200;
+    ctx.body = result;
+  } else {
+    ctx.status = 500;
+    console.error(result);
+  }
+});
+
+router.post('/getbaseblenders', async (ctx) => {
+  const result = await flavourEntriesController
+    .getFlavoursAndBasesFromBaseDays();
+
+  if (Array.isArray(result)) {
     ctx.status = 200;
     ctx.body = result;
   } else {
@@ -119,6 +160,87 @@ router.post('/getboxesinrange', async (ctx) => {
       } else {
         ctx.status = 500;
         throw new Error('Unkown box getting error!');
+      }
+    }
+  }
+
+  ctx.status = 200;
+  ctx.body = body;
+});
+
+router.post('/gettraysinrange', async (ctx) => {
+  const { body } = ctx.request;
+  console.log('get trays body', body);
+
+  if (Array.isArray(body)) {
+    for (let i = 0; i < body.length; i += 1) {
+      console.log('for dates', body[i].start, body[i].end);
+      const result = await flavourEntriesController // eslint-disable-line
+        .getTraysInRange(body[i].start, body[i].end);
+
+      if (Array.isArray(result)) {
+        let total = 0;
+        for (let n = 0; n < result.length; n += 1) {
+          total += result[n].traysamount;
+        }
+        body[i].trays = total;
+      } else {
+        ctx.status = 500;
+        throw new Error('Unkown tray getting error!');
+      }
+    }
+  }
+
+  ctx.status = 200;
+  ctx.body = body;
+});
+
+router.post('/getbasesinrange', async (ctx) => {
+  const { body } = ctx.request;
+  console.log('get bases body', body);
+
+  if (Array.isArray(body)) {
+    for (let i = 0; i < body.length; i += 1) {
+      console.log('for dates', body[i].start, body[i].end);
+      const result = await flavourEntriesController // eslint-disable-line
+        .getBasesInRange(body[i].start, body[i].end);
+
+      if (Array.isArray(result)) {
+        let total = 0;
+        for (let n = 0; n < result.length; n += 1) {
+          total += result[n].blenderamount;
+        }
+        body[i].blenderbatches = total;
+      } else {
+        ctx.status = 500;
+        throw new Error('Unkown base getting error!');
+      }
+    }
+  }
+
+  ctx.status = 200;
+  ctx.body = body;
+});
+
+router.post('/getslabsinrange', async (ctx) => {
+  const { body } = ctx.request;
+  console.log('get slabs body', body);
+
+  if (Array.isArray(body)) {
+    for (let i = 0; i < body.length; i += 1) {
+      console.log('for dates', body[i].start, body[i].end);
+      const result = await flavourEntriesController // eslint-disable-line
+        .getSlabsInRange(body[i].start, body[i].end);
+
+      if (Array.isArray(result)) {
+        let total = 0;
+        for (let n = 0; n < result.length; n += 1) {
+          total += result[n].slabamount;
+        }
+        body[i].slabs = total;
+      } else {
+        ctx.status = 500;
+        throw new Error('Unkown base getting error!');
       }
     }
   }

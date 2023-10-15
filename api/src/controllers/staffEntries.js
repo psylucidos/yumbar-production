@@ -74,8 +74,11 @@ module.exports = {
     });
   }),
 
+  // SELECT SUM(breaklength), array_agg(endtime), array_agg(starttime),
+  // endtime::time - starttime::time AS duration, array_agg(productiondate) FROM
+  // staffentries WHERE productiondate BETWEEN $1 AND $2 GROUP BY name ORDER BY name;
   getStaffEntriesInRange: (startDate, endDate) => new Promise((resolve, reject) => {
-    db.query('SELECT * FROM staffentries WHERE productiondate BETWEEN $1 AND $2;', [startDate, endDate], (err, res) => {
+    db.query('SELECT *, endtime::time - starttime::time AS duration FROM staffentries WHERE productiondate BETWEEN $1 AND $2;', [startDate, endDate], (err, res) => {
       if (err) {
         reject(err);
       } else if (res.rows) {

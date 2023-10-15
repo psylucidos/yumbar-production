@@ -1,3 +1,4 @@
+/* eslint max-len: "off" */
 const db = require('../database');
 
 module.exports = {
@@ -26,13 +27,14 @@ module.exports = {
       );
     } else if (productionType === 'Packing Day') {
       db.query(
-        'INSERT INTO packingflavourentries(productiondate, flavour, batchnumber, slabamount, boxamount, usebydate, sampleamount, leftoverbaramount, notes) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *;',
+        'INSERT INTO packingflavourentries(productiondate, flavour, batchnumber, slabamount, boxamount, smallboxamount, usebydate, sampleamount, leftoverbaramount, notes) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *;',
         [
           date,
           flavourEntryData.flavour,
           flavourEntryData.batchnumber,
           flavourEntryData.slabamount,
           flavourEntryData.boxamount,
+          flavourEntryData.smallboxamount,
           flavourEntryData.usebydate === '' ? null : flavourEntryData.usebydate,
           flavourEntryData.sampleamount,
           flavourEntryData.leftoverbaramount,
@@ -125,13 +127,14 @@ module.exports = {
       );
     } else if (productionType === 'Packing Day') {
       db.query(
-        'UPDATE packingflavourentries SET flavour=$2, batchnumber=$3, slabamount=$4, boxamount=$5, usebydate=$6, leftoverbaramount=$7, sampleamount=$8, notes=$9 WHERE id=$1;',
+        'UPDATE packingflavourentries SET flavour=$2, batchnumber=$3, slabamount=$4, boxamount=$5, smallboxamount=$6, usebydate=$7, leftoverbaramount=$8, sampleamount=$9, notes=$10 WHERE id=$1;',
         [
           id,
           flavourEntryData.flavour,
           flavourEntryData.batchnumber,
           flavourEntryData.slabamount,
           flavourEntryData.boxamount,
+          flavourEntryData.smallboxamount,
           flavourEntryData.usebydate,
           flavourEntryData.sampleamount,
           flavourEntryData.leftoverbaramount,
@@ -243,90 +246,92 @@ module.exports = {
     }
   }),
 
-  getAllFlavourEntries: () => new Promise((resolve, reject) => {
-    db.query('SELECT * FROM cuttingflavourentries;', [], (cuttingErr, cuttingRes) => {
-      if (cuttingErr) {
-        reject(cuttingErr);
-      } else if (cuttingRes.rows) {
-        const cuttingData = cuttingRes.rows;
-        db.query('SELECT * FROM packingflavourentries;', [], (packingErr, packingRes) => {
-          if (packingErr) {
-            reject(packingErr);
-          } else if (packingRes.rows) {
-            const packingData = packingRes.rows;
-            db.query('SELECT * FROM baseflavourentries;', [], (baseErr, baseRes) => {
-              if (baseErr) {
-                reject(baseErr);
-              } else if (baseRes.rows) {
-                const baseData = baseRes.rows;
-                db.query('SELECT * FROM icecreamflavourentries;', [], (icecreamErr, icecreamRes) => {
-                  if (icecreamErr) {
-                    reject(icecreamErr);
-                  } else if (icecreamRes.rows) {
-                    const icecreamData = icecreamRes.rows;
-                    resolve({
-                      cuttingData,
-                      packingData,
-                      baseData,
-                      icecreamData,
-                    });
-                  } else {
-                    reject(new Error('Unable to find flavour entries!'));
-                  }
-                });
-              } else {
-                reject(new Error('Unable to find flavour entries!'));
-              }
-            });
-          } else {
-            reject(new Error('Unable to find flavour entries!'));
-          }
-        });
+  getFlavourEntriesInRange: (startDate, endDate, productionType) => new Promise((resolve, reject) => {
+    if (productionType === 'Cutting Day') {
+      db.query('SELECT productiondate, AVG(slabbatch) slabbatch, AVG(basebatch) basebatch, SUM(slabamount) slabamount FROM cuttingflavourentries WHERE productiondate BETWEEN $1 AND $2 GROUP BY productiondate ORDER BY productiondate;', [startDate, endDate], (err, res) => {
+        if (err) {
+          reject(err);
+        } else if (res.rows) {
+          resolve(res.rows);
+        } else {
+          reject(new Error('Unable to find flavour entries!'));
+        }
+      });
+    } else if (productionType === 'Packing Day') {
+      db.query('SELECT productiondate, AVG(batchnumber) batchnumber, SUM(slabamount) slabamount, SUM(boxamount) boxamount, SUM(leftoverbaramount) leftoverbaramount FROM packingflavourentries WHERE productiondate BETWEEN $1 AND $2 GROUP BY productiondate ORDER BY productiondate;', [startDate, endDate], (err, res) => {
+        if (err) {
+          reject(err);
+        } else if (res.rows) {
+          resolve(res.rows);
+        } else {
+          reject(new Error('Unable to find flavour entries!'));
+        }
+      });
+    } else if (productionType === 'Base Day') {
+      db.query('SELECT productiondate, AVG(batchnumber) batchnumber, SUM(blenderamount) blenderamount, SUM(smallamount) smallamount, SUM(largeamount) largeamount, SUM(smallcakeamount) smallcakeamount, SUM(mediumcakeamount) mediumcakeamount, SUM(largecakeamount) largecakeamount FROM baseflavourentries WHERE productiondate BETWEEN $1 AND $2 GROUP BY productiondate ORDER BY productiondate;', [startDate, endDate], (err, res) => {
+        if (err) {
+          reject(err);
+        } else if (res.rows) {
+          resolve(res.rows);
+        } else {
+          reject(new Error('Unable to find flavour entries!'));
+        }
+      });
+    } else if (productionType === 'Ice Cream Day') {
+      db.query('SELECT productiondate, AVG(batchnumber) batchnumber, SUM(jugsamount) jugsamount, SUM(traysamount) traysamount, SUM(unsaleableweight) unsaleableweight FROM icecreamflavourentries WHERE productiondate BETWEEN $1 AND $2 GROUP BY productiondate ORDER BY productiondate;', [startDate, endDate], (err, res) => {
+        if (err) {
+          reject(err);
+        } else if (res.rows) {
+          resolve(res.rows);
+        } else {
+          reject(new Error('Unable to find flavour entries!'));
+        }
+      });
+    }
+  }),
+
+  getFlavoursAndBoxesFromPackingDays: () => new Promise((resolve, reject) => {
+    db.query('SELECT flavour, SUM(boxamount) FROM packingflavourentries GROUP BY flavour;', [], (err, res) => {
+      if (err) {
+        reject(err);
+      } else if (res.rows) {
+        resolve(res.rows);
       } else {
         reject(new Error('Unable to find flavour entries!'));
       }
     });
   }),
 
-  getAllFlavoursFromFlavourEntries: () => new Promise((resolve, reject) => {
-    db.query('SELECT flavour FROM cuttingflavourentries;', [], (cuttingErr, cuttingRes) => {
-      if (cuttingErr) {
-        reject(cuttingErr);
-      } else if (cuttingRes.rows) {
-        const cuttingData = cuttingRes.rows;
-        db.query('SELECT flavour FROM packingflavourentries;', [], (packingErr, packingRes) => {
-          if (packingErr) {
-            reject(packingErr);
-          } else if (packingRes.rows) {
-            const packingData = packingRes.rows;
-            db.query('SELECT flavour FROM baseflavourentries;', [], (baseErr, baseRes) => {
-              if (baseErr) {
-                reject(baseErr);
-              } else if (baseRes.rows) {
-                const baseData = baseRes.rows;
-                db.query('SELECT flavour FROM icecreamflavourentries;', [], (icecreamErr, icecreamRes) => {
-                  if (icecreamErr) {
-                    reject(icecreamErr);
-                  } else if (icecreamRes.rows) {
-                    const icecreamData = icecreamRes.rows;
-                    resolve({
-                      cuttingData,
-                      packingData,
-                      baseData,
-                      icecreamData,
-                    });
-                  } else {
-                    reject(new Error('Unable to find flavour entries!'));
-                  }
-                });
-              } else {
-                reject(new Error('Unable to find flavour entries!'));
-              }
-            });
-          } else {
-            reject(new Error('Unable to find flavour entries!'));
-          }
-        });
+  getFlavoursAndSlabsFromCuttingDays: () => new Promise((resolve, reject) => {
+    db.query('SELECT flavour, SUM(slabamount) FROM cuttingflavourentries GROUP BY flavour;', [], (err, res) => {
+      if (err) {
+        reject(err);
+      } else if (res.rows) {
+        resolve(res.rows);
+      } else {
+        reject(new Error('Unable to find flavour entries!'));
+      }
+    });
+  }),
+
+  getFlavoursAndTraysFromIcecreamDays: () => new Promise((resolve, reject) => {
+    db.query('SELECT flavour, SUM(traysamount) FROM icecreamflavourentries GROUP BY flavour;', [], (err, res) => {
+      if (err) {
+        reject(err);
+      } else if (res.rows) {
+        resolve(res.rows);
+      } else {
+        reject(new Error('Unable to find flavour entries!'));
+      }
+    });
+  }),
+
+  getFlavoursAndBasesFromBaseDays: () => new Promise((resolve, reject) => {
+    db.query('SELECT flavour, SUM(blenderamount) FROM baseflavourentries GROUP BY flavour;', [], (err, res) => {
+      if (err) {
+        reject(err);
+      } else if (res.rows) {
+        resolve(res.rows);
       } else {
         reject(new Error('Unable to find flavour entries!'));
       }
@@ -335,6 +340,42 @@ module.exports = {
 
   getBoxesInRange: (startDate, endDate) => new Promise((resolve, reject) => {
     db.query('SELECT boxamount FROM packingflavourentries WHERE productiondate BETWEEN $1 AND $2;', [startDate, endDate], (err, res) => {
+      if (err) {
+        reject(err);
+      } else if (res.rows) {
+        resolve(res.rows);
+      } else {
+        reject(new Error('Unable to find flavour entries!'));
+      }
+    });
+  }),
+
+  getTraysInRange: (startDate, endDate) => new Promise((resolve, reject) => {
+    db.query('SELECT traysamount FROM icecreamflavourentries WHERE productiondate BETWEEN $1 AND $2;', [startDate, endDate], (err, res) => {
+      if (err) {
+        reject(err);
+      } else if (res.rows) {
+        resolve(res.rows);
+      } else {
+        reject(new Error('Unable to find flavour entries!'));
+      }
+    });
+  }),
+
+  getBasesInRange: (startDate, endDate) => new Promise((resolve, reject) => {
+    db.query('SELECT blenderamount FROM baseflavourentries WHERE productiondate BETWEEN $1 AND $2;', [startDate, endDate], (err, res) => {
+      if (err) {
+        reject(err);
+      } else if (res.rows) {
+        resolve(res.rows);
+      } else {
+        reject(new Error('Unable to find flavour entries!'));
+      }
+    });
+  }),
+
+  getSlabsInRange: (startDate, endDate) => new Promise((resolve, reject) => {
+    db.query('SELECT slabamount FROM cuttingflavourentries WHERE productiondate BETWEEN $1 AND $2;', [startDate, endDate], (err, res) => {
       if (err) {
         reject(err);
       } else if (res.rows) {

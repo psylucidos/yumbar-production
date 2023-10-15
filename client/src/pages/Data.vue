@@ -132,11 +132,24 @@
 
                   <div class="col-4 pad-right">
                     <q-input
-                      label="Number of Boxes"
+                      label="Number of Large Boxes"
                       required
                       v-model.number="packingFlavourEntries[index].boxamount"
                       @focus="$event.target.select()"
                       @update:model-value="val => packingFlavourEntries[index].slabamount = val * 2"
+                      :rules="[ val => val >= 0 || 'Amount must be positive!' ]"
+                      type="number"
+                      :color="flavourColors[packingFlavourEntries[index].flavour]"
+                    />
+                  </div>
+
+                  <div class="col-4 pad-right">
+                    <q-input
+                      label="Number of Small Boxes"
+                      required
+                      v-model.number="packingFlavourEntries[index].smallboxamount"
+                      @focus="$event.target.select()"
+                      @update:model-value="val => packingFlavourEntries[index].slabamount = val"
                       :rules="[ val => val >= 0 || 'Amount must be positive!' ]"
                       type="number"
                       :color="flavourColors[packingFlavourEntries[index].flavour]"
@@ -255,7 +268,7 @@
                   </div>
                   <div class="col-3 pad-right">
                     <q-input
-                      label="Second Base Batch # (Optional)"
+                      label="Second Base Batch # (Default is 0)"
                       required
                       v-model.number="cuttingFlavourEntries[index].secondbasebatch"
                       @focus="$event.target.select()"
@@ -314,8 +327,8 @@
                         label="Batch Flavour"
                         required
                         v-model="baseFlavourEntries[index].flavour"
-                        :rules="[ val => flavourOptions.includes(val) || 'Please select flavour!' ]"
-                        :options="baseFlavourOptions"
+                        :rules="[ val => val !== '' || 'Please select flavour!' ]"
+                        :options="['Vanilla', 'Chocolate']"
                         :color="flavourColors[baseFlavourEntries[index].flavour]"
                       />
                     </div>
@@ -713,7 +726,7 @@
               label="Save"
               class="full-width"
               :loading="saveLoading"
-              :disable="loading"
+              :disable="loading || productionType === 'Select Production Type'"
               type="submit"
               color="primary"
             />
@@ -858,12 +871,21 @@ export default defineComponent({
     };
   },
   mounted() {
-    const currentDate = new Date();
-    const DD = currentDate.getDate() < 10 ? `0${currentDate.getDate()}` : currentDate.getDate();
-    const M = currentDate.getMonth() + 1; // account for dates starting at 0
-    const MM = M < 10 ? `0${M}` : M;
-    const YYYY = currentDate.getFullYear();
-    this.date = `${DD}-${MM}-${YYYY}`;
+    if (this.$route.params.date) {
+      console.log('has date!', this.$route.params.date);
+      const [day, month, year] = this.$route.params.date.split('-');
+      const testDate = new Date(`${month}/${day}/${year}`);
+      if (testDate.getTime() > -1) {
+        console.log('valid date!');
+        this.date = this.$route.params.date;
+      } else {
+        console.log('invalid date!');
+        this.setDateToCurrentDate();
+      }
+    } else {
+      console.log('has no date');
+      this.setDateToCurrentDate();
+    }
 
     const self = this;
     this.autoSaveTimer = setInterval(() => {
@@ -871,6 +893,15 @@ export default defineComponent({
     }, AUTOUPDATEINTERVAL * 1000);
   },
   methods: {
+    setDateToCurrentDate() {
+      const currentDate = new Date();
+      const DD = currentDate.getDate() < 10 ? `0${currentDate.getDate()}` : currentDate.getDate();
+      const M = currentDate.getMonth() + 1; // account for dates starting at 0
+      const MM = M < 10 ? `0${M}` : M;
+      const YYYY = currentDate.getFullYear();
+      this.date = `${DD}-${MM}-${YYYY}`;
+      this.$route.params.date = this.date;
+    },
     getData() {
       console.log('Trying to get data on:', this.date, 'for:', this.productionType);
       this.startLoading();
@@ -981,7 +1012,7 @@ export default defineComponent({
       }
 
       // check on data entry page and object data is complete
-      if ((window.location.hash !== '#/data'
+      if ((!window.location.hash.includes('#/data')
         || !checkObjectNotNull(flavourEntryData))
         || !this.formIsValid
         || (flavourEntryData.length === 0 && this.staffEntries.length === 0)) {
@@ -1092,6 +1123,7 @@ export default defineComponent({
           batchnumber: previousBatchNumber,
           slabamount: 0,
           boxamount: 0,
+          smallboxamount: 0,
           usebydate: previousUseBy,
           sampleamount: 0,
           leftoverbaramount: 0,
@@ -1109,7 +1141,7 @@ export default defineComponent({
           flavour: '',
           slabbatch: previousSlabBatch,
           basebatch: previousBaseBatch,
-          secondbasebatch: null,
+          secondbasebatch: 0,
           slabamount: 0,
           notes: '',
         };
@@ -1406,7 +1438,24 @@ export default defineComponent({
     },
   },
   beforeRouteLeave() {
+    console.log('CLEARING AUTOSAVE!');
     clearInterval(this.autoSaveTimer);
+  },
+  beforeRouteUpdate(to, from) {
+    console.log('route chnaged!', from, to);
+    if (to.params.date) {
+      console.log('has date!', to.params.date);
+      const [day, month, year] = to.params.date.split('-');
+      const testDate = new Date(`${month}/${day}/${year}`);
+      if (testDate.getTime() > -1) {
+        console.log('valid date!');
+        this.date = to.params.date;
+      } else {
+        console.log('invalid date!');
+      }
+    } else {
+      console.log('has no date');
+    }
   },
 });
 </script>

@@ -7,7 +7,7 @@
             Timesheet
           </div>
           <div class="col-auto">
-            Staff entries for this week.
+            <q-date v-model="dateRange" @update:model-value="updateTimesheetTable" landscape compact range />
           </div>
         </q-card-section>
 
@@ -24,6 +24,7 @@
                 <th class="text-right">Date</th>
                 <th class="text-right">Start Time</th>
                 <th class="text-right">End Time</th>
+                <th class="text-right">Duration</th>
                 <th class="text-right">Break</th>
               </tr>
             </thead>
@@ -33,9 +34,10 @@
                 v-bind:key="staffEntry.id"
               >
                 <td class="text-left">{{ staffEntry.name }}</td>
-                <td class="text-right">{{ formatDateString(staffEntry.productiondate) }}</td>
+                <td class="text-right">{{ formatDateToString(new Date(staffEntry.productiondate)) }}</td>
                 <td class="text-right">{{ staffEntry.starttime }}</td>
                 <td class="text-right">{{ staffEntry.endtime }}</td>
+                <td class="text-right">{{ staffEntry.duration.hours }}:{{ staffEntry.duration.minutes || '00' }}</td>
                 <td class="text-right">{{ staffEntry.breaklength }}m</td>
               </tr>
             </tbody>
@@ -116,6 +118,10 @@
 <script>
 import { defineComponent } from 'vue';
 
+function pad(string) {
+  return (string < 10) ? `0${string}` : string;
+}
+
 function getMonday(d = new Date()) {
   d.setHours(0, 0, 0);
   const day = d.getDay();
@@ -146,25 +152,14 @@ export default defineComponent({
         id: 0,
         name: 'Bob',
       }],
+      dateRange: {
+        from: this.formatDateToString(getMonday()),
+        to: this.formatDateToString(getSaturday()),
+      },
     };
   },
   created() {
-    this.$api
-      .post('/staff/getrange', {
-        startDate: getMonday(),
-        endDate: getSaturday(),
-      }, {
-        headers: {
-          Authorization: `Bearer ${this.$store.state.token}`,
-        },
-      })
-      .then((res) => {
-        const { data } = res;
-        console.log('received get entries in range res', data);
-        this.staffEntries = data;
-        this.loading = false;
-      })
-      .catch(this.handlePostErr);
+    this.updateTimesheetTable();
   },
   methods: {
     handlePostErr(err) {
@@ -188,13 +183,30 @@ export default defineComponent({
 
       throw err;
     },
-    formatDateString(date) {
-      const currentDate = new Date(date);
-      const DD = currentDate.getDate() < 10 ? `0${currentDate.getDate()}` : currentDate.getDate();
-      const M = currentDate.getMonth() + 1; // account for dates starting at 0
-      const MM = M < 10 ? `0${M}` : M;
-      const YYYY = currentDate.getFullYear();
-      return `${DD}-${MM}-${YYYY}`;
+    formatDateToString(date) {
+      return [pad(date.getFullYear()), pad(date.getMonth() + 1), pad(date.getDate())].join('/');
+    },
+    updateTimesheetTable() {
+      this.loading = true;
+
+      if (this.dateRange != null) {
+        this.$api
+          .post('/staff/getrange', {
+            startDate: new Date(this.dateRange.from),
+            endDate: new Date(this.dateRange.to),
+          }, {
+            headers: {
+              Authorization: `Bearer ${this.$store.state.token}`,
+            },
+          })
+          .then((res) => {
+            const { data } = res;
+            console.log('received get entries in range res', data);
+            this.staffEntries = data;
+            this.loading = false;
+          })
+          .catch(this.handlePostErr);
+      }
     },
   },
 });
