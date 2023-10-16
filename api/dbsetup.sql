@@ -63,7 +63,7 @@ CREATE TABLE icecreamflavourentries (
   productiondate date NOT NULL,
   flavour text NOT NULL,
   batchnumber integer NOT NULL,
-  jugsamount integer NOT NULL,
+  jugsamount real NOT NULL,
   traysamount integer NOT NULL,
   unsaleableweight integer NOT NULL,
   notes text

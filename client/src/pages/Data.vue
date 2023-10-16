@@ -486,10 +486,9 @@
                     <q-input
                       label="Number of Jugs"
                       required
-                      v-model.number="icecreamFlavourEntries[index].jugsamount"
+                      v-model="icecreamFlavourEntries[index].jugsamount"
                       @focus="$event.target.select()"
-                      :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
-                      type="number"
+                      :rules="[ val => Number(val) >= 0 || 'amount must not be negative!' ]"
                       :color="flavourColors[icecreamFlavourEntries[index].flavour]"
                     />
                   </div>
@@ -1026,6 +1025,7 @@ export default defineComponent({
       const self = this;
       for (let i = 0; i < flavourEntryData.length; i += 1) {
         console.log('Saving flavour entry:', Object(flavourEntryData[i]));
+        flavourEntryData[i].jugsamount = Number(flavourEntryData[i].jugsamount);
         this.$api
           .post('/flavours/update', {
             id: String(flavourEntryData[i].id),
