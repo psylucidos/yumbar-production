@@ -97,6 +97,30 @@ module.exports = {
           }
         },
       );
+    } else if (productionType === 'Cake Ice Cream Day') {
+      const flavours = `{"${flavourEntryData.flavour.join('", "')}"}`;
+      const jugs = `{${flavourEntryData.jugsamount.join(', ')}}`;
+      db.query(
+        'INSERT INTO icecreamcakeflavourentries(productiondate, flavour, batchnumber, jugsamount, cakesamount, unsaleableweight, notes) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *;',
+        [
+          date,
+          flavours,
+          flavourEntryData.batchnumber,
+          jugs,
+          flavourEntryData.cakesamount,
+          flavourEntryData.unsaleableweight,
+          flavourEntryData.notes,
+        ],
+        (err, res) => {
+          if (err) {
+            reject(err);
+          } else if (res.rows[0]) {
+            resolve(res.rows[0]);
+          } else {
+            reject(new Error('Flavor entry not added!'));
+          }
+        },
+      );
     } else {
       reject(new Error('Unkown production day!'));
     }
@@ -197,6 +221,30 @@ module.exports = {
           }
         },
       );
+    } else if (productionType === 'Cake Ice Cream Day') {
+      const flavours = `{"${flavourEntryData.flavour.join('", "')}"}`;
+      const jugs = `{${flavourEntryData.jugsamount.join(', ')}}`;
+      db.query(
+        'UPDATE icecreamcakeflavourentries SET flavour=$2, batchnumber=$3, jugsamount=$4, cakesamount=$5, unsaleableweight=$6, notes=$7 WHERE id=$1',
+        [
+          id,
+          flavours,
+          flavourEntryData.batchnumber,
+          jugs,
+          flavourEntryData.cakesamount,
+          flavourEntryData.unsaleableweight,
+          flavourEntryData.notes,
+        ],
+        (err, res) => {
+          if (err) {
+            reject(err);
+          } else if (res.rowCount === 1) {
+            resolve(200);
+          } else {
+            resolve(404);
+          }
+        },
+      );
     } else {
       reject(new Error('Unkown production day!'));
     }
@@ -243,6 +291,18 @@ module.exports = {
           reject(new Error('Unable to find flavour entries!'));
         }
       });
+    } else if (productionType === 'Cake Ice Cream Day') {
+      db.query('SELECT * FROM icecreamcakeflavourentries WHERE productiondate=$1;', [date], (err, res) => {
+        if (err) {
+          reject(err);
+        } else if (res.rows) {
+          resolve(res.rows);
+        } else {
+          reject(new Error('Unable to find flavour entries!'));
+        }
+      });
+    } else {
+      reject(new Error('Unkown production day!'));
     }
   }),
 
@@ -287,6 +347,18 @@ module.exports = {
           reject(new Error('Unable to find flavour entries!'));
         }
       });
+    } else if (productionType === 'Cake Ice Cream Day') {
+      db.query('SELECT productiondate, AVG(batchnumber) batchnumber, SUM(jugsamount) jugsamount, SUM(cakesamount) cakesamount, SUM(unsaleableweight) unsaleableweight FROM icecreamcakeflavourentries WHERE productiondate BETWEEN $1 AND $2 GROUP BY productiondate ORDER BY productiondate;', [startDate, endDate], (err, res) => {
+        if (err) {
+          reject(err);
+        } else if (res.rows) {
+          resolve(res.rows);
+        } else {
+          reject(new Error('Unable to find flavour entries!'));
+        }
+      });
+    } else {
+      reject(new Error('Unkown production day!'));
     }
   }),
 
@@ -352,6 +424,18 @@ module.exports = {
 
   getTraysInRange: (startDate, endDate) => new Promise((resolve, reject) => {
     db.query('SELECT traysamount FROM icecreamflavourentries WHERE productiondate BETWEEN $1 AND $2;', [startDate, endDate], (err, res) => {
+      if (err) {
+        reject(err);
+      } else if (res.rows) {
+        resolve(res.rows);
+      } else {
+        reject(new Error('Unable to find flavour entries!'));
+      }
+    });
+  }),
+
+  getCakesInRange: (startDate, endDate) => new Promise((resolve, reject) => {
+    db.query('SELECT cakesamount FROM icecreamcakeflavourentries WHERE productiondate BETWEEN $1 AND $2;', [startDate, endDate], (err, res) => {
       if (err) {
         reject(err);
       } else if (res.rows) {
@@ -443,7 +527,22 @@ module.exports = {
           }
         },
       );
+    } else if (productionType === 'Cake Ice Cream Day') {
+      db.query(
+        'DELETE FROM icecreamcakeflavourentries WHERE id=$1;',
+        [id],
+        (err, res) => {
+          if (err) {
+            reject(err);
+          } else if (res.rowCount === 1) {
+            resolve(200);
+          } else {
+            resolve(404);
+          }
+        },
+      );
+    } else {
+      reject(new Error('Unkown production day!'));
     }
-    // TODO: handle no production type
   }),
 };

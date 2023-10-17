@@ -195,6 +195,33 @@ router.post('/gettraysinrange', async (ctx) => {
   ctx.body = body;
 });
 
+router.post('/getcakesinrange', async (ctx) => {
+  const { body } = ctx.request;
+  console.log('get cakes body', body);
+
+  if (Array.isArray(body)) {
+    for (let i = 0; i < body.length; i += 1) {
+      console.log('for dates', body[i].start, body[i].end);
+      const result = await flavourEntriesController // eslint-disable-line
+        .getCakesInRange(body[i].start, body[i].end);
+
+      if (Array.isArray(result)) {
+        let total = 0;
+        for (let n = 0; n < result.length; n += 1) {
+          total += result[n].cakesamount;
+        }
+        body[i].cakes = total;
+      } else {
+        ctx.status = 500;
+        throw new Error('Unkown cake getting error!');
+      }
+    }
+  }
+
+  ctx.status = 200;
+  ctx.body = body;
+});
+
 router.post('/getbasesinrange', async (ctx) => {
   const { body } = ctx.request;
   console.log('get bases body', body);

@@ -69,6 +69,17 @@ CREATE TABLE icecreamflavourentries (
   notes text
 );
 
+CREATE TABLE icecreamcakeflavourentries (
+  id SERIAL PRIMARY KEY,
+  productiondate date NOT NULL,
+  flavour text[3] NOT NULL,
+  batchnumber integer NOT NULL,
+  jugsamount real[3] NOT NULL,
+  cakesamount integer NOT NULL,
+  unsaleableweight integer NOT NULL,
+  notes text
+);
+
 CREATE TABLE staffnames (
   id SERIAL PRIMARY KEY,
   name text NOT NULL
