@@ -1119,7 +1119,8 @@ export default defineComponent({
       console.log('has no date');
       this.setDateToCurrentDate();
     }
-
+  },
+  created() {
     const self = this;
     this.autoSaveTimer = setInterval(() => {
       self.saveData(true);
