@@ -625,7 +625,7 @@
                         required
                         multiple
                         v-model="icecreamCakeFlavourEntries[index].flavour"
-                        :rules="[ val => val.length > 0 || 'Please select flavour!' ]"
+                        :rules="[ val => val.length > 0 || 'Please select flavours!', val => val.length < 4 || 'Too many flavours!' ]"
                         :options="flavourOptions"
                         :color="flavourColors[icecreamCakeFlavourEntries[index].flavour]"
                       />
