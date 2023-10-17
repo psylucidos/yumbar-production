@@ -75,7 +75,9 @@ CREATE TABLE icecreamcakeflavourentries (
   flavour text[3] NOT NULL,
   batchnumber integer NOT NULL,
   jugsamount real[3] NOT NULL,
-  cakesamount integer NOT NULL,
+  smallcakesamount integer NOT NULL,
+  mediumcakesamount integer NOT NULL,
+  largecakesamount integer NOT NULL,
   unsaleableweight integer NOT NULL,
   notes text
 );

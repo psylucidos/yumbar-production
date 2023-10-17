@@ -101,13 +101,15 @@ module.exports = {
       const flavours = `{"${flavourEntryData.flavour.join('", "')}"}`;
       const jugs = `{${flavourEntryData.jugsamount.join(', ')}}`;
       db.query(
-        'INSERT INTO icecreamcakeflavourentries(productiondate, flavour, batchnumber, jugsamount, cakesamount, unsaleableweight, notes) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *;',
+        'INSERT INTO icecreamcakeflavourentries(productiondate, flavour, batchnumber, jugsamount, smallcakesamount, mediumcakesamount, largecakesamount, unsaleableweight, notes) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *;',
         [
           date,
           flavours,
           flavourEntryData.batchnumber,
           jugs,
-          flavourEntryData.cakesamount,
+          flavourEntryData.smallcakesamount,
+          flavourEntryData.mediumcakesamount,
+          flavourEntryData.largecakesamount,
           flavourEntryData.unsaleableweight,
           flavourEntryData.notes,
         ],
@@ -225,13 +227,15 @@ module.exports = {
       const flavours = `{"${flavourEntryData.flavour.join('", "')}"}`;
       const jugs = `{${flavourEntryData.jugsamount.join(', ')}}`;
       db.query(
-        'UPDATE icecreamcakeflavourentries SET flavour=$2, batchnumber=$3, jugsamount=$4, cakesamount=$5, unsaleableweight=$6, notes=$7 WHERE id=$1',
+        'UPDATE icecreamcakeflavourentries SET flavour=$2, batchnumber=$3, jugsamount=$4, smallcakesamount=$5, mediumcakesamount=$6, largecakesamount=$7, unsaleableweight=$8, notes=$9 WHERE id=$1',
         [
           id,
           flavours,
           flavourEntryData.batchnumber,
           jugs,
-          flavourEntryData.cakesamount,
+          flavourEntryData.smallcakesamount,
+          flavourEntryData.mediumcakesamount,
+          flavourEntryData.largecakesamount,
           flavourEntryData.unsaleableweight,
           flavourEntryData.notes,
         ],
@@ -435,7 +439,7 @@ module.exports = {
   }),
 
   getCakesInRange: (startDate, endDate) => new Promise((resolve, reject) => {
-    db.query('SELECT cakesamount FROM icecreamcakeflavourentries WHERE productiondate BETWEEN $1 AND $2;', [startDate, endDate], (err, res) => {
+    db.query('SELECT smallcakesamount, mediumcakeamount, largecakesamount FROM icecreamcakeflavourentries WHERE productiondate BETWEEN $1 AND $2;', [startDate, endDate], (err, res) => {
       if (err) {
         reject(err);
       } else if (res.rows) {

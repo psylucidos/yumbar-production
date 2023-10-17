@@ -582,6 +582,7 @@
                       required
                       v-model="icecreamCakeFlavourEntries[index].jugsamount[0]"
                       @focus="$event.target.select()"
+                      :readonly="!icecreamCakeFlavourEntries[index].flavour[0]"
                       :rules="[ val => Number(val) >= 0 || 'amount must not be negative!' ]"
                       :color="flavourColors[icecreamCakeFlavourEntries[index].flavour]"
                     />
@@ -592,6 +593,7 @@
                       required
                       v-model="icecreamCakeFlavourEntries[index].jugsamount[1]"
                       @focus="$event.target.select()"
+                      :readonly="!icecreamCakeFlavourEntries[index].flavour[1]"
                       :rules="[ val => Number(val) >= 0 || 'amount must not be negative!' ]"
                       :color="flavourColors[icecreamCakeFlavourEntries[index].flavour]"
                     />
@@ -602,15 +604,38 @@
                       required
                       v-model="icecreamCakeFlavourEntries[index].jugsamount[2]"
                       @focus="$event.target.select()"
+                      :readonly="!icecreamCakeFlavourEntries[index].flavour[2]"
                       :rules="[ val => Number(val) >= 0 || 'amount must not be negative!' ]"
                       :color="flavourColors[icecreamCakeFlavourEntries[index].flavour]"
                     />
                   </div>
                   <div class="col-3 pad-right">
                     <q-input
-                      label="Number of Cakes"
+                      label="Number of Small Cakes"
                       required
-                      v-model.number="icecreamCakeFlavourEntries[index].cakesamount"
+                      v-model.number="icecreamCakeFlavourEntries[index].smallcakesamount"
+                      @focus="$event.target.select()"
+                      :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
+                      type="number"
+                      :color="flavourColors[icecreamCakeFlavourEntries[index].flavour]"
+                    />
+                  </div>
+                  <div class="col-3 pad-right">
+                    <q-input
+                      label="Number of Medium Cakes"
+                      required
+                      v-model.number="icecreamCakeFlavourEntries[index].mediumcakesamount"
+                      @focus="$event.target.select()"
+                      :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
+                      type="number"
+                      :color="flavourColors[icecreamCakeFlavourEntries[index].flavour]"
+                    />
+                  </div>
+                  <div class="col-3 pad-right">
+                    <q-input
+                      label="Number of Large Cakes"
+                      required
+                      v-model.number="icecreamCakeFlavourEntries[index].largecakesamount"
                       @focus="$event.target.select()"
                       :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
                       type="number"
@@ -1302,7 +1327,9 @@ export default defineComponent({
           flavour: [],
           batchnumber: previousBatch,
           jugsamount: [0, 0, 0],
-          cakesamount: 0,
+          smallcakesamount: 0,
+          mediumcakesamount: 0,
+          largecakesamount: 0,
           unsaleableweight: 0,
           notes: '',
         };
