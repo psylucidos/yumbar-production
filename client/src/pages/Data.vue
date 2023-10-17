@@ -1326,6 +1326,9 @@ export default defineComponent({
               Authorization: `Bearer ${self.$store.state.token}`,
             },
           })
+          .then(() => {
+            self.saveLoading = false;
+          })
           .catch((err) => {
             if (err.response) {
               if (err.response.status === 401) {
