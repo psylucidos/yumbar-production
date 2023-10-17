@@ -10,11 +10,11 @@
         >
           <q-card-section>
             <div class="row items-center no-wrap">
-              <div class="col-2">
+              <div class="col-9">
                 <div class="text-h4">Data Entry</div>
               </div>
 
-              <div class="col-2" id="date-input">
+              <div class="col-3" id="date-input">
                 <q-input
                   dense
                   v-model="date"
@@ -39,8 +39,12 @@
                   </template>
                 </q-input>
               </div>
+            </div>
 
-              <div class="col-8">
+            <q-separator />
+
+            <div class="row items-center no-wrap">
+              <div class="col-12">
                 <q-tabs
                   v-model="productionType"
                   @update:model-value="productionTypeSelecterUpdate"
@@ -211,15 +215,31 @@
                   </div>
                 </q-card>
 
-                <q-btn
-                  v-if="!loading"
-                  icon="add"
-                  id="add-flavour-btn"
-                  label="Add Flavour"
-                  class="full-width"
-                  color="primary"
-                  @click="addFlavourEntry"
-                />
+                <div class="row items-center full-width">
+                  <div class="col-8 pad-right">
+                    <q-btn
+                      v-if="!loading"
+                      icon="add"
+                      id="add-flavour-btn"
+                      label="Add Flavour"
+                      class="full-width"
+                      color="primary"
+                      @click="addFlavourEntry"
+                    />
+                  </div>
+
+                  <div class="col-4">
+                    <q-btn
+                      v-if="!loading"
+                      icon="delete"
+                      id="add-flavour-btn"
+                      label="Delete Production Day"
+                      class="full-width"
+                      color="primary"
+                      @click="deleteProductionDay"
+                    />
+                  </div>
+                </div>
               </q-tab-panel>
 
               <q-tab-panel name="Cutting Day">
@@ -311,15 +331,31 @@
                   </div>
                 </q-card>
 
-                <q-btn
-                  v-if="!loading"
-                  icon="add"
-                  id="add-flavour-btn"
-                  label="Add Flavour"
-                  class="full-width"
-                  color="primary"
-                  @click="addFlavourEntry"
-                />
+                <div class="row items-center full-width">
+                  <div class="col-8 pad-right">
+                    <q-btn
+                      v-if="!loading"
+                      icon="add"
+                      id="add-flavour-btn"
+                      label="Add Flavour"
+                      class="full-width"
+                      color="primary"
+                      @click="addFlavourEntry"
+                    />
+                  </div>
+
+                  <div class="col-4">
+                    <q-btn
+                      v-if="!loading"
+                      icon="delete"
+                      id="add-flavour-btn"
+                      label="Delete Production Day"
+                      class="full-width"
+                      color="primary"
+                      @click="deleteProductionDay"
+                    />
+                  </div>
+                </div>
               </q-tab-panel>
 
               <q-tab-panel name="Base Day">
@@ -440,15 +476,31 @@
                   </div>
                 </q-card>
 
-                <q-btn
-                  v-if="!loading"
-                  icon="add"
-                  id="add-flavour-btn"
-                  label="Add Flavour"
-                  class="full-width"
-                  color="primary"
-                  @click="addFlavourEntry"
-                />
+                <div class="row items-center full-width">
+                  <div class="col-8 pad-right">
+                    <q-btn
+                      v-if="!loading"
+                      icon="add"
+                      id="add-flavour-btn"
+                      label="Add Flavour"
+                      class="full-width"
+                      color="primary"
+                      @click="addFlavourEntry"
+                    />
+                  </div>
+
+                  <div class="col-4">
+                    <q-btn
+                      v-if="!loading"
+                      icon="delete"
+                      id="add-flavour-btn"
+                      label="Delete Production Day"
+                      class="full-width"
+                      color="primary"
+                      @click="deleteProductionDay"
+                    />
+                  </div>
+                </div>
               </q-tab-panel>
 
               <q-tab-panel name="Ice Cream Day">
@@ -533,15 +585,31 @@
                   </div>
                 </q-card>
 
-                <q-btn
-                  v-if="!loading"
-                  icon="add"
-                  id="add-flavour-btn"
-                  label="Add Flavour"
-                  class="full-width"
-                  color="primary"
-                  @click="addFlavourEntry"
-                />
+                <div class="row items-center full-width">
+                  <div class="col-8 pad-right">
+                    <q-btn
+                      v-if="!loading"
+                      icon="add"
+                      id="add-flavour-btn"
+                      label="Add Flavour"
+                      class="full-width"
+                      color="primary"
+                      @click="addFlavourEntry"
+                    />
+                  </div>
+
+                  <div class="col-4">
+                    <q-btn
+                      v-if="!loading"
+                      icon="delete"
+                      id="add-flavour-btn"
+                      label="Delete Production Day"
+                      class="full-width"
+                      color="primary"
+                      @click="deleteProductionDay"
+                    />
+                  </div>
+                </div>
               </q-tab-panel>
 
               <q-tab-panel name="Cake Ice Cream Day">
@@ -672,15 +740,31 @@
                   </div>
                 </q-card>
 
-                <q-btn
-                  v-if="!loading"
-                  icon="add"
-                  id="add-flavour-btn"
-                  label="Add Flavour"
-                  class="full-width"
-                  color="primary"
-                  @click="addFlavourEntry"
-                />
+                <div class="row items-center full-width">
+                  <div class="col-8 pad-right">
+                    <q-btn
+                      v-if="!loading"
+                      icon="add"
+                      id="add-flavour-btn"
+                      label="Add Flavour"
+                      class="full-width"
+                      color="primary"
+                      @click="addFlavourEntry"
+                    />
+                  </div>
+
+                  <div class="col-4">
+                    <q-btn
+                      v-if="!loading"
+                      icon="delete"
+                      id="add-flavour-btn"
+                      label="Delete Production Day"
+                      class="full-width"
+                      color="primary"
+                      @click="deleteProductionDay"
+                    />
+                  </div>
+                </div>
               </q-tab-panel>
 
               <q-tab-panel name="Select Production Type">
@@ -1442,6 +1526,80 @@ export default defineComponent({
           }
         })
         .catch(self.handlePostErr);
+    },
+    deleteProductionDay() {
+      if (!this.productionType) {
+        throw new Error('Cannot delete flavour with no local production date!');
+      }
+
+      const self = this;
+      this.$q.dialog({
+        title: 'Confirm',
+        message: `Would you like to delete the ${this.productionType} on ${this.date}? This will delete all flavour entries for the ${this.productionType}.`,
+        cancel: true,
+        persistent: true,
+      }).onOk(() => {
+        self.startLoading();
+        console.log('deleting day', self.date, 'production type from', this.productionType);
+        this.$api
+          .post('/days/delete', {
+            date: self.date,
+            productionType: self.productionType,
+          }, {
+            headers: {
+              Authorization: `Bearer ${self.$store.state.token}`,
+            },
+          })
+          .then(() => {
+            if (self.knownProductionTypesOnDate.length > 1) {
+              self.knownProductionTypesOnDate = self.knownProductionTypesOnDate.filter((item) => item !== self.productionType);
+              [self.productionType] = self.knownProductionTypesOnDate;
+              self.getData();
+            } else {
+              self.knownProductionTypesOnDate = [];
+              self.productionType = 'Select Production Type';
+            }
+
+            self.endLoading();
+          })
+          .catch(self.handlePostErr);
+
+        const currentProductionType = this.productionType; // to prevent variable from updating during post
+        let currentFlavourEntries = null;
+
+        if (self.productionType === 'Packing Day') {
+          currentFlavourEntries = self.packingFlavourEntries;
+        } else if (self.productionType === 'Cutting Day') {
+          currentFlavourEntries = self.cuttingFlavourEntries;
+        } else if (self.productionType === 'Ice Cream Day') {
+          currentFlavourEntries = self.icecreamFlavourEntries;
+        } else if (self.productionType === 'Base Day') {
+          currentFlavourEntries = self.baseFlavourEntries;
+        } else if (self.productionType === 'Cake Ice Cream Day') {
+          currentFlavourEntries = self.icecreamCakeFlavourEntries;
+        } else {
+          throw new Error('Cannot delete flavour with no production type!');
+        }
+
+        for (let i = 0; i < currentFlavourEntries.length; i += 1) {
+          this.$api
+            .post('/flavours/delete', {
+              id: currentFlavourEntries[i].id,
+              productionType: currentProductionType,
+            }, {
+              headers: {
+                Authorization: `Bearer ${self.$store.state.token}`,
+              },
+            })
+            .then(() => {
+              console.log('deleted flavour entry of ID', currentFlavourEntries[i].id);
+            })
+            .catch(self.handlePostErr);
+        }
+      }).onCancel(() => {
+        console.log('Cancelling to', self.productionType);
+        self.endLoading();
+      });
     },
     addStaffMember() {
       const self = this;

@@ -37,4 +37,20 @@ module.exports = {
       }
     });
   }),
+
+  deleteDay: (date, productionType) => new Promise((resolve, reject) => {
+    db.query(
+      'DELETE FROM productiondays WHERE productiondate=$1 AND productiontype=$2;',
+      [date, productionType],
+      (err, res) => {
+        if (err) {
+          reject(err);
+        } else if (res.rowCount === 1) {
+          resolve(200);
+        } else {
+          resolve(404);
+        }
+      },
+    );
+  }),
 };

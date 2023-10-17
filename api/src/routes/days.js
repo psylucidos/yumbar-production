@@ -51,4 +51,22 @@ router.post('/get', async (ctx) => {
   }
 });
 
+router.post('/delete', async (ctx) => {
+  const { date, productionType } = ctx.request.body;
+
+  const result = await daysController
+    .deleteDay(date, productionType);
+
+  if (typeof result === 'number') {
+    if (result === 200) {
+      ctx.status = 200;
+    } else if (result === 404) {
+      ctx.status = 404;
+    }
+  } else {
+    ctx.status = 500;
+    console.error(result);
+  }
+});
+
 module.exports = router;
