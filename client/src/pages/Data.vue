@@ -10,11 +10,11 @@
         >
           <q-card-section>
             <div class="row items-center no-wrap">
-              <div class="col-6">
+              <div class="col-2">
                 <div class="text-h4">Data Entry</div>
               </div>
 
-              <div class="col-3" id="date-input">
+              <div class="col-2" id="date-input">
                 <q-input
                   dense
                   v-model="date"
@@ -40,15 +40,23 @@
                 </q-input>
               </div>
 
-              <div class="col-3">
-                <q-select
-                  dense
+              <div class="col-8">
+                <q-tabs
                   v-model="productionType"
-                  :rules="[ val => !!val || 'Please enter a production type!']"
                   @update:model-value="productionTypeSelecterUpdate"
-                  :options="productionTypeOptions"
+                  dense
+                  align="justify"
+                  narrow-indicator
+                  active-color="primary"
+                  indicator-color="primary"
                   :disable="loading"
-                />
+                >
+                  <q-tab name="Ice Cream Day" label="Ice Cream Day" :class="{ 'text-primary': knownProductionTypesOnDate.includes('Ice Cream Day') }" />
+                  <q-tab name="Base Day" label="Base Day" :class="{ 'text-primary': knownProductionTypesOnDate.includes('Base Day') }" />
+                  <q-tab name="Packing Day" label="Packing Day" :class="{ 'text-primary': knownProductionTypesOnDate.includes('Packing Day') }" />
+                  <q-tab name="Cutting Day" label="Cutting Day" :class="{ 'text-primary': knownProductionTypesOnDate.includes('Cutting Day') }" />
+                  <q-tab name="Cake Ice Cream Day" label="Cake Ice Cream Day" :class="{ 'text-primary': knownProductionTypesOnDate.includes('Cake Ice Cream Day') }" />
+                </q-tabs>
               </div>
             </div>
 
@@ -965,6 +973,8 @@ export default defineComponent({
       loading: true,
       productionType: 'Select Production Type',
       oldProductionType: '',
+      knownProductionTypesOnDate: [],
+      knownProductionDays: [],
       productionTypeOptions: ['Cutting Day', 'Packing Day', 'Base Day', 'Ice Cream Day', 'Cake Ice Cream Day'],
       staffOptions: ['Andoah', 'Alysse', 'Cat', 'Beau', 'Iris', 'Lily', 'Isabelle', 'Nicole', 'Yindi', 'Azalea', 'Kira', 'Satima', 'Lucy',
         'Sutara', 'Sophie', 'Dale', 'Nara'],
@@ -1476,7 +1486,11 @@ export default defineComponent({
         this.oldProductionType = newProductionType;
       }
 
-      if (!this.dateCreated && newProductionType !== 'Select Production Type') {
+      if (updateFromUser && this.knownProductionTypesOnDate.includes(newProductionType)) {
+        this.oldProductionType = this.productionType;
+        this.productionType = newProductionType;
+        this.getData();
+      } else if (!this.dateCreated && newProductionType !== 'Select Production Type') {
         const self = this;
         console.log('Posting new day to api:', String(self.date), newProductionType);
         this.$api
@@ -1491,6 +1505,8 @@ export default defineComponent({
           .then(() => {
             self.endLoading();
             self.dateCreated = true;
+            console.log('adding known production type', newProductionType);
+            self.knownProductionTypesOnDate.push(newProductionType);
           })
           .catch(self.handlePostErr);
       } else if (this.dateCreated && newProductionType !== 'Select Production Type'
@@ -1499,14 +1515,14 @@ export default defineComponent({
         const self = this;
         this.$q.dialog({
           title: 'Confirm',
-          message: `Would you like to change the production type on the ${this.date} to a ${newProductionType}? This will delete all previously created data entries on this date.`,
+          message: `Would you like to add a new production type on the ${this.date} of a ${newProductionType}?`,
           cancel: true,
           persistent: true,
         }).onOk(() => {
           console.log('Updating day', self.date, 'production type from', oldProductionType, 'to', newProductionType);
-          self.$api
-            .post('/days/update', {
-              id: String(self.dayID),
+          this.$api
+            .post('/days/add', {
+              date: String(self.date),
               productionType: String(newProductionType),
             }, {
               headers: {
@@ -1514,7 +1530,10 @@ export default defineComponent({
               },
             })
             .then(() => {
-              self.getData();
+              self.endLoading();
+              console.log('adding known production type', newProductionType);
+              self.knownProductionTypesOnDate.push(newProductionType);
+              self.dateCreated = true;
             })
             .catch(self.handlePostErr);
         }).onCancel(() => {
@@ -1573,6 +1592,8 @@ export default defineComponent({
   watch: {
     date(newDate) {
       this.startLoading();
+      this.knownProductionTypesOnDate = [];
+      this.knownProductionDays = [];
       console.log('User changed date to', newDate, 'getting date data');
       const self = this;
       this.$api
@@ -1586,10 +1607,15 @@ export default defineComponent({
         .then((res) => {
           const { data } = res;
           console.log('Received api response with date data', data);
-          if (data.id) {
-            self.dayID = data.id;
+          if (data.length > 0) {
+            self.dayID = data[0].id;
             self.dateCreated = true;
-            self.updateLocalProductionType(data.productiontype, String(self.productionType), false);
+            self.updateLocalProductionType(data[0].productiontype, String(self.productionType), false);
+            self.knownProductionDays = data;
+
+            data.forEach((item) => {
+              self.knownProductionTypesOnDate.push(item.productiontype);
+            });
           } else {
             self.dateCreated = false;
             self.updateLocalProductionType('Select Production Type', String(self.productionType), false);

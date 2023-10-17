@@ -15,3 +15,5 @@ DROP TABLE icecreamflavourentries;
 DROP TABLE staffnames;
 
 DROP TABLE flavournames;
+
+DROP TABLE icecreamcakeflavourentries;

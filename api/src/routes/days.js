@@ -39,7 +39,7 @@ router.post('/get', async (ctx) => {
   const result = await daysController
     .getDay(date);
 
-  if (result.id) {
+  if (result) {
     ctx.status = 200;
     ctx.body = result;
   } else if (result === 404) {
