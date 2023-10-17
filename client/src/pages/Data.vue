@@ -10,7 +10,7 @@
         >
           <q-card-section>
             <div class="row items-center no-wrap">
-              <div class="col-6">
+              <div class="col-9">
                 <div class="text-h4">Data Entry</div>
               </div>
 
@@ -39,16 +39,28 @@
                   </template>
                 </q-input>
               </div>
+            </div>
 
-              <div class="col-3">
-                <q-select
-                  dense
+            <q-separator />
+
+            <div class="row items-center no-wrap">
+              <div class="col-12">
+                <q-tabs
                   v-model="productionType"
-                  :rules="[ val => !!val || 'Please enter a production type!']"
                   @update:model-value="productionTypeSelecterUpdate"
-                  :options="productionTypeOptions"
+                  dense
+                  align="justify"
+                  narrow-indicator
+                  active-color="primary"
+                  indicator-color="primary"
                   :disable="loading"
-                />
+                >
+                  <q-tab name="Ice Cream Day" label="Ice Cream Day" :class="{ 'text-primary': knownProductionTypesOnDate.includes('Ice Cream Day') }" />
+                  <q-tab name="Base Day" label="Base Day" :class="{ 'text-primary': knownProductionTypesOnDate.includes('Base Day') }" />
+                  <q-tab name="Packing Day" label="Packing Day" :class="{ 'text-primary': knownProductionTypesOnDate.includes('Packing Day') }" />
+                  <q-tab name="Cutting Day" label="Cutting Day" :class="{ 'text-primary': knownProductionTypesOnDate.includes('Cutting Day') }" />
+                  <q-tab name="Cake Ice Cream Day" label="Cake Ice Cream Day" :class="{ 'text-primary': knownProductionTypesOnDate.includes('Cake Ice Cream Day') }" />
+                </q-tabs>
               </div>
             </div>
 
@@ -203,15 +215,31 @@
                   </div>
                 </q-card>
 
-                <q-btn
-                  v-if="!loading"
-                  icon="add"
-                  id="add-flavour-btn"
-                  label="Add Flavour"
-                  class="full-width"
-                  color="primary"
-                  @click="addFlavourEntry"
-                />
+                <div class="row items-center full-width">
+                  <div class="col-8 pad-right">
+                    <q-btn
+                      v-if="!loading"
+                      icon="add"
+                      id="add-flavour-btn"
+                      label="Add Flavour"
+                      class="full-width"
+                      color="primary"
+                      @click="addFlavourEntry"
+                    />
+                  </div>
+
+                  <div class="col-4">
+                    <q-btn
+                      v-if="!loading"
+                      icon="delete"
+                      id="add-flavour-btn"
+                      label="Delete Production Day"
+                      class="full-width"
+                      color="primary"
+                      @click="deleteProductionDay"
+                    />
+                  </div>
+                </div>
               </q-tab-panel>
 
               <q-tab-panel name="Cutting Day">
@@ -303,15 +331,31 @@
                   </div>
                 </q-card>
 
-                <q-btn
-                  v-if="!loading"
-                  icon="add"
-                  id="add-flavour-btn"
-                  label="Add Flavour"
-                  class="full-width"
-                  color="primary"
-                  @click="addFlavourEntry"
-                />
+                <div class="row items-center full-width">
+                  <div class="col-8 pad-right">
+                    <q-btn
+                      v-if="!loading"
+                      icon="add"
+                      id="add-flavour-btn"
+                      label="Add Flavour"
+                      class="full-width"
+                      color="primary"
+                      @click="addFlavourEntry"
+                    />
+                  </div>
+
+                  <div class="col-4">
+                    <q-btn
+                      v-if="!loading"
+                      icon="delete"
+                      id="add-flavour-btn"
+                      label="Delete Production Day"
+                      class="full-width"
+                      color="primary"
+                      @click="deleteProductionDay"
+                    />
+                  </div>
+                </div>
               </q-tab-panel>
 
               <q-tab-panel name="Base Day">
@@ -432,15 +476,31 @@
                   </div>
                 </q-card>
 
-                <q-btn
-                  v-if="!loading"
-                  icon="add"
-                  id="add-flavour-btn"
-                  label="Add Flavour"
-                  class="full-width"
-                  color="primary"
-                  @click="addFlavourEntry"
-                />
+                <div class="row items-center full-width">
+                  <div class="col-8 pad-right">
+                    <q-btn
+                      v-if="!loading"
+                      icon="add"
+                      id="add-flavour-btn"
+                      label="Add Flavour"
+                      class="full-width"
+                      color="primary"
+                      @click="addFlavourEntry"
+                    />
+                  </div>
+
+                  <div class="col-4">
+                    <q-btn
+                      v-if="!loading"
+                      icon="delete"
+                      id="add-flavour-btn"
+                      label="Delete Production Day"
+                      class="full-width"
+                      color="primary"
+                      @click="deleteProductionDay"
+                    />
+                  </div>
+                </div>
               </q-tab-panel>
 
               <q-tab-panel name="Ice Cream Day">
@@ -486,10 +546,9 @@
                     <q-input
                       label="Number of Jugs"
                       required
-                      v-model.number="icecreamFlavourEntries[index].jugsamount"
+                      v-model="icecreamFlavourEntries[index].jugsamount"
                       @focus="$event.target.select()"
-                      :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
-                      type="number"
+                      :rules="[ val => Number(val) >= 0 || 'amount must not be negative!' ]"
                       :color="flavourColors[icecreamFlavourEntries[index].flavour]"
                     />
                   </div>
@@ -526,15 +585,186 @@
                   </div>
                 </q-card>
 
-                <q-btn
-                  v-if="!loading"
-                  icon="add"
-                  id="add-flavour-btn"
-                  label="Add Flavour"
-                  class="full-width"
-                  color="primary"
-                  @click="addFlavourEntry"
-                />
+                <div class="row items-center full-width">
+                  <div class="col-8 pad-right">
+                    <q-btn
+                      v-if="!loading"
+                      icon="add"
+                      id="add-flavour-btn"
+                      label="Add Flavour"
+                      class="full-width"
+                      color="primary"
+                      @click="addFlavourEntry"
+                    />
+                  </div>
+
+                  <div class="col-4">
+                    <q-btn
+                      v-if="!loading"
+                      icon="delete"
+                      id="add-flavour-btn"
+                      label="Delete Production Day"
+                      class="full-width"
+                      color="primary"
+                      @click="deleteProductionDay"
+                    />
+                  </div>
+                </div>
+              </q-tab-panel>
+
+              <q-tab-panel name="Cake Ice Cream Day">
+                <q-card
+                  v-for="(item, index) in icecreamCakeFlavourEntries"
+                  v-bind:key="index"
+                  class="row items-center full-width flavour-item"
+                >
+                  <div class="row full-width items-center no-wrap">
+                    <div class="col pad-right">
+                      <q-select
+                        label="Batch Flavour"
+                        required
+                        multiple
+                        v-model="icecreamCakeFlavourEntries[index].flavour"
+                        :rules="[ val => val.length > 0 || 'Please select flavour!' ]"
+                        :options="flavourOptions"
+                        :color="flavourColors[icecreamCakeFlavourEntries[index].flavour]"
+                      />
+                    </div>
+
+                    <div class="col-auto">
+                      <q-btn
+                        flat
+                        round
+                        icon="delete"
+                        @click="deleteFlavourEntry(index)"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="col-3 pad-right">
+                    <q-input
+                      label="Batch #"
+                      required
+                      v-model.number="icecreamCakeFlavourEntries[index].batchnumber"
+                      @focus="$event.target.select()"
+                      :rules="[ val => val >= 0 || 'Batch must be positive!' ]"
+                      type="number"
+                      :color="flavourColors[icecreamCakeFlavourEntries[index].flavour]"
+                    />
+                  </div>
+                  <div class="col-3 pad-right">
+                    <q-input
+                      :label="`Number of Jugs (${icecreamCakeFlavourEntries[index].flavour[0] || ''})`"
+                      required
+                      v-model="icecreamCakeFlavourEntries[index].jugsamount[0]"
+                      @focus="$event.target.select()"
+                      :readonly="!icecreamCakeFlavourEntries[index].flavour[0]"
+                      :rules="[ val => Number(val) >= 0 || 'amount must not be negative!' ]"
+                      :color="flavourColors[icecreamCakeFlavourEntries[index].flavour]"
+                    />
+                  </div>
+                  <div class="col-3 pad-right">
+                    <q-input
+                      :label="`Number of Jugs (${icecreamCakeFlavourEntries[index].flavour[1] || ''})`"
+                      required
+                      v-model="icecreamCakeFlavourEntries[index].jugsamount[1]"
+                      @focus="$event.target.select()"
+                      :readonly="!icecreamCakeFlavourEntries[index].flavour[1]"
+                      :rules="[ val => Number(val) >= 0 || 'amount must not be negative!' ]"
+                      :color="flavourColors[icecreamCakeFlavourEntries[index].flavour]"
+                    />
+                  </div>
+                  <div class="col-3 pad-right">
+                    <q-input
+                      :label="`Number of Jugs (${icecreamCakeFlavourEntries[index].flavour[2] || ''})`"
+                      required
+                      v-model="icecreamCakeFlavourEntries[index].jugsamount[2]"
+                      @focus="$event.target.select()"
+                      :readonly="!icecreamCakeFlavourEntries[index].flavour[2]"
+                      :rules="[ val => Number(val) >= 0 || 'amount must not be negative!' ]"
+                      :color="flavourColors[icecreamCakeFlavourEntries[index].flavour]"
+                    />
+                  </div>
+                  <div class="col-3 pad-right">
+                    <q-input
+                      label="Number of Small Cakes"
+                      required
+                      v-model.number="icecreamCakeFlavourEntries[index].smallcakesamount"
+                      @focus="$event.target.select()"
+                      :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
+                      type="number"
+                      :color="flavourColors[icecreamCakeFlavourEntries[index].flavour]"
+                    />
+                  </div>
+                  <div class="col-3 pad-right">
+                    <q-input
+                      label="Number of Medium Cakes"
+                      required
+                      v-model.number="icecreamCakeFlavourEntries[index].mediumcakesamount"
+                      @focus="$event.target.select()"
+                      :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
+                      type="number"
+                      :color="flavourColors[icecreamCakeFlavourEntries[index].flavour]"
+                    />
+                  </div>
+                  <div class="col-3 pad-right">
+                    <q-input
+                      label="Number of Large Cakes"
+                      required
+                      v-model.number="icecreamCakeFlavourEntries[index].largecakesamount"
+                      @focus="$event.target.select()"
+                      :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
+                      type="number"
+                      :color="flavourColors[icecreamCakeFlavourEntries[index].flavour]"
+                    />
+                  </div>
+                  <div class="col-3">
+                    <q-input
+                      label="Weight of Unsaleable Icecream"
+                      required
+                      v-model.number="icecreamCakeFlavourEntries[index].unsaleableweight"
+                      @focus="$event.target.select()"
+                      :rules="[ val => val >= 0 || 'amount must not be negative!' ]"
+                      type="number"
+                      :color="flavourColors[icecreamCakeFlavourEntries[index].flavour]"
+                    />
+                  </div>
+                  <div class="col-12">
+                    <q-input
+                      label="Notes"
+                      v-model="icecreamCakeFlavourEntries[index].notes"
+                      type="text"
+                      autogrow
+                      :color="flavourColors[icecreamCakeFlavourEntries[index].flavour]"
+                    />
+                  </div>
+                </q-card>
+
+                <div class="row items-center full-width">
+                  <div class="col-8 pad-right">
+                    <q-btn
+                      v-if="!loading"
+                      icon="add"
+                      id="add-flavour-btn"
+                      label="Add Flavour"
+                      class="full-width"
+                      color="primary"
+                      @click="addFlavourEntry"
+                    />
+                  </div>
+
+                  <div class="col-4">
+                    <q-btn
+                      v-if="!loading"
+                      icon="delete"
+                      id="add-flavour-btn"
+                      label="Delete Production Day"
+                      class="full-width"
+                      color="primary"
+                      @click="deleteProductionDay"
+                    />
+                  </div>
+                </div>
               </q-tab-panel>
 
               <q-tab-panel name="Select Production Type">
@@ -827,7 +1057,9 @@ export default defineComponent({
       loading: true,
       productionType: 'Select Production Type',
       oldProductionType: '',
-      productionTypeOptions: ['Cutting Day', 'Packing Day', 'Base Day', 'Ice Cream Day'],
+      knownProductionTypesOnDate: [],
+      knownProductionDays: [],
+      productionTypeOptions: ['Cutting Day', 'Packing Day', 'Base Day', 'Ice Cream Day', 'Cake Ice Cream Day'],
       staffOptions: ['Andoah', 'Alysse', 'Cat', 'Beau', 'Iris', 'Lily', 'Isabelle', 'Nicole', 'Yindi', 'Azalea', 'Kira', 'Satima', 'Lucy',
         'Sutara', 'Sophie', 'Dale', 'Nara'],
       flavourOptions: [
@@ -861,6 +1093,7 @@ export default defineComponent({
       packingFlavourEntries: [],
       baseFlavourEntries: [],
       icecreamFlavourEntries: [],
+      icecreamCakeFlavourEntries: [],
       staffEntries: [],
       dateCreated: false,
       saveLoading: false,
@@ -886,7 +1119,8 @@ export default defineComponent({
       console.log('has no date');
       this.setDateToCurrentDate();
     }
-
+  },
+  created() {
     const self = this;
     this.autoSaveTimer = setInterval(() => {
       self.saveData(true);
@@ -939,6 +1173,13 @@ export default defineComponent({
               self.icecreamFlavourEntries = flavourData;
             } else if (self.productionType === 'Base Day') {
               self.baseFlavourEntries = flavourData;
+            } else if (self.productionType === 'Cake Ice Cream Day') {
+              for (let i = 0; i < flavourData.length; i += 1) {
+                if (flavourData[i].flavour[0] === '') {
+                  flavourData[i].flavour = [];
+                }
+              }
+              self.icecreamCakeFlavourEntries = flavourData;
             } else {
               throw new Error('Cannot get flavour with no local production date!');
             }
@@ -1005,8 +1246,20 @@ export default defineComponent({
         flavourEntryData = this.cuttingFlavourEntries;
       } else if (this.productionType === 'Ice Cream Day') {
         flavourEntryData = this.icecreamFlavourEntries;
+        for (let i = 0; i < flavourEntryData.length; i += 1) {
+          flavourEntryData[i].jugsamount = Number(flavourEntryData[i].jugsamount);
+        }
       } else if (this.productionType === 'Base Day') {
         flavourEntryData = this.baseFlavourEntries;
+      } else if (this.productionType === 'Cake Ice Cream Day') {
+        flavourEntryData = this.icecreamCakeFlavourEntries;
+        console.log('ice cream day');
+        console.log(flavourEntryData);
+        for (let i = 0; i < flavourEntryData.length; i += 1) {
+          for (let n = 0; n < flavourEntryData[i].jugsamount.length; n += 1) {
+            flavourEntryData[i].jugsamount[n] = Number(flavourEntryData[i].jugsamount[n]);
+          }
+        }
       } else {
         return;
       }
@@ -1073,6 +1326,9 @@ export default defineComponent({
             headers: {
               Authorization: `Bearer ${self.$store.state.token}`,
             },
+          })
+          .then(() => {
+            self.saveLoading = false;
           })
           .catch((err) => {
             if (err.response) {
@@ -1159,6 +1415,22 @@ export default defineComponent({
           unsaleableweight: 0,
           notes: '',
         };
+      } else if (this.productionType === 'Cake Ice Cream Day') {
+        let previousBatch = 0;
+        if (this.icecreamCakeFlavourEntries.length > 0) {
+          const previousEntry = this.icecreamCakeFlavourEntries[this.icecreamCakeFlavourEntries.length - 1];
+          previousBatch = previousEntry.batchnumber;
+        }
+        flavourEntryData = {
+          flavour: [],
+          batchnumber: previousBatch,
+          jugsamount: [0, 0, 0],
+          smallcakesamount: 0,
+          mediumcakesamount: 0,
+          largecakesamount: 0,
+          unsaleableweight: 0,
+          notes: '',
+        };
       } else if (this.productionType === 'Base Day') {
         let previousBatch = 0;
         if (this.baseFlavourEntries.length > 0) {
@@ -1206,6 +1478,9 @@ export default defineComponent({
             self.icecreamFlavourEntries.push(data);
           } else if (self.productionType === 'Base Day') {
             self.baseFlavourEntries.push(data);
+          } else if (self.productionType === 'Cake Ice Cream Day') {
+            data.flavour = [];
+            self.icecreamCakeFlavourEntries.push(data);
           } else {
             throw new Error('Cannot add flavour with no local production date!');
           }
@@ -1222,6 +1497,8 @@ export default defineComponent({
         flavourEntries = this.icecreamFlavourEntries;
       } else if (this.productionType === 'Base Day') {
         flavourEntries = this.baseFlavourEntries;
+      } else if (this.productionType === 'Cake Ice Cream Day') {
+        flavourEntries = this.icecreamCakeFlavourEntries;
       } else {
         throw new Error('Cannot delete flavour with no local production date!');
       }
@@ -1246,11 +1523,87 @@ export default defineComponent({
             self.icecreamFlavourEntries.splice(index, 1);
           } else if (self.productionType === 'Base Day') {
             self.baseFlavourEntries.splice(index, 1);
+          } else if (self.productionType === 'Cake Ice Cream Day') {
+            self.icecreamCakeFlavourEntries.splice(index, 1);
           } else {
             throw new Error('Cannot delete flavour with no local production date!');
           }
         })
         .catch(self.handlePostErr);
+    },
+    deleteProductionDay() {
+      if (!this.productionType) {
+        throw new Error('Cannot delete flavour with no local production date!');
+      }
+
+      const self = this;
+      this.$q.dialog({
+        title: 'Confirm',
+        message: `Would you like to delete the ${this.productionType} on ${this.date}? This will delete all flavour entries for the ${this.productionType}.`,
+        cancel: true,
+        persistent: true,
+      }).onOk(() => {
+        self.startLoading();
+        console.log('deleting day', self.date, 'production type from', this.productionType);
+        this.$api
+          .post('/days/delete', {
+            date: self.date,
+            productionType: self.productionType,
+          }, {
+            headers: {
+              Authorization: `Bearer ${self.$store.state.token}`,
+            },
+          })
+          .then(() => {
+            if (self.knownProductionTypesOnDate.length > 1) {
+              self.knownProductionTypesOnDate = self.knownProductionTypesOnDate.filter((item) => item !== self.productionType);
+              [self.productionType] = self.knownProductionTypesOnDate;
+              self.getData();
+            } else {
+              self.knownProductionTypesOnDate = [];
+              self.productionType = 'Select Production Type';
+            }
+
+            self.endLoading();
+          })
+          .catch(self.handlePostErr);
+
+        const currentProductionType = this.productionType; // to prevent variable from updating during post
+        let currentFlavourEntries = null;
+
+        if (self.productionType === 'Packing Day') {
+          currentFlavourEntries = self.packingFlavourEntries;
+        } else if (self.productionType === 'Cutting Day') {
+          currentFlavourEntries = self.cuttingFlavourEntries;
+        } else if (self.productionType === 'Ice Cream Day') {
+          currentFlavourEntries = self.icecreamFlavourEntries;
+        } else if (self.productionType === 'Base Day') {
+          currentFlavourEntries = self.baseFlavourEntries;
+        } else if (self.productionType === 'Cake Ice Cream Day') {
+          currentFlavourEntries = self.icecreamCakeFlavourEntries;
+        } else {
+          throw new Error('Cannot delete flavour with no production type!');
+        }
+
+        for (let i = 0; i < currentFlavourEntries.length; i += 1) {
+          this.$api
+            .post('/flavours/delete', {
+              id: currentFlavourEntries[i].id,
+              productionType: currentProductionType,
+            }, {
+              headers: {
+                Authorization: `Bearer ${self.$store.state.token}`,
+              },
+            })
+            .then(() => {
+              console.log('deleted flavour entry of ID', currentFlavourEntries[i].id);
+            })
+            .catch(self.handlePostErr);
+        }
+      }).onCancel(() => {
+        console.log('Cancelling to', self.productionType);
+        self.endLoading();
+      });
     },
     addStaffMember() {
       const self = this;
@@ -1295,7 +1648,11 @@ export default defineComponent({
         this.oldProductionType = newProductionType;
       }
 
-      if (!this.dateCreated && newProductionType !== 'Select Production Type') {
+      if (updateFromUser && this.knownProductionTypesOnDate.includes(newProductionType)) {
+        this.oldProductionType = this.productionType;
+        this.productionType = newProductionType;
+        this.getData();
+      } else if (!this.dateCreated && newProductionType !== 'Select Production Type') {
         const self = this;
         console.log('Posting new day to api:', String(self.date), newProductionType);
         this.$api
@@ -1310,6 +1667,8 @@ export default defineComponent({
           .then(() => {
             self.endLoading();
             self.dateCreated = true;
+            console.log('adding known production type', newProductionType);
+            self.knownProductionTypesOnDate.push(newProductionType);
           })
           .catch(self.handlePostErr);
       } else if (this.dateCreated && newProductionType !== 'Select Production Type'
@@ -1318,14 +1677,14 @@ export default defineComponent({
         const self = this;
         this.$q.dialog({
           title: 'Confirm',
-          message: `Would you like to change the production type on the ${this.date} to a ${newProductionType}? This will delete all previously created data entries on this date.`,
+          message: `Would you like to add a new production type on the ${this.date} of a ${newProductionType}?`,
           cancel: true,
           persistent: true,
         }).onOk(() => {
           console.log('Updating day', self.date, 'production type from', oldProductionType, 'to', newProductionType);
-          self.$api
-            .post('/days/update', {
-              id: String(self.dayID),
+          this.$api
+            .post('/days/add', {
+              date: String(self.date),
               productionType: String(newProductionType),
             }, {
               headers: {
@@ -1333,7 +1692,10 @@ export default defineComponent({
               },
             })
             .then(() => {
-              self.getData();
+              self.endLoading();
+              console.log('adding known production type', newProductionType);
+              self.knownProductionTypesOnDate.push(newProductionType);
+              self.dateCreated = true;
             })
             .catch(self.handlePostErr);
         }).onCancel(() => {
@@ -1385,10 +1747,15 @@ export default defineComponent({
 
       throw err;
     },
+    log(a) {
+      console.log(a);
+    },
   },
   watch: {
     date(newDate) {
       this.startLoading();
+      this.knownProductionTypesOnDate = [];
+      this.knownProductionDays = [];
       console.log('User changed date to', newDate, 'getting date data');
       const self = this;
       this.$api
@@ -1402,10 +1769,15 @@ export default defineComponent({
         .then((res) => {
           const { data } = res;
           console.log('Received api response with date data', data);
-          if (data.id) {
-            self.dayID = data.id;
+          if (data.length > 0) {
+            self.dayID = data[0].id;
             self.dateCreated = true;
-            self.updateLocalProductionType(data.productiontype, String(self.productionType), false);
+            self.updateLocalProductionType(data[0].productiontype, String(self.productionType), false);
+            self.knownProductionDays = data;
+
+            data.forEach((item) => {
+              self.knownProductionTypesOnDate.push(item.productiontype);
+            });
           } else {
             self.dateCreated = false;
             self.updateLocalProductionType('Select Production Type', String(self.productionType), false);

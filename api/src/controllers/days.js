@@ -30,11 +30,27 @@ module.exports = {
     db.query('SELECT * FROM productiondays WHERE productiondate=$1;', [date], (err, res) => {
       if (err) {
         reject(err);
-      } else if (res.rows[0]) {
-        resolve(res.rows[0]);
+      } else if (res.rows) {
+        resolve(res.rows);
       } else {
         resolve(404);
       }
     });
+  }),
+
+  deleteDay: (date, productionType) => new Promise((resolve, reject) => {
+    db.query(
+      'DELETE FROM productiondays WHERE productiondate=$1 AND productiontype=$2;',
+      [date, productionType],
+      (err, res) => {
+        if (err) {
+          reject(err);
+        } else if (res.rowCount === 1) {
+          resolve(200);
+        } else {
+          resolve(404);
+        }
+      },
+    );
   }),
 };

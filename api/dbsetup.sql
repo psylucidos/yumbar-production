@@ -6,7 +6,7 @@ CREATE TABLE yumbarusers (
 
 CREATE TABLE productiondays (
   id SERIAL PRIMARY KEY,
-  productiondate date NOT NULL UNIQUE,
+  productiondate date NOT NULL,
   productiontype text NOT NULL
 );
 
@@ -63,8 +63,21 @@ CREATE TABLE icecreamflavourentries (
   productiondate date NOT NULL,
   flavour text NOT NULL,
   batchnumber integer NOT NULL,
-  jugsamount integer NOT NULL,
+  jugsamount real NOT NULL,
   traysamount integer NOT NULL,
+  unsaleableweight integer NOT NULL,
+  notes text
+);
+
+CREATE TABLE icecreamcakeflavourentries (
+  id SERIAL PRIMARY KEY,
+  productiondate date NOT NULL,
+  flavour text[3] NOT NULL,
+  batchnumber integer NOT NULL,
+  jugsamount real[3] NOT NULL,
+  smallcakesamount integer NOT NULL,
+  mediumcakesamount integer NOT NULL,
+  largecakesamount integer NOT NULL,
   unsaleableweight integer NOT NULL,
   notes text
 );
