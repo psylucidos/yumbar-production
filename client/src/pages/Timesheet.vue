@@ -192,8 +192,8 @@ export default defineComponent({
       if (this.dateRange != null) {
         this.$api
           .post('/staff/getrange', {
-            startDate: new Date(this.dateRange.from),
-            endDate: new Date(this.dateRange.to),
+            startDate: this.dateRange.from,
+            endDate: this.dateRange.to,
           }, {
             headers: {
               Authorization: `Bearer ${this.$store.state.token}`,
