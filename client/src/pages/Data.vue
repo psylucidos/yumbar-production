@@ -1643,6 +1643,8 @@ export default defineComponent({
         .catch(self.handlePostErr);
     },
     updateLocalProductionType(newProductionType, oldProductionType, updateFromUser) {
+      this.saveData();
+
       if (!updateFromUser) {
         this.productionType = newProductionType;
         this.oldProductionType = newProductionType;
